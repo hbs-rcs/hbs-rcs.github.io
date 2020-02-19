@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>web scraping on HBS RCS</title>
+    <link>/tags/web-scraping/</link>
+    <description>Recent content in web scraping on HBS RCS</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 10 Jan 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/web-scraping/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Easier web scraping in R with tidyverse</title>
+      <link>/post/easier-web-scraping-in-r-with-tidyverse/</link>
+      <pubDate>Fri, 10 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/easier-web-scraping-in-r-with-tidyverse/</guid>
+      <description>I recently used R for a moderately complicated scraping task, and found that using tools and techniques from the tidyverse made for a very pleasant web scraping experience, especially for retrieving nested data. In particular, the nest/unnest functions in the tidyr package make it easy to implement breadth-first scrapers in R by nesting the results from each level and then expanding to a tabular structure. This approach has the advantage of making it easy to follow the program logic, and it also makes it very easy to store retrieved values in a convenient format.</description>
+    </item>
+    
+    <item>
+      <title>Web Scraping in R</title>
+      <link>/post/2019-08-08-web-scraping-in-r/</link>
+      <pubDate>Thu, 08 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/2019-08-08-web-scraping-in-r/</guid>
+      <description>Let’s walk through some steps for web scraping with R. On this Wikipedia page there is a table of visa requirements that I want to scrape. Let’s use the rvest package to get the HTML associated with that page:
+library(rvest) html &amp;lt;- read_html(&amp;quot;https://en.wikipedia.org/wiki/Visa_requirements_for_United_States_citizens&amp;quot;) html ## {html_document} ## &amp;lt;html class=&amp;quot;client-nojs&amp;quot; lang=&amp;quot;en&amp;quot; dir=&amp;quot;ltr&amp;quot;&amp;gt; ## [1] &amp;lt;head&amp;gt;\n&amp;lt;meta http-equiv=&amp;quot;Content-Type&amp;quot; content=&amp;quot;text/html; charset= ... ## [2] &amp;lt;body class=&amp;quot;mediawiki ltr sitedir-ltr mw-hide-empty-elt ns-0 ns-sub ... Now let’s use the html_nodes() function to extract the table of interest.</description>
+    </item>
+    
+  </channel>
+</rss>

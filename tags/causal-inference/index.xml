@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>causal inference on HBS RCS</title>
+    <link>/tags/causal-inference/</link>
+    <description>Recent content in causal inference on HBS RCS</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 12 Sep 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/causal-inference/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Synthetic Controls: brief overview with practical recommmendations</title>
+      <link>/post/synthetic-controls/</link>
+      <pubDate>Thu, 12 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/synthetic-controls/</guid>
+      <description>Recently, I found myself researching the latest developments on the topic of Synthetic Controls (SC) for one of the projects. I had the pleasure of learning about the method from its co-author Prof. Jens Hainmueller back in 2011, when it had just started gaining momentum. Wondering what new insights have been gathered over the last 8 years by applied researchers utilizing this method for causal inference problems, I outlined interesting highlights in this post.</description>
+    </item>
+    
+  </channel>
+</rss>

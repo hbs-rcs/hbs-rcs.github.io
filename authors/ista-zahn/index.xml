@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Ista Zahn on HBS RCS</title>
+    <link>/authors/ista-zahn/</link>
+    <description>Recent content in Ista Zahn on HBS RCS</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 10 Jan 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/authors/ista-zahn/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Easier web scraping in R with tidyverse</title>
+      <link>/post/easier-web-scraping-in-r-with-tidyverse/</link>
+      <pubDate>Fri, 10 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/easier-web-scraping-in-r-with-tidyverse/</guid>
+      <description>I recently used R for a moderately complicated scraping task, and found that using tools and techniques from the tidyverse made for a very pleasant web scraping experience, especially for retrieving nested data. In particular, the nest/unnest functions in the tidyr package make it easy to implement breadth-first scrapers in R by nesting the results from each level and then expanding to a tabular structure. This approach has the advantage of making it easy to follow the program logic, and it also makes it very easy to store retrieved values in a convenient format.</description>
+    </item>
+    
+  </channel>
+</rss>
