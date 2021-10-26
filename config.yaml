@@ -8,3 +8,18 @@ menu:
           url: archives/
         - name: Posts by Topic
           url: tags
+        - name: Search
+          url: search/
+outputs:
+    home:
+        - HTML
+        - RSS
+        - JSON # is necessary
+params:
+    env: production # to enable google analytics, opengraph, twitter-cards and schema.
+    defaultTheme: light
+    ShowShareButtons: true
+    ShowReadingTime: true
+    ShowPostNavLinks: true
+    ShowCodeCopyButtons: true
+    ShowToc: true
