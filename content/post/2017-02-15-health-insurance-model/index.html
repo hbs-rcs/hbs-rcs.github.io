@@ -1,0 +1,21 @@
+---
+title: Health Insurance Model
+author: 'Andrew Marder'
+draft: true
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>Consider an individual’s choice of how much health insurance to buy. Imagine there are two goods the individual needs to choose between. She must choose how much health insurance to purchase <span class="math inline">\(x_h\)</span> and how much of a generic consumption good to consume <span class="math inline">\(x_c\)</span>. She maximizes her utility from these two goods subject to her budget constraint (the total amount spent on both goods cannot exceed her after-tax wage <span class="math inline">\(w\)</span>):</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp; \underset{x_h, x_c}{\text{maximize}}
+&amp; &amp; u(x_h, x_c) \\
+&amp; \text{subject to}
+&amp; &amp; p_h x_h + x_c \le w.
+\end{aligned}
+\]</span></p>
+<p>Notice that I have normalized the price of the generic good to one.</p>
+<p>The model above describes how an individual chooses health insurance absent any distortions. Now we consider the situation where an employer subsidizes an employee’s health insurance. Imagine an employer paying a proportion <span class="math inline">\(s\)</span> of the employee’s health insurance premiums. This would lower the effective price of health insurance to <span class="math inline">\((1 - s) p_h\)</span> and increase the amount of health insurance consumed.</p>
+<p>If the government no longer allows companies to subsidize health insurance with pre-tax dollars it would be more efficient for the employer to stop subsidizing insurance and instead increase the employee’s wage by the dollar amount of the subsidy <span class="math inline">\(s p_h x_h^1\)</span>.</p>
