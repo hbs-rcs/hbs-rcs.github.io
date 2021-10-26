@@ -1,4 +1,4 @@
 theme: "hugo-PaperMod"
-baseURL: https://github.com/hbs-rcs/hbs-rcs.github.io
+baseURL: https://hbs-rcs.github.io
 languageCode: en-us
 title: HBS Research Computing Services Blog
