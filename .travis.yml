@@ -1,6 +1,15 @@
+language: r
 dist: xenial
-language: cpp
-sudo: required
+latex: false
+
+branches:
+  only:
+    - master
+
+cache:
+  packages: yes
+  directories:
+    - $HOME/bin
 
 branches:
   except:
