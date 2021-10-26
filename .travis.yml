@@ -18,6 +18,6 @@ deploy:
   skip_cleanup: true
   github_token: $GITHUB_TOKEN
   on:
-    branch: test
+    branch: oldschool # replace this with the branch you want to build from!
   local_dir: public
   target_branch: master
