@@ -1,15 +1,15 @@
 language: r
-dist: xenial
+dist: focal
 latex: false
 
 branches:
   only:
     - master
 
-cache:
-  packages: yes
-  directories:
-    - $HOME/bin
+#cache:
+#  packages: yes
+#  directories:
+#    - $HOME/bin
 
 branches:
   except:
