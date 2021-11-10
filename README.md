@@ -13,7 +13,7 @@ and technical issues that researchers at HBS frequently encounter.
 To make a new post clone the Git repository at https://github.com/hbs-rcs/hbs-rcs.github.io
 and then follow the steps below.
 
-There are to supported workflows for authoring a new post, as detailed below.
+There are two supported workflows for authoring a new post, as detailed below.
 
 1. Create a post using RStudio / blogdown.
    1. Install the `blogdown` R package if you have not done so already
