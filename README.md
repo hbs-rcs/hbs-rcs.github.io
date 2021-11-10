@@ -16,17 +16,17 @@ and then follow the steps below.
 There are to supported workflows for authoring a new post, as detailed below.
 
 1. Create a post using RStudio / blogdown.
-   a. Install the `blogdown` R package if you have not done so already
-   b. In RStudio click *Addins => New Post*, or run `blogdown::new_post()` in R
-   c. Write the content of your post
-   d. Click the "Knit" button in Rstudio or run `rmarkdown::render("index.Rmd")` to render your post
-   e. Click *Addins => Serve Site* in RStudio or run `blogdown::serve_site()` to preview your post
+   1. Install the `blogdown` R package if you have not done so already
+   2. In RStudio click *Addins => New Post*, or run `blogdown::new_post()` in R
+   3. Write the content of your post
+   4. Click the "Knit" button in Rstudio or run `rmarkdown::render("index.Rmd")` to render your post
+   5. Click *Addins => Serve Site* in RStudio or run `blogdown::serve_site()` to preview your post
 
 2. If you do not wish to use the R `blogdown` package you can instead create a post manually.
-   a. Make a directory for your post in `content/post` following the year-name convention used in previous posts
-   b. Create `index.html` or `index.md` file in your post directory and add title, author, and date metadata using
+   1. Make a directory for your post in `content/post` following the year-name convention used in previous posts
+   2. Create `index.html` or `index.md` file in your post directory and add title, author, and date metadata using
       an existing post as a template
-  c. Write the content of your post.
+   3. Write the content of your post.
 
 Once you have authored a new post you can commit your changes in Git and push them to the github repository.
 If you push directly to the default branch your post will be added directly to the website. If you push
