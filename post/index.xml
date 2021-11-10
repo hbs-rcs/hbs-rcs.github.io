@@ -1,0 +1,1840 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts | HBS Research Computing Services Blog</title>
+    <link>https://hbs-rcs.github.io/post/</link>
+      <atom:link href="https://hbs-rcs.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <description>Posts</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Sun, 10 Oct 2021 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://hbs-rcs.github.io/media/icon_hua2ec155b4296a9c9791d015323e16eb5_11927_512x512_fill_lanczos_center_3.png</url>
+      <title>Posts</title>
+      <link>https://hbs-rcs.github.io/post/</link>
+    </image>
+    
+    <item>
+      <title>Specification Curve Analysis: Overview and Stata Example</title>
+      <link>https://hbs-rcs.github.io/post/specification-curve-analysis/</link>
+      <pubDate>Sun, 10 Oct 2021 00:00:00 +0000</pubDate>
+      <guid>https://hbs-rcs.github.io/post/specification-curve-analysis/</guid>
+      <description>
+
+&lt;div id=&#34;overview&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Overview&lt;/h2&gt;
+&lt;p&gt;Research reproducibility topic has been gaining momentum over the past decade. There have been many studies reporting inability to replicate published results and lack of necessary details in methods description. Some journals are addressing this issue by requiring access to study data and executable code. However, while this may provide some reassurance in reliability of the results, the actual choice of analytic methods could be shaped by many assumptions that might not be evident.&lt;/p&gt;
+&lt;p&gt;There usually isn’t one correct way to analyse data. Instead, empirical studies often have plenty of flexibility in the way data are collected and cleaned as well as in the final model specification. A data cleaning step may involve exclusion of some units with missing data or conversion of a continuous variable to a categorical one or (vice versa). There also might be models equally plausible for the outcome, but having different sets of covariates or functional forms. Each of these small steps may snowball into a reported effect that is overly favorable to researchers’ narrative.&lt;/p&gt;
+&lt;p&gt;A relatively novel and very promising method that can help to mitigate this issue was proposed in &lt;span class=&#34;citation&#34;&gt;&lt;a href=&#34;#ref-simonsohn2015better&#34; role=&#34;doc-biblioref&#34;&gt;Simonsohn, Simmons, and Nelson&lt;/a&gt; (&lt;a href=&#34;#ref-simonsohn2015better&#34; role=&#34;doc-biblioref&#34;&gt;2015&lt;/a&gt;)&lt;/span&gt; and is called &lt;strong&gt;Specification Curve Analysis&lt;/strong&gt; (SCA). The idea behind the method is simple - the researcher is asked to consider multiple plausible ways to analyze the data and show that, &lt;em&gt;jointly&lt;/em&gt;, the null hypothesis of no effect can be rejected. It doesn’t mean that all models must result in a statistically significant effect (though, it would make the conclusions very convincing!). However, even if the effect is detected when all specifications are tested simultaneously, this would result in a more objective inference.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;method-details&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Method Details&lt;/h2&gt;
+&lt;p&gt;The method involves the following steps:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: lower-roman&#34;&gt;
+&lt;li&gt;identifying the set of theoretically justified, statistically valid, and non-redundant analytic specifications;&lt;/li&gt;
+&lt;li&gt;running the analysis for each specification and displaying the results graphically - this allows the readers to identify consequential specification decisions;&lt;/li&gt;
+&lt;li&gt;conducting statistical tests to determine whether, as a whole, results are inconsistent with the null hypothesis.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The first two steps above are self-explanatory. However, the third step is novel. The authors (&lt;span class=&#34;citation&#34;&gt;&lt;a href=&#34;#ref-simonsohn2020specification&#34; role=&#34;doc-biblioref&#34;&gt;Simonsohn, Simmons, and Nelson&lt;/a&gt; (&lt;a href=&#34;#ref-simonsohn2020specification&#34; role=&#34;doc-biblioref&#34;&gt;2020&lt;/a&gt;)&lt;/span&gt;) proposed three test statistics for the SCA:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;median effect estimated across all specifications;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;share of specifications that obtain a statistically significant effect in the predicted direction;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;average of Z-values across all specifications.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;For each of them a sampling distribution can be generating by “resampling under-the-null.” This involves modifying the observed data so that the null hypothesis is known to be true, and then drawing random samples of the modified data. The test statistic of interest is then computed on each of those samples. The resulting distribution is the estimated distribution of the test statistic under the null.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;available-tools&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Available Tools&lt;/h2&gt;
+&lt;p&gt;There are several resources available to aid the implementation of the method. I organize them in a table below:&lt;/p&gt;
+&lt;table&gt;
+&lt;colgroup&gt;
+&lt;col width=&#34;2%&#34; /&gt;
+&lt;col width=&#34;15%&#34; /&gt;
+&lt;col width=&#34;82%&#34; /&gt;
+&lt;/colgroup&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th&gt;Language&lt;/th&gt;
+&lt;th&gt;Package Name&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;R&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;https://masurp.github.io/specr/&#34;&gt;specr&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;Available on CRAN. Provides functions to set up, run, evaluate and plot the specifications of interest. There is a lot of flexibility in model set-up. However, the package doesn’t have capability to perform the step (iii) above (i.e., the joint testing).&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;R&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;https://joachim-gassen.github.io/rdfanalysis/&#34;&gt;rdfanalysis&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;Available only on GitHub. A more comprehensive collection of functions that provides a self-documenting code base that allows researchers to systematically document and explore their researcher degrees of freedom when conducting analyses. Has a shiny front end that helps to explore the findings interactively.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;Stata&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;https://github.com/martin-andresen/speccurve&#34;&gt;speccurve&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;One function that can only plot the curve using coefficients stored in the &lt;strong&gt;e()&lt;/strong&gt;-returns. Requires setting up and looping through the models beforehand.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;Stata&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;https://github.com/mgao6767/specurve&#34;&gt;specurve&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;Depends on Stata 16’s Python (v.3.6) integration and several additional Python modules. The function performs regressions as specified in a provided YAML-formatted file and plots the specification curve. Limited to &lt;code&gt;reghdfe&lt;/code&gt; models only, but allows for various combinations of fixed effects and clustering.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;Stata&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;https://github.com/bbdaniels/specc&#34;&gt;specc&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;Available on &lt;a href=&#34;https://econpapers.repec.org/software/bocbocode/s458720.htm&#34;&gt;SSC&lt;/a&gt; and is open for development on GitHub. The package appears to be very flexible in setting up models and enumerating specifications as well as plotting the curve. However, it lacks a simple example to get started.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;Python&lt;/td&gt;
+&lt;td&gt;&lt;a href=&#34;https://github.com/aeturrell/specification_curve&#34;&gt;specification_curve&lt;/a&gt;&lt;/td&gt;
+&lt;td&gt;Allows to conduct analysis and plot specification curves. Flexible in model specification and very well &lt;a href=&#34;https://specification-curve.readthedocs.io/en/latest/&#34;&gt;documented&lt;/a&gt;. While it also can’t perform the joint test (step (iii) of the specification analysis), the author has an example of its manual implementation &lt;a href=&#34;http://aeturrell.com/2019/01/25/Specification-Curve-Analysis/&#34;&gt;here&lt;/a&gt;.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;It looks like most major statistical programming language have some version of the specification curve implemented. However, as far as I can tell, none of them are capable of performing step (iii), which, arguably, is as important as the curve itself. Therefore, for now, researches have to implement it themselves or contact RCS (research@hbs.edu) for assistance!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;stata-example&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Stata Example&lt;/h2&gt;
+&lt;p&gt;Next, I show an example in Stata that loops through several model specifications and then uses the &lt;a href=&#34;https://github.com/martin-andresen/speccurve&#34;&gt;speccurve&lt;/a&gt; function in Stata to plot the curve. Before running this code, make sure that the function is installed in Stata by running the following line:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;net install speccurve, from(&#34;https://raw.githubusercontent.com/martin-andresen/speccurve/master&#34;)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The code uses a classic &lt;code&gt;auto&lt;/code&gt; data set and specifies several regression models that predict car price using available characteristics. The effect of interest is the coefficient estimated for the indicator &lt;code&gt;foreign&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;stata&#34;&gt;&lt;code&gt;clear all
+sysuse auto, clear
+
+loc no=0
+
+* enumerationg many different specifications using a loop
+foreach m in &amp;quot;&amp;quot; &amp;quot;mpg&amp;quot; {
+    foreach tr in &amp;quot;&amp;quot; &amp;quot;trunk&amp;quot; {
+        foreach wt in &amp;quot;&amp;quot; &amp;quot;weight&amp;quot; {
+            foreach ln in &amp;quot;&amp;quot; &amp;quot;length&amp;quot; {
+                foreach hr in &amp;quot;&amp;quot; &amp;quot;headroom&amp;quot; {
+                    qui reg price foreign `m&amp;#39; `tr&amp;#39; `wt&amp;#39; `ln&amp;#39; `hr&amp;#39;
+                  eststo md`no&amp;#39;
+                    loc ++no
+                }
+            }
+        }
+    }
+}
+
+* plotting a SC with foreign as a parameter of interest
+speccurve *, param(foreign) controls title(SCA for the effect of foreigh)
+graph export &amp;quot;speccurve1.svg&amp;quot;, replace&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;(1978 Automobile Data)
+
+
+
+
+(file speccurve1.svg written in SVG format)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The code above produced the following specification curve:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;speccurve1.svg&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;Looks like including the &lt;code&gt;weight&lt;/code&gt; variable in the model had a notable effect on the coefficient for &lt;code&gt;foreign&lt;/code&gt;. Function &lt;code&gt;speccurve&lt;/code&gt; is somewhat limited in that it doesn’t work with models that have factors as controls. Next, I show a workaround for the latter case:&lt;/p&gt;
+&lt;pre class=&#34;stata&#34;&gt;&lt;code&gt;clear all
+sysuse auto, clear
+
+egen headroom_c = group(headroom)
+loc no=0
+
+foreach m in &amp;quot;&amp;quot; &amp;quot;mpg&amp;quot; {
+    foreach tr in &amp;quot;&amp;quot; &amp;quot;trunk&amp;quot; {
+        foreach wt in &amp;quot;&amp;quot; &amp;quot;weight&amp;quot; {
+            foreach ln in &amp;quot;&amp;quot; &amp;quot;length&amp;quot; {
+                foreach hr in &amp;quot;&amp;quot; &amp;quot;headroom&amp;quot; &amp;quot;i.headroom_c&amp;quot;{
+                    qui reg price foreign `m&amp;#39; `tr&amp;#39; `wt&amp;#39; `ln&amp;#39; `hr&amp;#39;
+                    
+                    qui estadd scalar mpgv = 0, replace
+                    qui estadd scalar trunkv = 0, replace
+                    qui estadd scalar weightv = 0, replace
+                    qui estadd scalar lengthv = 0, replace
+                    foreach vr in m tr wt ln {
+                        if &amp;quot;``vr&amp;#39;&amp;#39;&amp;quot;!=&amp;quot;&amp;quot; qui estadd scalar ``vr&amp;#39;&amp;#39;v = 1, replace
+                    }
+                    
+                    qui estadd scalar headroomv = 0
+                    qui estadd scalar iheadroom_cv = 0
+                    local vname = subinstr(&amp;quot;`hr&amp;#39;&amp;quot;, &amp;quot;.&amp;quot;, &amp;quot;&amp;quot;, .)
+                    qui estadd scalar `vname&amp;#39;v = 1, replace 
+                    
+                    eststo md`no&amp;#39;
+                    loc ++no
+                }
+            }
+        }
+    }
+}
+
+* The code below produces an error:
+*speccurve *, param(foreign) controls title(SCA for the effect of foreigh)
+
+* Workaround:
+speccurve *, param(foreign) level(95) graphopts(legend(pos(1))) title(SCA for auto dataset) panel(mpgv trunkv weightv lengthv headroomv iheadroom_cv)
+graph export &amp;quot;speccurve2.svg&amp;quot;, replace&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;(1978 Automobile Data)
+
+
+
+
+
+(file speccurve2.svg written in SVG format)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The code implements models that have &lt;code&gt;headroom&lt;/code&gt; included as a factor or as a continuous variable. Note that the first call for &lt;code&gt;speccurve&lt;/code&gt; would produce an error due to a bug in the function. However, the second call produces the following specification curve:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;speccurve2.svg&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;One can also output a table with numerical results:&lt;/p&gt;
+&lt;pre class=&#34;stata&#34;&gt;&lt;code&gt;matlist r(table)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;             |    specno    modelno   estimate      min95      max95       mpgv     trunkv    weightv    lengthv  headroomv  iheadro~v 
+-------------+-------------------------------------------------------------------------------------------------------------------------
+         md0 |         1          1   312.2587  -1191.708   1816.225          0          0          0          0          0          0 
+         md2 |         2          3    364.925  -1419.362   2149.212          0          0          0          0          0          1 
+         md1 |         3          2   577.8125  -992.5493   2148.174          0          0          0          0          1          0 
+        md14 |         4         15   740.7716  -960.3329   2441.876          0          1          0          0          0          1 
+        md13 |         5         14   1128.818  -393.3118   2650.948          0          1          0          0          1          0 
+        md12 |         6         13   1190.155  -326.8468   2707.157          0          1          0          0          0          0 
+        md26 |         7         27   1327.396  -294.4929   2949.285          1          0          0          0          0          1 
+        md38 |         8         39   1376.011  -230.2271   2982.249          1          1          0          0          0          1 
+        md25 |         9         26   1714.109   292.4855   3135.733          1          0          0          0          1          0 
+        md24 |        10         25   1767.292   371.2169   3163.368          1          0          0          0          0          0 
+        md37 |        11         38   1825.733   408.1118   3243.355          1          1          0          0          1          0 
+        md36 |        12         37   1887.461   468.5866   3306.335          1          1          0          0          0          0 
+        md41 |        13         42   2196.194   517.1768   3875.212          1          1          0          1          0          1 
+        md29 |        14         30   2247.635   591.1235   3904.146          1          0          0          1          0          1 
+        md17 |        15         18   2294.095   616.0623   3972.129          0          1          0          1          0          1 
+         md5 |        16          6   2352.064   696.5941   4007.534          0          0          0          1          0          1 
+        md40 |        17         41   2615.666   1084.272   4147.059          1          1          0          1          1          0 
+        md27 |        18         28   2644.771   1125.227   4164.315          1          0          0          1          0          0 
+        md28 |        19         29   2644.847   1133.077   4156.616          1          0          0          1          1          0 
+        md39 |        20         40   2670.519   1133.691   4207.347          1          1          0          1          0          0 
+        md16 |        21         17   2774.021   1233.682   4314.361          0          1          0          1          1          0 
+         md3 |        22          4   2801.143   1273.549   4328.737          0          0          0          1          0          0 
+         md4 |        23          5   2801.899   1281.258    4322.54          0          0          0          1          1          0 
+        md15 |        24         16   2827.236    1282.39   4372.082          0          1          0          1          0          0 
+        md23 |        25         24   3072.365   1665.236   4479.495          0          1          1          1          0          1 
+        md47 |        26         48   3079.179   1643.422   4514.937          1          1          1          1          0          1 
+        md20 |        27         21   3116.728   1652.392   4581.064          0          1          1          0          0          1 
+         md8 |        28          9   3132.815    1688.75    4576.88          0          0          1          0          0          1 
+        md11 |        29         12   3146.808   1750.304   4543.312          0          0          1          1          0          1 
+        md35 |        30         36   3148.211   1721.962   4574.459          1          0          1          1          0          1 
+        md44 |        31         45   3162.517   1671.851   4653.184          1          1          1          0          0          1 
+        md32 |        32         33   3179.193   1706.637   4651.749          1          0          1          0          0          1 
+        md46 |        33         47   3502.516   2193.975   4811.056          1          1          1          1          1          0 
+        md22 |        34         23    3526.83   2250.662   4802.999          0          1          1          1          1          0 
+        md34 |        35         35   3545.345   2248.433   4842.256          1          0          1          1          1          0 
+        md33 |        36         34   3550.194   2242.594   4857.793          1          0          1          1          0          0 
+        md45 |        37         46   3557.085     2235.3   4878.871          1          1          1          1          0          0 
+        md10 |        38         11   3570.379   2305.781   4834.976          0          0          1          1          1          0 
+         md9 |        39         10   3573.092   2297.992   4848.191          0          0          1          1          0          0 
+        md21 |        40         22   3580.051   2290.845   4869.256          0          1          1          1          0          0 
+         md7 |        41          8    3623.75   2316.374   4931.127          0          0          1          0          1          0 
+        md19 |        42         20   3631.585    2310.07   4953.101          0          1          1          0          1          0 
+         md6 |        43          7   3637.001   2303.885   4970.118          0          0          1          0          0          0 
+        md31 |        44         32   3648.619   2310.079   4987.159          1          0          1          0          1          0 
+        md43 |        45         44   3654.777   2302.875   5006.679          1          1          1          0          1          0 
+        md30 |        46         31    3673.06   2308.909   5037.212          1          0          1          0          0          0 
+        md18 |        47         19   3686.447   2352.692   5020.201          0          1          1          0          0          0 
+        md42 |        48         43   3711.123   2346.938   5075.308          1          1          1          0          0          0 &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;references&#34; class=&#34;section level2 unnumbered&#34;&gt;
+&lt;h2&gt;References&lt;/h2&gt;
+&lt;div id=&#34;refs&#34; class=&#34;references csl-bib-body hanging-indent&#34;&gt;
+&lt;div id=&#34;ref-simonsohn2015better&#34; class=&#34;csl-entry&#34;&gt;
+Simonsohn, Uri, Joseph P Simmons, and Leif D Nelson. 2015. &lt;span&gt;“Better p-Curves: Making p-Curve Analysis More Robust to Errors, Fraud, and Ambitious p-Hacking, a Reply to Ulrich and Miller (2015).”&lt;/span&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ref-simonsohn2020specification&#34; class=&#34;csl-entry&#34;&gt;
+———. 2020. &lt;span&gt;“Specification Curve Analysis.”&lt;/span&gt; &lt;em&gt;Nature Human Behaviour&lt;/em&gt; 4 (11): 1208–14.
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Easier web scraping in R with tidyverse</title>
+      <link>https://hbs-rcs.github.io/post/easier-web-scraping-in-r-with-tidyverse/</link>
+      <pubDate>Fri, 10 Jan 2020 00:00:00 +0000</pubDate>
+      <guid>https://hbs-rcs.github.io/post/easier-web-scraping-in-r-with-tidyverse/</guid>
+      <description>
+
+
+&lt;p&gt;I recently used R for a moderately complicated scraping task, and found that using
+tools and techniques from the &lt;em&gt;tidyverse&lt;/em&gt; made for a very pleasant web scraping
+experience, especially for retrieving nested data. In particular, the &lt;em&gt;nest/unnest&lt;/em&gt;
+functions in the &lt;code&gt;tidyr&lt;/code&gt; package make it easy to implement breadth-first scrapers in R by
+nesting the results from each level and then expanding to a tabular structure. This
+approach has the advantage of making it easy to follow the program logic, and it also
+makes it very easy to store retrieved values in a convenient format.&lt;/p&gt;
+&lt;div id=&#34;example-hbs-workshops&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Example: HBS workshops&lt;/h2&gt;
+&lt;p&gt;As a simple example of a website with a nested structure consider &lt;a href=&#34;https://training.rcs.hbs.org/workshops&#34; class=&#34;uri&#34;&gt;https://training.rcs.hbs.org/workshops&lt;/a&gt;.
+This site lists workshops nested within categories.&lt;/p&gt;
+&lt;div id=&#34;start-at-the-top-and-store-results-in-tibbles&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Start at the top and store results in tibbles&lt;/h3&gt;
+&lt;p&gt;Using the &lt;em&gt;tidyverse&lt;/em&gt; packages along with &lt;em&gt;rvest&lt;/em&gt; make web scraping in R more convenient.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+library(rvest)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To retrieve workshop information from &lt;a href=&#34;https://training.rcs.hbs.org&#34; class=&#34;uri&#34;&gt;https://training.rcs.hbs.org&lt;/a&gt; we can start by creating
+a &lt;code&gt;tibble&lt;/code&gt; to store the data we will retrieve from the site. To begin with this &lt;code&gt;tibble&lt;/code&gt; has
+only one row and one column containing the URL of the starting page. This might seem like
+a strange way to start, but it helps us keep a consistent and clean pattern as we descend
+through the nested structure of the website.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ws_data &amp;lt;- tibble(start_url = &amp;quot;https://training.rcs.hbs.org/workshops&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;store-retrieved-data-in-list-columns-and-unnest-as-needed&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Store retrieved data in list columns and unnest as needed&lt;/h3&gt;
+&lt;p&gt;Next we &lt;em&gt;mutate&lt;/em&gt; the data, reading the page containing the outer-most collection
+and extracting the information we need. The information we extract includes URLs
+at the next level of the tree we are traversing. Because we will retrieve multiple
+elements we store the result in a list-column.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ws_data &amp;lt;- ws_data %&amp;gt;%
+  mutate(category = map(start_url,
+                        ~ read_html(.) %&amp;gt;%
+                          html_nodes(&amp;quot;.menu-depth-2 a&amp;quot;) %&amp;gt;%
+                          {tibble(name = html_text(.),
+                                  url = html_attr(., &amp;quot;href&amp;quot;))})
+  )
+
+glimpse(ws_data)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Observations: 1
+## Variables: 2
+## $ start_url &amp;lt;chr&amp;gt; &amp;quot;https://training.rcs.hbs.org/workshops&amp;quot;
+## $ category  &amp;lt;list&amp;gt; [&amp;lt;tbl_df[7 x 2]&amp;gt;]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Our data structure still only has one row, but we can easily expand it so that it has
+one row per category.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ws_data &amp;lt;- ws_data %&amp;gt;%
+  unnest(category, names_sep = &amp;quot;_&amp;quot;, keep_empty = TRUE)
+
+glimpse(ws_data)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Observations: 7
+## Variables: 3
+## $ start_url     &amp;lt;chr&amp;gt; &amp;quot;https://training.rcs.hbs.org/workshops&amp;quot;, &amp;quot;https://tr...
+## $ category_name &amp;lt;chr&amp;gt; &amp;quot;HBS Grid Training &amp;quot;, &amp;quot;R&amp;quot;, &amp;quot;Stata&amp;quot;, &amp;quot;Python&amp;quot;, &amp;quot;Other ...
+## $ category_url  &amp;lt;chr&amp;gt; &amp;quot;https://training.rcs.hbs.org/compute-grid-training&amp;quot;,...&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Each of the categories contains one or more workshops, so the next step is to iterate
+over categories and retrieve the all the workshop links. Because we want to retrieve
+more than one value for each category we store the result in a list-column.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ws_data &amp;lt;- ws_data %&amp;gt;%
+  mutate(workshop = map(category_url,
+                        ~ read_html(.) %&amp;gt;%
+                          html_nodes(&amp;quot;.menu-depth-3 a&amp;quot;) %&amp;gt;%
+                          {tibble(name = html_text(.),
+                                  url = html_attr(., &amp;quot;href&amp;quot;))})
+  )
+
+glimpse(ws_data)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Observations: 7
+## Variables: 4
+## $ start_url     &amp;lt;chr&amp;gt; &amp;quot;https://training.rcs.hbs.org/workshops&amp;quot;, &amp;quot;https://tr...
+## $ category_name &amp;lt;chr&amp;gt; &amp;quot;HBS Grid Training &amp;quot;, &amp;quot;R&amp;quot;, &amp;quot;Stata&amp;quot;, &amp;quot;Python&amp;quot;, &amp;quot;Other ...
+## $ category_url  &amp;lt;chr&amp;gt; &amp;quot;https://training.rcs.hbs.org/compute-grid-training&amp;quot;,...
+## $ workshop      &amp;lt;list&amp;gt; [&amp;lt;tbl_df[0 x 2]&amp;gt;, &amp;lt;tbl_df[5 x 2]&amp;gt;, &amp;lt;tbl_df[2 x 2]&amp;gt;, ...&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;As before we unnest the data, making sure to keep empty rows.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ws_data &amp;lt;- ws_data %&amp;gt;%
+  unnest(workshop, names_sep = &amp;quot;_&amp;quot;, keep_empty = TRUE)
+
+glimpse(ws_data)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Observations: 18
+## Variables: 5
+## $ start_url     &amp;lt;chr&amp;gt; &amp;quot;https://training.rcs.hbs.org/workshops&amp;quot;, &amp;quot;https://tr...
+## $ category_name &amp;lt;chr&amp;gt; &amp;quot;HBS Grid Training &amp;quot;, &amp;quot;R&amp;quot;, &amp;quot;R&amp;quot;, &amp;quot;R&amp;quot;, &amp;quot;R&amp;quot;, &amp;quot;R&amp;quot;, &amp;quot;Stata...
+## $ category_url  &amp;lt;chr&amp;gt; &amp;quot;https://training.rcs.hbs.org/compute-grid-training&amp;quot;,...
+## $ workshop_name &amp;lt;chr&amp;gt; NA, &amp;quot;Introduction to R&amp;quot;, &amp;quot;Introduction to R Graphics ...
+## $ workshop_url  &amp;lt;chr&amp;gt; NA, &amp;quot;https://training.rcs.hbs.org/introduction-r&amp;quot;, &amp;quot;h...&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;putting-it-all-together&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Putting it all together&lt;/h3&gt;
+&lt;p&gt;As simple as it is, the code examples above can be simplified even further by modularizing
+the data processing functions. Here is the whole simplified program for retrieving workshop
+information, in less than 20 lines of code.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+library(rvest)
+
+get_links &amp;lt;- function(url, css) {
+  read_html(url) %&amp;gt;%
+    html_nodes(css) %&amp;gt;%
+    {tibble(name = html_text(.),
+            url = html_attr(., &amp;quot;href&amp;quot;))}
+}
+
+ws_data &amp;lt;- tibble(start_url = &amp;quot;https://training.rcs.hbs.org/workshops&amp;quot;)
+
+ws_data &amp;lt;- ws_data %&amp;gt;%
+  mutate(category = map(start_url, get_links, css = &amp;quot;.menu-depth-2 a&amp;quot;)) %&amp;gt;%
+  unnest(category, names_sep = &amp;quot;_&amp;quot;, keep_empty = TRUE) %&amp;gt;%
+  mutate(workshop = map(category_url, get_links, css = &amp;quot;.menu-depth-3 a&amp;quot;)) %&amp;gt;%
+  unnest(workshop, names_sep = &amp;quot;_&amp;quot;, keep_empty = TRUE)
+
+glimpse(ws_data)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Observations: 18
+## Variables: 5
+## $ start_url     &amp;lt;chr&amp;gt; &amp;quot;https://training.rcs.hbs.org/workshops&amp;quot;, &amp;quot;https://tr...
+## $ category_name &amp;lt;chr&amp;gt; &amp;quot;HBS Grid Training &amp;quot;, &amp;quot;R&amp;quot;, &amp;quot;R&amp;quot;, &amp;quot;R&amp;quot;, &amp;quot;R&amp;quot;, &amp;quot;R&amp;quot;, &amp;quot;Stata...
+## $ category_url  &amp;lt;chr&amp;gt; &amp;quot;https://training.rcs.hbs.org/compute-grid-training&amp;quot;,...
+## $ workshop_name &amp;lt;chr&amp;gt; NA, &amp;quot;Introduction to R&amp;quot;, &amp;quot;Introduction to R Graphics ...
+## $ workshop_url  &amp;lt;chr&amp;gt; NA, &amp;quot;https://training.rcs.hbs.org/introduction-r&amp;quot;, &amp;quot;h...&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Conclusions&lt;/h2&gt;
+&lt;p&gt;The key pattern is &lt;code&gt;mutate&lt;/code&gt; to a list-column
+containing &lt;code&gt;tibbles&lt;/code&gt; and then &lt;code&gt;unnest&lt;/code&gt; to maintain a tabular record of URLs and results at
+each level. This expands the data structure as you descend
+through each level, resulting in a nice clean tabular structure at the end. At each level
+&lt;code&gt;unest(names_sep = &#34;_&#34;)&lt;/code&gt; produces a consistent naming scheme with minimal effort. Finally,
+this pattern generalizes easily to cases where you wish to retrieve multiple pieces of
+information at each level.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Synthetic Controls: brief overview with practical recommmendations</title>
+      <link>https://hbs-rcs.github.io/post/synthetic-controls/</link>
+      <pubDate>Thu, 12 Sep 2019 00:00:00 +0000</pubDate>
+      <guid>https://hbs-rcs.github.io/post/synthetic-controls/</guid>
+      <description>
+&lt;script src=&#34;https://hbs-rcs.github.io/post/synthetic-controls/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;Recently, I found myself researching the latest developments on the topic of Synthetic Controls (SC) for one of the projects. I had the pleasure of learning about the method from its co-author &lt;a href=&#34;https://web.stanford.edu/~jhain/&#34;&gt;Prof. Jens Hainmueller&lt;/a&gt; back in 2011, when it had just started gaining momentum. Wondering what new insights have been gathered over the last 8 years by applied researchers utilizing this method for causal inference problems, I outlined interesting highlights in this post.
+&lt;!-- In another post I give an annotated Stata example of automating the method for more than one treated unit. --&gt;&lt;/p&gt;
+&lt;div id=&#34;overview&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Overview&lt;/h2&gt;
+&lt;p&gt;The method was first introduced in &lt;span class=&#34;citation&#34;&gt;Abadie and Gardeazabal (&lt;a href=&#34;#ref-Abadie_Economic_Costs_2003&#34; role=&#34;doc-biblioref&#34;&gt;2003&lt;/a&gt;)&lt;/span&gt; to estimate a causal effect of a political conflict on region’s per capita GDP. In the spirit of classical matching methods for causal inference (&lt;span class=&#34;citation&#34;&gt;Rosenbaum (&lt;a href=&#34;#ref-rosenbaum2002overt&#34; role=&#34;doc-biblioref&#34;&gt;2002&lt;/a&gt;)&lt;/span&gt;), the authors proposed a procedure for finding a group of control regions such that their &lt;em&gt;weighted average&lt;/em&gt; would match the specified pre-intervention characteristics (including the evolution of the outcome) of the affected region.&lt;/p&gt;
+&lt;p&gt;Here is a more technical description: suppose that we observe &lt;span class=&#34;math inline&#34;&gt;\(J+1\)&lt;/span&gt; units in time periods &lt;span class=&#34;math inline&#34;&gt;\(1,2,..., T\)&lt;/span&gt; and unit #1 is exposed to the intervention during periods &lt;span class=&#34;math inline&#34;&gt;\(T_0+1, ...,T\)&lt;/span&gt;. Let &lt;span class=&#34;math inline&#34;&gt;\(Y^C_{jt}\)&lt;/span&gt; be the outcome that would be observed (i.e., the &lt;a href=&#34;https://en.wikipedia.org/wiki/Rubin_causal_model&#34;&gt;potential outcome&lt;/a&gt;) for unit &lt;span class=&#34;math inline&#34;&gt;\(j\)&lt;/span&gt; at time &lt;span class=&#34;math inline&#34;&gt;\(t\)&lt;/span&gt; in the absence of the intervention. For units 2 through &lt;span class=&#34;math inline&#34;&gt;\(J+1\)&lt;/span&gt;, the observed outcome &lt;span class=&#34;math inline&#34;&gt;\(Y_{jt}\)&lt;/span&gt; is equivalent to &lt;span class=&#34;math inline&#34;&gt;\(Y^C_{jt}\)&lt;/span&gt;. On the other hand, let &lt;span class=&#34;math inline&#34;&gt;\(Y^I_{jt}\)&lt;/span&gt; be the potential outcome under the intervention. Therefore, &lt;span class=&#34;math inline&#34;&gt;\(Y_{1t}=Y^I_{1t}\)&lt;/span&gt; for &lt;span class=&#34;math inline&#34;&gt;\(t=T_0+1, ...,T\)&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;Our goal is to estimate the &lt;em&gt;causal treatment effect on the treated&lt;/em&gt; unit:
+&lt;span class=&#34;math display&#34;&gt;\[
+\alpha_{1t} = Y^I_{jt} - Y^C_{jt}, \text{for } t=T_0+1,..., T.
+\]&lt;/span&gt;
+Suppose we also observe a vector of &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; covariates for each unit &lt;span class=&#34;math inline&#34;&gt;\(j\)&lt;/span&gt;, &lt;span class=&#34;math inline&#34;&gt;\(\textbf{Z}_j\)&lt;/span&gt;, that are &lt;em&gt;predictive of the outcome&lt;/em&gt; and “unaffected by the treatment”. The SC method assumes that we are able to find a set of nonnegative weights &lt;span class=&#34;math inline&#34;&gt;\(\textbf{W}=(w_2,...,w_{J+1})&amp;#39;\)&lt;/span&gt; that sum up to 1 and satisfy the following &lt;span class=&#34;math inline&#34;&gt;\((R+T_0)\)&lt;/span&gt; conditions &lt;em&gt;exactly&lt;/em&gt;:
+&lt;span class=&#34;math display&#34;&gt;\[
+\sum_{j=2}^{J+1}w_j\textbf{Z}_j=\textbf{Z}_1\text{ and }\sum_{j=2}^{J+1}w_jY_{jt}=Y_{1t}, \text{ for }t=1,...,T_0.
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;In practice, of course, it is unlikely that we would find exact matches for all available characteristics. Therefore, we find weights that minimize a chosen measure of discrepancy. Let &lt;span class=&#34;math inline&#34;&gt;\(\textbf{X}_1\)&lt;/span&gt; be a &lt;span class=&#34;math inline&#34;&gt;\((R+T_0)\times 1\)&lt;/span&gt; vector of pre-intervention characteristics for the treated unit. Similarly, &lt;span class=&#34;math inline&#34;&gt;\(\textbf{X}_0\)&lt;/span&gt; is a &lt;span class=&#34;math inline&#34;&gt;\((R+T_0) \times J\)&lt;/span&gt; matrix of the same variables for the donor pool. The original paper (&lt;span class=&#34;citation&#34;&gt;Abadie, Diamond, and Hainmueller (&lt;a href=&#34;#ref-abadie2010synthetic&#34; role=&#34;doc-biblioref&#34;&gt;2010&lt;/a&gt;)&lt;/span&gt;) minimizes the following distance measure:
+&lt;span class=&#34;math display&#34;&gt;\[
+||\textbf{X}_1-\textbf{X}_0\textbf{W}||_{\textbf{V}} = \sqrt{(\textbf{X}_1-\textbf{X}_0\textbf{W})&amp;#39;\textbf{V}(\textbf{X}_1-\textbf{X}_0\textbf{W})} \qquad\qquad(1)
+\]&lt;/span&gt;
+In words, SC calculation produces two outputs: matrix &lt;span class=&#34;math inline&#34;&gt;\(\textbf{V}\)&lt;/span&gt;, which weighs variables included in the minimization differently depending on how well they predict pre-intervention outcomes, and an array of weights &lt;span class=&#34;math inline&#34;&gt;\(\textbf{W}\)&lt;/span&gt; for control units.&lt;/p&gt;
+&lt;p&gt;There are various ways to choose &lt;span class=&#34;math inline&#34;&gt;\(\textbf{V}\)&lt;/span&gt;, including subjective assessment of predictive power of &lt;span class=&#34;math inline&#34;&gt;\(\textbf{X}\)&lt;/span&gt;, regression, minimize prediction error, or cross-validation. When &lt;span class=&#34;math inline&#34;&gt;\(\textbf{V}\)&lt;/span&gt; is set to &lt;span class=&#34;math inline&#34;&gt;\(\textbf{I}\)&lt;/span&gt;, the identity matrix, then all characteristics are assumed to have equal weights, and the distance defined in (1) can be interpreted as the usual Euclidean distance between points &lt;span class=&#34;math inline&#34;&gt;\(\textbf{X}_1\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(\textbf{X}_0\textbf{W}\)&lt;/span&gt; on a &lt;span class=&#34;math inline&#34;&gt;\((R+T_0)\)&lt;/span&gt;-dimensional space.&lt;/p&gt;
+&lt;p&gt;Note that, once we have a synthetic control for the treated unit, the method permits estimation of a treatment effect for each post-treatment time period &lt;span class=&#34;math inline&#34;&gt;\(t=T_0+1,..., T\)&lt;/span&gt;, as long as we observe the corresponding outcome for all controls. However, it is more common to report an aggregated post-treatment effect, e.g., &lt;span class=&#34;math inline&#34;&gt;\(\sum_{t=T_0+1}^T \alpha_{1t}/(T-T_0)\)&lt;/span&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;features-and-limitations&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Features and Limitations&lt;/h2&gt;
+&lt;p&gt;There are several attractive features of the SC method:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;It provides a systematic data-driven way of assigning weights to control units to provide a close synthetic match to a treated unit, especially if none of the observed control units fit the bill.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;When potential outcomes are related linearly to observed and unobserved covariates (or &lt;em&gt;factors&lt;/em&gt;), &lt;span class=&#34;citation&#34;&gt;Abadie, Diamond, and Hainmueller (&lt;a href=&#34;#ref-abadie2010synthetic&#34; role=&#34;doc-biblioref&#34;&gt;2010&lt;/a&gt;)&lt;/span&gt; showed that the estimated causal effect is unbiased even when there are unobserved confounding factors that vary with time (though, this feature as well as many other theoretical properties of the SC method rely on availability of a &lt;em&gt;large number of preintervention outcomes&lt;/em&gt;.)&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;There is an &lt;em&gt;interesting parallel between a linear regression and the SC method&lt;/em&gt;: it turns out that, when estimating a counterfactual outcome using a naive regression approach, i.e., regressing &lt;span class=&#34;math inline&#34;&gt;\(Y_{jt}\)&lt;/span&gt; on &lt;span class=&#34;math inline&#34;&gt;\(\textbf{X}_0\)&lt;/span&gt; post-treatment for controls (&lt;span class=&#34;math inline&#34;&gt;\(t=T_0,...,T\)&lt;/span&gt;, &lt;span class=&#34;math inline&#34;&gt;\(j=2,...,J\)&lt;/span&gt;) and then using this model together with &lt;span class=&#34;math inline&#34;&gt;\(\textbf{X}_1\)&lt;/span&gt; to predict &lt;span class=&#34;math inline&#34;&gt;\(Y^C_{1t}\)&lt;/span&gt;, we can also rewrite the result as a linear combination of untreated units (see &lt;span class=&#34;citation&#34;&gt;Abadie, Diamond, and Hainmueller (&lt;a href=&#34;#ref-abadie2015comparative&#34; role=&#34;doc-biblioref&#34;&gt;2015&lt;/a&gt;)&lt;/span&gt; for a proof) with weights that sum up to one. However, a conceptual difference lies in the fact that regression weights are &lt;em&gt;unrestricted&lt;/em&gt; - they may be negative or greater than one. “As a result, estimates of counterfactuals based on linear regression may extrapolate beyond the support of comparison units.” In fact, as suggested in &lt;span class=&#34;citation&#34;&gt;Abadie, Diamond, and Hainmueller (&lt;a href=&#34;#ref-abadie2015comparative&#34; role=&#34;doc-biblioref&#34;&gt;2015&lt;/a&gt;)&lt;/span&gt;, one way to assess the extent of the extrapolation is to calculate the regression weights explicitly!&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;It can be shown that the SC method is a special case of a “sideways” Lasso regression with a fixed value of its threshold parameter to &lt;span class=&#34;math inline&#34;&gt;\(1\)&lt;/span&gt; and an additional restriction on coefficients to be nonnegative and sum up to one (&lt;span class=&#34;citation&#34;&gt;Kinn (&lt;a href=&#34;#ref-kinn2018synthetic&#34; role=&#34;doc-biblioref&#34;&gt;2018&lt;/a&gt;)&lt;/span&gt;). The “sideways” regression refers to one where units are acting as covariates, and the time periods (and covariates &lt;span class=&#34;math inline&#34;&gt;\(\textbf{Z}\)&lt;/span&gt;) serve as new “units” (e.g., observation &lt;span class=&#34;math inline&#34;&gt;\(Y_{1t}\)&lt;/span&gt; is regressed on &lt;span class=&#34;math inline&#34;&gt;\(Y_{2t}, \dots, Y_{(J+1)t}\)&lt;/span&gt; for &lt;span class=&#34;math inline&#34;&gt;\(t=1, \dots, T_0\)&lt;/span&gt;).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The SC method was originally developed for one treated unit. However, if multiple units are affected by the event of interest, the method can be applied to each unit separately and the treatment effect summarized by computing an Average Treatment Effect on the Treated (ATT) as demonstrated in &lt;span class=&#34;citation&#34;&gt;Kreif et al. (&lt;a href=&#34;#ref-kreif2016examination&#34; role=&#34;doc-biblioref&#34;&gt;2016&lt;/a&gt;)&lt;/span&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!-- An example of this procedure in Stata is shown here. --&gt;
+&lt;/div&gt;
+&lt;div id=&#34;practical-recommendations&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Practical Recommendations&lt;/h2&gt;
+&lt;p&gt;The topic of SCs is still an active area of research appearing regularly in methodological and applied papers. Here are some useful tips that I came across while going over the literature:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;There are many (sometimes, conflicting!) recommendations on what should be included as part of &lt;span class=&#34;math inline&#34;&gt;\(\textbf{X}_0\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(\textbf{X}_1\)&lt;/span&gt;, and I think the jury is still out. Of course, there is no doubt that the chosen covariates should be predictive of the outcome. That said, it is a bit less apparent how to strike a balance between the length of the pretreatment outcome window and a set of background characteristics that should be used to construct &lt;span class=&#34;math inline&#34;&gt;\(\textbf{X}\)&lt;/span&gt; matrices.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;On one hand, many theoretical properties of the procedure were derived asymptotically, assuming infinite pretreatment window. Moreover, &lt;span class=&#34;citation&#34;&gt;Botosaru and Ferman (&lt;a href=&#34;#ref-botosaru2019covariates&#34; role=&#34;doc-biblioref&#34;&gt;2019&lt;/a&gt;)&lt;/span&gt; show that a “perfect balance on pre-treatment outcomes does not generally imply an approximate balance for all covariates, even when they are all relevant”, concluding that, “although there may be advantages to balancing on covariates to construct the SC estimator, a perfect balance on covariates should not be required for the SC method as long as there is a perfect balance on a long set of pre-treatment outcomes.”&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;On the other hand &lt;span class=&#34;citation&#34;&gt;Kaul et al. (&lt;a href=&#34;#ref-kaul2015synthetic&#34; role=&#34;doc-biblioref&#34;&gt;2015&lt;/a&gt;)&lt;/span&gt; argues that one should not use covariates simultaneously with &lt;em&gt;all&lt;/em&gt; available preintervention outcomes, as, under certain conditions, this may renders covariates to be irrelevant. With that, &lt;span class=&#34;citation&#34;&gt;Abadie, Diamond, and Hainmueller (&lt;a href=&#34;#ref-abadie2015comparative&#34; role=&#34;doc-biblioref&#34;&gt;2015&lt;/a&gt;)&lt;/span&gt; states that “it is of crucial importance that synthetic controls closely reproduce the values that variables with a large predictive power on the outcome of interest take for the unit affected by the intervention.” Thus, it is important that the chosen covariates are allowed to influence the estimated synthetic control.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;One should always inspect the quality of the match and discard synthetic controls that do not closely trace the preintervention outcome. However, there is still debate whether a perfect balance on pre-treatment covariates is strictly necessary (&lt;span class=&#34;citation&#34;&gt;Botosaru and Ferman (&lt;a href=&#34;#ref-botosaru2017role&#34; role=&#34;doc-biblioref&#34;&gt;2017&lt;/a&gt;)&lt;/span&gt;).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;span class=&#34;citation&#34;&gt;Abadie, Diamond, and Hainmueller (&lt;a href=&#34;#ref-abadie2010synthetic&#34; role=&#34;doc-biblioref&#34;&gt;2010&lt;/a&gt;)&lt;/span&gt; emphasizes that SC method should be avoided in cases where the treated unit lies outside the distribution of control units. In other words, values of pretreatment variables for the affected unit cannot be outside any linear combination of the donor pool values. If no convex combination of control units can reconstruct the treated unit then counterfactual estimates could be severely biased. In practice, one can start with inspecting the ranges of outcomes and covariates during the pre-treatment period among controls and making sure that they at least overlap with those for the treated unit.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;In addition to the extrapolation issues, we should watch out for possible interpolation bias by making sure that the variables used to compute the weights have values among the donor pool units that are similar to those observed for the affected unit. To reduce interpolation biases, it is recommended to restrict the donor pool to units that are “similar” to the treated one(s).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Implicit in the notation above is the usual assumption of &lt;em&gt;no interference&lt;/em&gt; between units - or that outcomes of the untreated units are not affected by the intervention implemented in the treated unit. For example, the policy in the affected region cannot affect the outcome in the pool of donor regions.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Finally, when dealing with multiple outcomes, a procedure that uses distance measure given in (1) will likely construct a different synthetic control for each outcome, even if the same set of pretreatment characteristics is being matched on. This is due to the fact that the weighting matrix &lt;span class=&#34;math inline&#34;&gt;\(\textbf{V}\)&lt;/span&gt; is computed separately for each outcome. If we preset &lt;span class=&#34;math inline&#34;&gt;\(\textbf{V}\)&lt;/span&gt; to an identity (or any other positive-definite) matrix and use the same pretreatment outcome values to construct &lt;span class=&#34;math inline&#34;&gt;\(\textbf{X}_0\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(\textbf{X}_1\)&lt;/span&gt;, the same synthetic control will be constructed for each unit regardless of the outcome considered.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;As a special case, if &lt;span class=&#34;math inline&#34;&gt;\(\textbf{X}_0\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(\textbf{X}_1\)&lt;/span&gt; do not contain any pretreatment characteristics, setting &lt;span class=&#34;math inline&#34;&gt;\(\textbf{V}\)&lt;/span&gt; to &lt;span class=&#34;math inline&#34;&gt;\(\textbf{I}\)&lt;/span&gt; would imply that we assume that all pretreatment outcome lags affect post-treatment values equally.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This list is by no means exhaustive. I’m sure, as the SC method matures, our understanding of its strengths and limitations as well as advice on practical implementation will continue evolving.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;references&#34; class=&#34;section level2 unnumbered&#34;&gt;
+&lt;h2&gt;References&lt;/h2&gt;
+&lt;div id=&#34;refs&#34; class=&#34;references csl-bib-body hanging-indent&#34;&gt;
+&lt;div id=&#34;ref-abadie2010synthetic&#34; class=&#34;csl-entry&#34;&gt;
+Abadie, Alberto, Alexis Diamond, and Jens Hainmueller. 2010. &lt;span&gt;“Synthetic Control Methods for Comparative Case Studies: Estimating the Effect of Californias Tobacco Control Program.”&lt;/span&gt; &lt;em&gt;Journal of the American Statistical Association&lt;/em&gt; 105 (490): 493–505.
+&lt;/div&gt;
+&lt;div id=&#34;ref-abadie2015comparative&#34; class=&#34;csl-entry&#34;&gt;
+———. 2015. &lt;span&gt;“Comparative Politics and the Synthetic Control Method.”&lt;/span&gt; &lt;em&gt;American Journal of Political Science&lt;/em&gt; 59 (2): 495–510.
+&lt;/div&gt;
+&lt;div id=&#34;ref-Abadie_Economic_Costs_2003&#34; class=&#34;csl-entry&#34;&gt;
+Abadie, Alberto, and Javier Gardeazabal. 2003. &lt;span&gt;“The Economic Costs of Conflict: A Case Study of the Basque Country.”&lt;/span&gt; &lt;em&gt;American Economic Review&lt;/em&gt; 93 (1): 113–32. &lt;a href=&#34;https://doi.org/10.1257/000282803321455188&#34;&gt;https://doi.org/10.1257/000282803321455188&lt;/a&gt;.
+&lt;/div&gt;
+&lt;div id=&#34;ref-botosaru2017role&#34; class=&#34;csl-entry&#34;&gt;
+Botosaru, Irene, and Bruno Ferman. 2017. &lt;span&gt;“On the Role of Covariates in the Synthetic Control Method.”&lt;/span&gt; &lt;a href=&#34;https://mpra.ub.uni-muenchen.de/81940/&#34;&gt;https://mpra.ub.uni-muenchen.de/81940/&lt;/a&gt;.
+&lt;/div&gt;
+&lt;div id=&#34;ref-botosaru2019covariates&#34; class=&#34;csl-entry&#34;&gt;
+———. 2019. &lt;span&gt;“&lt;span class=&#34;nocase&#34;&gt;On the role of covariates in the synthetic control method&lt;/span&gt;.”&lt;/span&gt; &lt;em&gt;The Econometrics Journal&lt;/em&gt; 22 (2): 117–30. &lt;a href=&#34;https://doi.org/10.1093/ectj/utz001&#34;&gt;https://doi.org/10.1093/ectj/utz001&lt;/a&gt;.
+&lt;/div&gt;
+&lt;div id=&#34;ref-kaul2015synthetic&#34; class=&#34;csl-entry&#34;&gt;
+Kaul, Ashok, Stefan Klößner, Gregor Pfeifer, and Manuel Schieler. 2015. &lt;span&gt;“Synthetic Control Methods: Never Use All Pre-Intervention Outcomes Together with Covariates.”&lt;/span&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ref-kinn2018synthetic&#34; class=&#34;csl-entry&#34;&gt;
+Kinn, Daniel. 2018. &lt;span&gt;“Synthetic Control Methods and Big Data.”&lt;/span&gt; &lt;em&gt;arXiv Preprint arXiv:1803.00096&lt;/em&gt;.
+&lt;/div&gt;
+&lt;div id=&#34;ref-kreif2016examination&#34; class=&#34;csl-entry&#34;&gt;
+Kreif, Noémi, Richard Grieve, Dominik Hangartner, Alex James Turner, Silviya Nikolova, and Matt Sutton. 2016. &lt;span&gt;“Examination of the Synthetic Control Method for Evaluating Health Policies with Multiple Treated Units.”&lt;/span&gt; &lt;em&gt;Health Economics&lt;/em&gt; 25 (12): 1514–28.
+&lt;/div&gt;
+&lt;div id=&#34;ref-rosenbaum2002overt&#34; class=&#34;csl-entry&#34;&gt;
+Rosenbaum, Paul R. 2002. &lt;span&gt;“Overt Bias in Observational Studies.”&lt;/span&gt; In &lt;em&gt;Observational Studies&lt;/em&gt;, 71–104. Springer.
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Web Scraping in R</title>
+      <link>https://hbs-rcs.github.io/post/2019-08-08-web-scraping-in-r/</link>
+      <pubDate>Thu, 08 Aug 2019 00:00:00 +0000</pubDate>
+      <guid>https://hbs-rcs.github.io/post/2019-08-08-web-scraping-in-r/</guid>
+      <description>
+
+
+&lt;p&gt;Let’s walk through some steps for web scraping with R. On &lt;a href=&#34;https://en.wikipedia.org/wiki/Visa_requirements_for_United_States_citizens&#34;&gt;this Wikipedia page&lt;/a&gt; there is a table of visa requirements that I want to scrape. Let’s use the &lt;a href=&#34;https://github.com/hadley/rvest&#34;&gt;rvest&lt;/a&gt; package to get the HTML associated with that page:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(rvest)
+
+html &amp;lt;- read_html(&amp;quot;https://en.wikipedia.org/wiki/Visa_requirements_for_United_States_citizens&amp;quot;)
+html&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## {html_document}
+## &amp;lt;html class=&amp;quot;client-nojs&amp;quot; lang=&amp;quot;en&amp;quot; dir=&amp;quot;ltr&amp;quot;&amp;gt;
+## [1] &amp;lt;head&amp;gt;\n&amp;lt;meta http-equiv=&amp;quot;Content-Type&amp;quot; content=&amp;quot;text/html; charset= ...
+## [2] &amp;lt;body class=&amp;quot;mediawiki ltr sitedir-ltr mw-hide-empty-elt ns-0 ns-sub ...&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now let’s use the &lt;code&gt;html_nodes()&lt;/code&gt; function to extract the table of interest. I used Chrome’s Developer Tools to get the XPath of the table (see notes at the end of the post on how to do it):&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;referenced_by &amp;lt;- html_node(html, xpath=&amp;#39;//*[@id=&amp;quot;mw-content-text&amp;quot;]/div/table[1]&amp;#39;)
+referenced_by&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## {html_node}
+## &amp;lt;table class=&amp;quot;sortable wikitable&amp;quot;&amp;gt;
+## [1] &amp;lt;tbody&amp;gt;\n&amp;lt;tr&amp;gt;\n&amp;lt;th style=&amp;quot;width:18%;&amp;quot;&amp;gt;Country\n&amp;lt;/th&amp;gt;\n&amp;lt;th style=&amp;quot;wid ...&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now let’s convert that HTML table into a data frame.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;visa_requirements &amp;lt;- html_table(referenced_by)
+head(visa_requirements[,1:3])&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##               Country          Visa requirement     Allowed stay
+## 1         Afghanistan       Visa required[2][3]                 
+## 2             Albania   Visa not required[5][6]        1 year[7]
+## 3             Algeria       Visa required[8][9]                 
+## 4             Andorra     Visa not required[10] 3 months[11][12]
+## 5              Angola         eVisa[13][14][15]          30 days
+## 6 Antigua and Barbuda Visa not required[18][19]     6 months[20]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Finally, we can clean footnote references from columns 2 and 3 using &lt;code&gt;gsub()&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;visa_requirements &amp;lt;- html_table(referenced_by)
+visa_requirements$`Visa requirement` &amp;lt;- gsub(&amp;quot;\\[.*&amp;quot;,&amp;quot;&amp;quot;,visa_requirements$`Visa requirement`)
+visa_requirements$`Allowed stay` &amp;lt;-  gsub(&amp;quot;\\[.*&amp;quot;,&amp;quot;&amp;quot;,visa_requirements$`Allowed stay`)
+head(visa_requirements[,1:3])&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##               Country  Visa requirement Allowed stay
+## 1         Afghanistan     Visa required             
+## 2             Albania Visa not required       1 year
+## 3             Algeria     Visa required             
+## 4             Andorra Visa not required     3 months
+## 5              Angola             eVisa      30 days
+## 6 Antigua and Barbuda Visa not required     6 months&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We’ve only scratched the surface here, but hope this example shows off the convenience of the &lt;code&gt;rvest&lt;/code&gt; package.&lt;/p&gt;
+&lt;p&gt;Notes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Chrome’s Developer Tools can be launched by right-clicking on the page and selecting Inspect. Then, mouse over the html code listed under elements and find a place that highlights the table of interest on the right. Then right-click again, select Copy -&amp;gt; Copy XPath.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;If writing custom scraping scripts in R is not the route you’d want to take, our team has recently discovered a very nice and flexible commercial tool &lt;a href=&#34;https://www.mozenda.com/&#34;&gt;Mozenda&lt;/a&gt;. As of 8/8/2019, they offer a 30-day trial of a full product.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Makefile Tips</title>
+      <link>https://hbs-rcs.github.io/post/make/</link>
+      <pubDate>Mon, 19 Jun 2017 00:00:00 +0000</pubDate>
+      <guid>https://hbs-rcs.github.io/post/make/</guid>
+      <description>&lt;p&gt;If you&amp;rsquo;re new to Make, check out Mike Bostock&amp;rsquo;s article &lt;a href=&#34;https://bost.ocks.org/mike/make/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Why Use Make&lt;/a&gt;, it&amp;rsquo;s excellent! This post is intended as a follow-up to Mike&amp;rsquo;s introduction.&lt;/p&gt;
+&lt;p&gt;I love Makefiles because they allow me to describe my workflow as a directed acyclic graph. Makefiles are a great example of &lt;a href=&#34;https://en.wikipedia.org/wiki/Declarative_programming&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;declarative programming&lt;/a&gt;. When I specify a rule like the following:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;targetfile: sourcefile
+	command
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I am saying that the &lt;code&gt;targetfile&lt;/code&gt; depends on the &lt;code&gt;sourcefile&lt;/code&gt;. Whenever I issue the command &lt;code&gt;make targetfile&lt;/code&gt;, Make checks to see if anything in the &lt;code&gt;targetfile&lt;/code&gt;&amp;rsquo;s dependency graph needs to be recompiled and it runs the necessary commands to bring the &lt;code&gt;targetfile&lt;/code&gt; up to date. I enjoy using Make because it provides:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;A framework for writing reproducible research.&lt;/li&gt;
+&lt;li&gt;A transparent caching mechanism. Often downloading data can take a lot of time, while cleaning data once it&amp;rsquo;s downloaded is relatively fast. By breaking these into two rules. I only need to download the data once and then I can focus on data cleaning and data analysis without re-running code from previous steps.&lt;/li&gt;
+&lt;li&gt;A mechanism for building projects in parallel. Using &lt;code&gt;make -j&lt;/code&gt; (or &lt;code&gt;lsmake&lt;/code&gt; on the Grid) tells Make to run commands in parallel. All I have to specify is how each file in my project is built, Make figures out how to run everything in parallel.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h1 id=&#34;makefiles-as-glue&#34;&gt;Makefiles as Glue&lt;/h1&gt;
+&lt;p&gt;I often find myself using different tools for different jobs. I like using Python for web scraping, R for data visualization, and Stata for certain statistical models. Makefiles make it easy to combine different tools:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-makefile&#34;&gt;DATA = data/processed/data.csv
+
+$(DATA): src/download.py
+	python $&amp;lt;
+
+reports/figures/graph.pdf: src/graph.R $(DATA)
+	Rscript $&amp;lt;
+
+reports/figures/table.tex: src/table.do $(DATA)
+	stata-mp -b do $&amp;lt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To understand the syntax above, read about &lt;a href=&#34;https://www.gnu.org/software/make/manual/html_node/Using-Variables.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;variables&lt;/a&gt; and &lt;a href=&#34;https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;automatic variables&lt;/a&gt;.&lt;/p&gt;
+&lt;h1 id=&#34;compiling-a-bunch-of-files-at-once&#34;&gt;Compiling a Bunch of Files at Once&lt;/h1&gt;
+&lt;p&gt;Often the projects I work on require a lot of analyses. Imagine the following directory structure:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;.
+├── Makefile
+├── data
+│   └── processed
+│       └── data.dta
+└── src
+    └── tables
+        ├── table1.do
+        ├── table2.do
+        └── table3.do
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Putting the following two rules in my Makefile allows me to recompile all tables with a single &lt;code&gt;make tables&lt;/code&gt; command:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-makefile&#34;&gt;%.log: %.do data/processed/data.dta
+	cd $(dir $&amp;lt;); stata-mp -b do $(notdir $&amp;lt;)
+
+DO_FILES = $(shell find src/tables -name &amp;quot;*.do&amp;quot;)
+LOG_FILES = $(patsubst %.do,%.log,$(DO_FILES))
+
+tables: $(LOG_FILES)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To understand the syntax above, read about &lt;a href=&#34;https://www.gnu.org/software/make/manual/html_node/Pattern-Rules.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;pattern rules&lt;/a&gt; and &lt;a href=&#34;https://www.gnu.org/software/make/manual/html_node/Functions.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;functions&lt;/a&gt;.&lt;/p&gt;
+&lt;h1 id=&#34;working-with-databases&#34;&gt;Working with Databases&lt;/h1&gt;
+&lt;p&gt;Make cannot inspect when a database table was last modified. Imagine we have a script that updates a table of patent data. We can work this into a Makefile by creating a corresponding file to keep track of when the database table was last updated. A rule like the following will allow Make to keep track of when the patents table was last updated:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-makefile&#34;&gt;data/processed/patents.table: src/patents.py
+	python $&amp;lt;
+	echo &amp;quot;Data stored in PostgreSQL database.&amp;quot; &amp;gt; $@
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h1 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h1&gt;
+&lt;p&gt;There are a crazy number of alternatives to Make. Here are just a few:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://ant.apache.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Ant&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://cmake.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CMake&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://gradle.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Gradle&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://luigi.readthedocs.io/en/stable/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Luigi&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://maven.apache.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Maven&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://ninja-build.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Ninja&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://ruby.github.io/rake/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Rake&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://scons.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;SCons&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://waf.io/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Waf&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;For the most part, I&amp;rsquo;ve found Make does everything I need it to do. Although the syntax is ugly, I appreciate how it ships with Unix-like operating systems (I find it annoying when I want to install a project and first I have to install the installation tool). That being said, I am very interested to experiment with Luigi (I&amp;rsquo;ve heard great things).&lt;/p&gt;
+&lt;p&gt;If you want to learn more about how I structure my projects, check out &lt;a href=&#34;https://drivendata.github.io/cookiecutter-data-science/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Cookiecutter Data Science&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Makefile Tips</title>
+      <link>https://hbs-rcs.github.io/post/make/</link>
+      <pubDate>Mon, 19 Jun 2017 00:00:00 +0000</pubDate>
+      <guid>https://hbs-rcs.github.io/post/make/</guid>
+      <description>&lt;p&gt;If you&amp;rsquo;re new to Make, check out Mike Bostock&amp;rsquo;s article &lt;a href=&#34;https://bost.ocks.org/mike/make/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Why Use Make&lt;/a&gt;, it&amp;rsquo;s excellent! This post is intended as a follow-up to Mike&amp;rsquo;s introduction.&lt;/p&gt;
+&lt;p&gt;I love Makefiles because they allow me to describe my workflow as a directed acyclic graph. Makefiles are a great example of &lt;a href=&#34;https://en.wikipedia.org/wiki/Declarative_programming&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;declarative programming&lt;/a&gt;. When I specify a rule like the following:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;targetfile: sourcefile
+	command
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I am saying that the &lt;code&gt;targetfile&lt;/code&gt; depends on the &lt;code&gt;sourcefile&lt;/code&gt;. Whenever I issue the command &lt;code&gt;make targetfile&lt;/code&gt;, Make checks to see if anything in the &lt;code&gt;targetfile&lt;/code&gt;&amp;rsquo;s dependency graph needs to be recompiled and it runs the necessary commands to bring the &lt;code&gt;targetfile&lt;/code&gt; up to date. I enjoy using Make because it provides:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;A framework for writing reproducible research.&lt;/li&gt;
+&lt;li&gt;A transparent caching mechanism. Often downloading data can take a lot of time, while cleaning data once it&amp;rsquo;s downloaded is relatively fast. By breaking these into two rules. I only need to download the data once and then I can focus on data cleaning and data analysis without re-running code from previous steps.&lt;/li&gt;
+&lt;li&gt;A mechanism for building projects in parallel. Using &lt;code&gt;make -j&lt;/code&gt; (or &lt;code&gt;lsmake&lt;/code&gt; on the Grid) tells Make to run commands in parallel. All I have to specify is how each file in my project is built, Make figures out how to run everything in parallel.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h1 id=&#34;makefiles-as-glue&#34;&gt;Makefiles as Glue&lt;/h1&gt;
+&lt;p&gt;I often find myself using different tools for different jobs. I like using Python for web scraping, R for data visualization, and Stata for certain statistical models. Makefiles make it easy to combine different tools:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-makefile&#34;&gt;DATA = data/processed/data.csv
+
+$(DATA): src/download.py
+	python $&amp;lt;
+
+reports/figures/graph.pdf: src/graph.R $(DATA)
+	Rscript $&amp;lt;
+
+reports/figures/table.tex: src/table.do $(DATA)
+	stata-mp -b do $&amp;lt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To understand the syntax above, read about &lt;a href=&#34;https://www.gnu.org/software/make/manual/html_node/Using-Variables.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;variables&lt;/a&gt; and &lt;a href=&#34;https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;automatic variables&lt;/a&gt;.&lt;/p&gt;
+&lt;h1 id=&#34;compiling-a-bunch-of-files-at-once&#34;&gt;Compiling a Bunch of Files at Once&lt;/h1&gt;
+&lt;p&gt;Often the projects I work on require a lot of analyses. Imagine the following directory structure:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;.
+├── Makefile
+├── data
+│   └── processed
+│       └── data.dta
+└── src
+    └── tables
+        ├── table1.do
+        ├── table2.do
+        └── table3.do
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Putting the following two rules in my Makefile allows me to recompile all tables with a single &lt;code&gt;make tables&lt;/code&gt; command:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-makefile&#34;&gt;%.log: %.do data/processed/data.dta
+	cd $(dir $&amp;lt;); stata-mp -b do $(notdir $&amp;lt;)
+
+DO_FILES = $(shell find src/tables -name &amp;quot;*.do&amp;quot;)
+LOG_FILES = $(patsubst %.do,%.log,$(DO_FILES))
+
+tables: $(LOG_FILES)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To understand the syntax above, read about &lt;a href=&#34;https://www.gnu.org/software/make/manual/html_node/Pattern-Rules.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;pattern rules&lt;/a&gt; and &lt;a href=&#34;https://www.gnu.org/software/make/manual/html_node/Functions.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;functions&lt;/a&gt;.&lt;/p&gt;
+&lt;h1 id=&#34;working-with-databases&#34;&gt;Working with Databases&lt;/h1&gt;
+&lt;p&gt;Make cannot inspect when a database table was last modified. Imagine we have a script that updates a table of patent data. We can work this into a Makefile by creating a corresponding file to keep track of when the database table was last updated. A rule like the following will allow Make to keep track of when the patents table was last updated:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-makefile&#34;&gt;data/processed/patents.table: src/patents.py
+	python $&amp;lt;
+	echo &amp;quot;Data stored in PostgreSQL database.&amp;quot; &amp;gt; $@
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h1 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h1&gt;
+&lt;p&gt;There are a crazy number of alternatives to Make. Here are just a few:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://ant.apache.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Ant&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://cmake.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CMake&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://gradle.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Gradle&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://luigi.readthedocs.io/en/stable/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Luigi&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://maven.apache.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Maven&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://ninja-build.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Ninja&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://ruby.github.io/rake/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Rake&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://scons.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;SCons&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://waf.io/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Waf&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;For the most part, I&amp;rsquo;ve found Make does everything I need it to do. Although the syntax is ugly, I appreciate how it ships with Unix-like operating systems (I find it annoying when I want to install a project and first I have to install the installation tool). That being said, I am very interested to experiment with Luigi (I&amp;rsquo;ve heard great things).&lt;/p&gt;
+&lt;p&gt;If you want to learn more about how I structure my projects, check out &lt;a href=&#34;https://drivendata.github.io/cookiecutter-data-science/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Cookiecutter Data Science&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Use machine learning for causal effect in observational study</title>
+      <link>https://hbs-rcs.github.io/post/2017-03-01-causal_tmle/</link>
+      <pubDate>Wed, 01 Mar 2017 00:00:00 +0000</pubDate>
+      <guid>https://hbs-rcs.github.io/post/2017-03-01-causal_tmle/</guid>
+      <description>
+
+
+&lt;div id=&#34;a-simulation-for-ols-model&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;A simulation for OLS model&lt;/h1&gt;
+&lt;p&gt;In an observational study, we need to assume we have the functional form to get causal effect estimated correctly, in addtion to the assumption of treatment being exogenous.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(MASS)
+library(ggplot2)
+library(dplyr)
+library(tmle)
+library(glmnet)
+
+set.seed(366)
+
+nobs &amp;lt;- 2000
+xw &amp;lt;- .8
+xz &amp;lt;- .5
+zw &amp;lt;- .6
+nrow &amp;lt;- 3
+ncol &amp;lt;- 3
+covarMat = matrix( c(1^2, xz^2, xw^2, xz^2, 1^2, zw^2,  xw^2, zw^2, 1^2 ) , nrow=ncol , ncol=ncol )
+
+mu &amp;lt;- rep(0,3)
+rawvars &amp;lt;- mvrnorm(n=nobs, mu=mu, Sigma=covarMat)
+df &amp;lt;- tbl_df(rawvars)
+names(df) &amp;lt;- c(&amp;#39;x&amp;#39;,&amp;#39;z&amp;#39;,&amp;#39;w&amp;#39;)
+df &amp;lt;- df %&amp;gt;%
+    mutate(log.x=log(x^2), log.z=log(z^2), log.w=log(w^2), z.sqr=z^2, w.sqr=w^2) %&amp;gt;%
+    mutate(g.var= log.w  + rnorm(nobs)) %&amp;gt;%
+    mutate(A = rbinom(nobs, 1, 1/(1+exp((g.var))))) %&amp;gt;%
+    mutate(y0=rnorm(nobs) + log.x) %&amp;gt;%
+    mutate(tau.true = 2  + rnorm(nobs), y1=y0+tau.true, treat=A, y = treat*y1 + (1-treat)*y0)
+lm1 &amp;lt;- lm(y ~ A + log.w + log.x , data=df)
+summary(lm1)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## Call:
+## lm(formula = y ~ A + log.w + log.x, data = df)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -4.5506 -0.8372 -0.0154  0.8502  4.1624 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&amp;gt;|t|)    
+## (Intercept)  0.01267    0.04778   0.265    0.791    
+## A            1.93171    0.06580  29.355   &amp;lt;2e-16 ***
+## log.w        0.01105    0.01428   0.774    0.439    
+## log.x        1.00162    0.01353  74.030   &amp;lt;2e-16 ***
+## ---
+## Signif. codes:  0 &amp;#39;***&amp;#39; 0.001 &amp;#39;**&amp;#39; 0.01 &amp;#39;*&amp;#39; 0.05 &amp;#39;.&amp;#39; 0.1 &amp;#39; &amp;#39; 1
+## 
+## Residual standard error: 1.255 on 1996 degrees of freedom
+## Multiple R-squared:  0.758,  Adjusted R-squared:  0.7576 
+## F-statistic:  2084 on 3 and 1996 DF,  p-value: &amp;lt; 2.2e-16&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;lm2 &amp;lt;- lm(y ~ A , data=df)
+summary(lm2)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## Call:
+## lm(formula = y ~ A, data = df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -15.9102  -1.3822   0.3241   1.6933   6.4046 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&amp;gt;|t|)    
+## (Intercept) -0.92139    0.08992  -10.25   &amp;lt;2e-16 ***
+## A            1.38964    0.11366   12.23   &amp;lt;2e-16 ***
+## ---
+## Signif. codes:  0 &amp;#39;***&amp;#39; 0.001 &amp;#39;**&amp;#39; 0.01 &amp;#39;*&amp;#39; 0.05 &amp;#39;.&amp;#39; 0.1 &amp;#39; &amp;#39; 1
+## 
+## Residual standard error: 2.459 on 1998 degrees of freedom
+## Multiple R-squared:  0.06961,    Adjusted R-squared:  0.06915 
+## F-statistic: 149.5 on 1 and 1998 DF,  p-value: &amp;lt; 2.2e-16&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;lm3 &amp;lt;- lm(y ~ A + w, data=df)
+summary(lm3)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## Call:
+## lm(formula = y ~ A + w, data = df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -15.9112  -1.3795   0.3139   1.6863   6.3468 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&amp;gt;|t|)    
+## (Intercept) -0.92056    0.08995 -10.234   &amp;lt;2e-16 ***
+## A            1.38860    0.11368  12.215   &amp;lt;2e-16 ***
+## w           -0.03351    0.05286  -0.634    0.526    
+## ---
+## Signif. codes:  0 &amp;#39;***&amp;#39; 0.001 &amp;#39;**&amp;#39; 0.01 &amp;#39;*&amp;#39; 0.05 &amp;#39;.&amp;#39; 0.1 &amp;#39; &amp;#39; 1
+## 
+## Residual standard error: 2.46 on 1997 degrees of freedom
+## Multiple R-squared:  0.0698, Adjusted R-squared:  0.06887 
+## F-statistic: 74.93 on 2 and 1997 DF,  p-value: &amp;lt; 2.2e-16&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;lm4 &amp;lt;- lm(y ~ A + w + x, data=df)
+summary(lm4)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## Call:
+## lm(formula = y ~ A + w + x, data = df)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -15.9109  -1.4047   0.3177   1.6926   6.4528 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&amp;gt;|t|)    
+## (Intercept) -0.91759    0.08995 -10.201   &amp;lt;2e-16 ***
+## A            1.38335    0.11372  12.164   &amp;lt;2e-16 ***
+## w           -0.09260    0.06827  -1.356    0.175    
+## x            0.09947    0.07275   1.367    0.172    
+## ---
+## Signif. codes:  0 &amp;#39;***&amp;#39; 0.001 &amp;#39;**&amp;#39; 0.01 &amp;#39;*&amp;#39; 0.05 &amp;#39;.&amp;#39; 0.1 &amp;#39; &amp;#39; 1
+## 
+## Residual standard error: 2.459 on 1996 degrees of freedom
+## Multiple R-squared:  0.07067,    Adjusted R-squared:  0.06927 
+## F-statistic:  50.6 on 3 and 1996 DF,  p-value: &amp;lt; 2.2e-16&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In this example, treatment assignment process is determined by logged w, and outcome is dtermined by logged x and treatment. However, what we observe is w and x. In observational studies, this happens all the time. In fact, this is an ideal situation, that we observe variables that are determinants of outcome, although we are not sure about the functional form that determines the outcome. However, this example shows that unless we have observed exactly the factors themselves (in this case logged x, w, which determines the DGP), we have biased estimates of the true treatment effect.&lt;/p&gt;
+&lt;p&gt;Model 1 is the only model with reasonable estimate of treatment effect (which is 2 in this case). Model 2 is a model with endogeneity: A is correlated with the missing variabel logged x. Model 3 and 4 we have x and w, but not logged, therefore still biased.&lt;/p&gt;
+&lt;p&gt;The lesson here is the functional form does matter. However, we have no way of knowing the functional form. What can we do here?&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;Q.SL.library &amp;lt;- c(&amp;quot;SL.randomForest&amp;quot;, &amp;quot;SL.glmnet&amp;quot;,&amp;quot;SL.loess&amp;quot;,&amp;quot;SL.glm&amp;quot;,&amp;quot;SL.glm.interaction&amp;quot;, &amp;quot;SL.rpart&amp;quot;,&amp;quot;SL.nnet&amp;quot;,&amp;quot;SL.bayesglm&amp;quot;,&amp;quot;SL.gam&amp;quot;,&amp;quot;SL.gbm&amp;quot;,&amp;quot;SL.step&amp;quot;,&amp;quot;SL.mean&amp;quot;)
+g.SL.library &amp;lt;- c(&amp;quot;SL.randomForest&amp;quot;, &amp;quot;SL.glmnet&amp;quot;,&amp;quot;SL.glm&amp;quot;,&amp;quot;SL.glm.interaction&amp;quot;, &amp;quot;SL.rpart&amp;quot;,&amp;quot;SL.nnet&amp;quot;,&amp;quot;SL.bayesglm&amp;quot;,&amp;quot;SL.gam&amp;quot;,&amp;quot;SL.gbm&amp;quot;,&amp;quot;SL.step&amp;quot;,&amp;quot;SL.mean&amp;quot;)
+
+# this one is good since both Q and g are correct (including z in it)
+tmle1 &amp;lt;- tmle(Y = df$y, A = df$treat, W = df[,c(&amp;#39;x&amp;#39;,&amp;#39;w&amp;#39;)], g.SL.library = g.SL.library , Q.SL.library = Q.SL.library)
+tmle1&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  Additive Effect
+##    Parameter Estimate:  2.015
+##    Estimated Variance:  0.0025985
+##               p-value:  &amp;lt;2e-16
+##     95% Conf Interval: (1.9151, 2.115)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;tmle2 &amp;lt;- tmle(Y = df$y, A = df$treat, W = df[,c(&amp;#39;x&amp;#39;,&amp;#39;w&amp;#39;, &amp;#39;z&amp;#39;)], g.SL.library = g.SL.library , Q.SL.library = Q.SL.library)
+tmle2&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##  Additive Effect
+##    Parameter Estimate:  2.0263
+##    Estimated Variance:  0.0029254
+##               p-value:  &amp;lt;2e-16
+##     95% Conf Interval: (1.9202, 2.1323)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We use &lt;a href=&#34;http://biostats.bepress.com/ucbbiostat/paper275/&#34;&gt;Mark van der Laan’s TMLE method&lt;/a&gt;. It uses &lt;a href=&#34;http://biostats.bepress.com/ucbbiostat/paper222/&#34;&gt;SuperLearner&lt;/a&gt; as the initial estimator. It’s an ensemble of mulitple machine learning algorithms. Therefore it does not need to assume the functional form of the DGP. Even if we don’t have the variables that determines the DGP of outcome, if we observe some functions (even nonlinear functions) of these variables, we can still get reasonable estimates of the treatment effect.&lt;/p&gt;
+&lt;p&gt;In this example, we used multiple popular machine learning algorithms in modeling both treatment assingment process and the outcome process. The first TMLE model is with x and w (note not the logged x and w which are in the true DGP), the second one with an additional variable z.&lt;/p&gt;
+&lt;p&gt;It seems that TMLE results are less biased than the linear models with x and w. It may not be better than the linear model with logged x and w, but in empirical studies, we often cannot assume we have the variables in the DGP, but only some proxy of the variables in the DGP. I’ll do more simulations to see whether TMLE does perform better in the situation that we are not sure about the functional form. We should expect that is the case.&lt;/p&gt;
+&lt;p&gt;So far TMLE can only be used when treatment is binary variable.&lt;/p&gt;
+&lt;p&gt;It’s about time we embrace machine learning techniques into studies of caual effect in observational studies.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Interaction term in a non-linear model</title>
+      <link>https://hbs-rcs.github.io/post/2017-02-16-nonlinear_interaction/</link>
+      <pubDate>Tue, 14 Feb 2017 00:00:00 +0000</pubDate>
+      <guid>https://hbs-rcs.github.io/post/2017-02-16-nonlinear_interaction/</guid>
+      <description>
+&lt;script src=&#34;https://hbs-rcs.github.io/post/2017-02-16-nonlinear_interaction/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;In a non-linear model (for example, logit or poisson model), the interpretation of the coefficient on the interaction term is tricky. &lt;a href=&#34;https://pdfs.semanticscholar.org/6285/8e64d9a337504d72cb862c4cc1e7fd27a7a0.pdf&#34;&gt;Ai and Norton (2003)&lt;/a&gt; points out that the interaction term coefficient is not the same as people can interpret as in a linear model; that is, how much effect of &lt;span class=&#34;math inline&#34;&gt;\(x1\)&lt;/span&gt; changes with the value of &lt;span class=&#34;math inline&#34;&gt;\(x2\)&lt;/span&gt;. They interpret this as a cross&lt;/p&gt;
+&lt;p&gt;If we have a linear model with interaction:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ E(y) = \beta_1 x_1 + \beta_2 x_2 + \beta_{12} x_1*x_2 \]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Then, the marginal effect&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ \frac{\partial^2 E(y)}{\partial x_1 \partial x_2} = \beta_{12} \]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;That is, &lt;span class=&#34;math inline&#34;&gt;\(\beta_{12}\)&lt;/span&gt; is the second derivative of &lt;span class=&#34;math inline&#34;&gt;\(E(y)\)&lt;/span&gt; on &lt;span class=&#34;math inline&#34;&gt;\(x_1\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(x_2\)&lt;/span&gt;. The marginal effect of &lt;span class=&#34;math inline&#34;&gt;\(x_1\)&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;In a non-linear model,&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ F(E(y)) = \beta_1 x_1 + \beta_2 x_2 + \beta_{12} x_1*x_2 \]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ \frac{\partial^2 F(E(y))}{\partial x_1 \partial x_2} = \beta_{12} \]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Here, the partial derivative of &lt;span class=&#34;math inline&#34;&gt;\(F(E(y))\)&lt;/span&gt; on &lt;span class=&#34;math inline&#34;&gt;\(x_1\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(x_2\)&lt;/span&gt; is still &lt;span class=&#34;math inline&#34;&gt;\(\beta_{12}\)&lt;/span&gt;. However, most people are interested in &lt;span class=&#34;math inline&#34;&gt;\(\frac{\partial^2 E(y)}{\partial x_1 \partial x_2}\)&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ \frac{\partial^2 E(y)}{\partial x_1 \partial x_2} = \beta_{12} G&amp;#39;() + (\beta_{1} + \beta_{12} x_2)(\beta_2 + \beta_{12} x_1) G&amp;#39;&amp;#39;()\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;where &lt;span class=&#34;math inline&#34;&gt;\(G()\)&lt;/span&gt; is the inverse function of &lt;span class=&#34;math inline&#34;&gt;\(F()\)&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;It is true that in a non-linear model with interaction, the marginal effect of &lt;span class=&#34;math inline&#34;&gt;\(x_1\)&lt;/span&gt; differs with different values of &lt;span class=&#34;math inline&#34;&gt;\(x_2\)&lt;/span&gt;. However, even if we have a non-linear model without interaction, the marginal effect of &lt;span class=&#34;math inline&#34;&gt;\(x_1\)&lt;/span&gt; is still different with different values of &lt;span class=&#34;math inline&#34;&gt;\(x_2\)&lt;/span&gt;. To see this,&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ F(E(y)) = \beta_1 x_1 + \beta_2 x_2 \]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ \frac{\partial^2 E(y)}{\partial x_1 \partial x_2} =  (\beta_{1} \beta_2 ) G&amp;#39;&amp;#39;()\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Therefore, when we set up our model,&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ F(E(y)) = \beta_1 x_1 + \beta_2 x_2 + \beta_{12} x_1*x_2 \]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;we have in mind that we allow interaction of &lt;span class=&#34;math inline&#34;&gt;\(x_1\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(x_1\)&lt;/span&gt; to interact for the effect on &lt;span class=&#34;math inline&#34;&gt;\(F(E(y))\)&lt;/span&gt;; not on &lt;span class=&#34;math inline&#34;&gt;\(E(y)\)&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;We agree with &lt;a href=&#34;http://people.stern.nyu.edu/wgreene/Lugano2013/Greene-InteractionTerms.pdf&#34;&gt;Bill Greene, 2013&lt;/a&gt;. In
+a nonlinear model, the partial effects (as Greene calls it) is
+nonlinear, regardless of the model. For example, in a logit model,
+even if you don’t have an interaction term in your model, the effect
+of &lt;span class=&#34;math inline&#34;&gt;\(x_1\)&lt;/span&gt; will still be different for every value of &lt;span class=&#34;math inline&#34;&gt;\(x_2\)&lt;/span&gt;, simply
+because it’s a nonlinear model.&lt;/p&gt;
+&lt;p&gt;As Greene put it at the summary section,
+“Build the model based on appropriate statistical procedures and principles. Statistical testing
+about the model specification is done at this step Hypothesis tests are about model coefficients
+and about the structural aspects of the model specifications. Partial effects are neither
+coefficients nor elements of the specification of the model. They are implications of the specified
+and estimated model.”&lt;/p&gt;
+&lt;p&gt;We also agree with &lt;a href=&#34;http://www.stata-journal.com/sjpdf.html?articlenum=st0194&#34;&gt;Maarten Buis 2010&lt;/a&gt;, that we should use multiplicative effect in a non-linear model. That is, in a non-linear model,&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ F(E(y)) = \beta_1 x_1 + \beta_2 x_2 + \beta_{12} x_1*x_2 \]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;We should pay more attention to&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ \frac{\partial^2 F(E(y))}{\partial x_1 \partial x_2} = \beta_{12} \]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;For example, in a logit model,&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ log(P(y=1)/(1-P(y=1))) = \beta_1 x_1 + \beta_2 x_2 + \beta_{12} x_1*x_2 \]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;That is, the log of odds is a linear function of &lt;span class=&#34;math inline&#34;&gt;\(x_1\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(x_2\)&lt;/span&gt; and interaction. The interaction effect has the same interpretation as the linear model, in terms of log of odds.&lt;/p&gt;
+&lt;p&gt;Or, it becomes multiplicative effect when we talk about odds ratios. Stata’s “margins” command is a great tool to calculate marginal effects in various situations, as shown in &lt;a href=&#34;http://www.stata-journal.com/sjpdf.html?articlenum=st0194&#34;&gt;Maarten Buis 2010&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Interpreting interaction term in a regression model</title>
+      <link>https://hbs-rcs.github.io/post/2017-02-16-interpret_interaction/</link>
+      <pubDate>Tue, 14 Feb 2017 00:00:00 +0000</pubDate>
+      <guid>https://hbs-rcs.github.io/post/2017-02-16-interpret_interaction/</guid>
+      <description>
+
+
+&lt;div id=&#34;interaction-with-two-binary-variables&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Interaction with two binary variables&lt;/h1&gt;
+&lt;p&gt;In a regression model with interaction term, people tend to pay attention to only the coefficient of the interaction term.&lt;/p&gt;
+&lt;p&gt;Let’s start with the simpliest situation: &lt;span class=&#34;math inline&#34;&gt;\(x_1\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(x_2\)&lt;/span&gt; are binary and coded 0/1.&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ E(y) = \beta_1 x_1 + \beta_2 x_2 + \beta_{12} x_1x_2 \]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;In this case, we have a saturated model; that is, we have three coefficients representing additive effects from the baseline situation (both &lt;span class=&#34;math inline&#34;&gt;\(x_1\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(x_2\)&lt;/span&gt; being 0). There are four different situations, with four combinations of &lt;span class=&#34;math inline&#34;&gt;\(x_1\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(x_2\)&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;A lot of people just pay attention to the interaction term. In the case of studying treatment effects between two groups, say female and male, that makes sense, the interaction term representing the difference between male and female in terms of treatment effect.&lt;/p&gt;
+&lt;p&gt;In this model:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ E(y) = \beta_1 female + \beta_2 treatment + \beta_{12} female*treatment \]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;The two dummy-coded binary variables, female and treatment, form four combinations. The following 2x2 table represents the expected means of the four cells(combinations).&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th&gt;&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;male&lt;/th&gt;
+&lt;th align=&#34;center&#34;&gt;female&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td&gt;control&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;span class=&#34;math inline&#34;&gt;\(\beta_0\)&lt;/span&gt;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;span class=&#34;math inline&#34;&gt;\(\beta_0 + \beta_1\)&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td&gt;treatment&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;span class=&#34;math inline&#34;&gt;\(\beta_0 + \beta_2\)&lt;/span&gt;&lt;/td&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;span class=&#34;math inline&#34;&gt;\(\beta_0 + \beta_1 + \beta_2 + \beta_{12}\)&lt;/span&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;We can see from this table that, for example,&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[\beta_0=E(Y|(0,0))\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;that is, &lt;span class=&#34;math inline&#34;&gt;\(\beta_0\)&lt;/span&gt; is the expected mean of the cell (0,0) (male and control).&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[\beta_0 + \beta_1 =E(Y|(1,0))\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;that is ,&lt;span class=&#34;math inline&#34;&gt;\(\beta_0 + \beta_1\)&lt;/span&gt; is the expected mean of the cell (1,0) (female and control). And so on.&lt;/p&gt;
+&lt;p&gt;Now,&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ \beta_{12} = (E(Y|(1,1))-E(Y|(0,1)))-(E(Y|(1,0))-E(Y|(0,0))) \]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;that is, the coefficient on the interaction term is actually the difference in difference. That’s why in many situations, people are only interested in the interaction coefficient, since they are only interested in the diff-in-diff estimates. The usually diff-in-diff estimator in causal inference literature refer to something similar, instead of female vs. male, people are interested in the treatment effect difference in before and after treatment. If we simply replace female/male dummy with before/after dummy, we can use the same logic. In those situations, it’s fine to mainly focus on the interaction term coefficient.&lt;/p&gt;
+&lt;p&gt;In some other situations, the three coefficients are equally important. It depends on your interest. For example, if we are interested in studying differences between union member and non-union member and black vs. non-black, we may not be only interested in the interaction effect. Instead, we might be interested in all four cells, maybe all possible pairwise comparisons. In that case, we should pay attention to all three coefficients. Stata’s “margins” command is of great help if we’d like to compare the cell means.&lt;/p&gt;
+&lt;p&gt;Let’s take a look from a sample example in Stata:&lt;/p&gt;
+&lt;pre class=&#34;stata&#34;&gt;&lt;code&gt;webuse union3
+reg ln_wage i.union##i.black, r
+margins union#black
+margins union#black, pwcompare
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## . webuse union3
+## (National Longitudinal Survey.  Young Women 14-26 years of age in 1968)
+## 
+## . reg ln_wage i.union##i.black, r
+## 
+## Linear regression                               Number of obs     =      1,244
+##                                                 F(3, 1240)        =      34.76
+##                                                 Prob &amp;gt; F          =     0.0000
+##                                                 R-squared         =     0.0762
+##                                                 Root MSE          =     .37699
+## 
+## ------------------------------------------------------------------------------
+##              |               Robust
+##      ln_wage |      Coef.   Std. Err.      t    P&amp;gt;|t|     [95% Conf. Interval]
+## -------------+----------------------------------------------------------------
+##      1.union |   .2045053   .0291682     7.01   0.000     .1472808    .2617298
+##      1.black |  -.1709034   .0308067    -5.55   0.000    -.2313425   -.1104644
+##              |
+##  union#black |
+##         1 1  |   .0386275   .0516609     0.75   0.455     -.062725      .13998
+##              |
+##        _cons |   1.657525   .0138278   119.87   0.000     1.630396    1.684653
+## ------------------------------------------------------------------------------
+## 
+## . margins union#black
+## 
+## Adjusted predictions                            Number of obs     =      1,244
+## Model VCE    : Robust
+## 
+## Expression   : Linear prediction, predict()
+## 
+## ------------------------------------------------------------------------------
+##              |            Delta-method
+##              |     Margin   Std. Err.      t    P&amp;gt;|t|     [95% Conf. Interval]
+## -------------+----------------------------------------------------------------
+##  union#black |
+##         0 0  |   1.657525   .0138278   119.87   0.000     1.630396    1.684653
+##         0 1  |   1.486621    .027529    54.00   0.000     1.432613     1.54063
+##         1 0  |    1.86203   .0256822    72.50   0.000     1.811644    1.912415
+##         1 1  |   1.729754   .0325611    53.12   0.000     1.665873    1.793635
+## ------------------------------------------------------------------------------
+## 
+## . margins union#black, pwcompare
+## 
+## Pairwise comparisons of adjusted predictions
+## Model VCE    : Robust
+## 
+## Expression   : Linear prediction, predict()
+## 
+## -----------------------------------------------------------------
+##                 |            Delta-method         Unadjusted
+##                 |   Contrast   Std. Err.     [95% Conf. Interval]
+## ----------------+------------------------------------------------
+##     union#black |
+## (0 1) vs (0 0)  |  -.1709034   .0308067     -.2313425   -.1104644
+## (1 0) vs (0 0)  |   .2045053   .0291682      .1472808    .2617298
+## (1 1) vs (0 0)  |   .0722294   .0353756      .0028268     .141632
+## (1 0) vs (0 1)  |   .3754087   .0376487      .3015466    .4492709
+## (1 1) vs (0 1)  |   .2431328   .0426388      .1594807     .326785
+## (1 1) vs (1 0)  |  -.1322759   .0414705     -.2136359   -.0509159
+## -----------------------------------------------------------------
+## 
+## .&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;What we get by using “margins union#black” is the four cell means of &lt;span class=&#34;math inline&#34;&gt;\(E(Y)\)&lt;/span&gt;, in this case, log of wage. Then “margins union#black, pwcompare” tells us all pairwise comparison of these four cell means. Instead of only paying attention to the interaction coefficient, in this case we might be interested in some comparisons of the four different situations of union and black. In fact, in this example, despite the interaction term being insignificant, all six comparisons of the cell means turn out to have 95% confidence intervals that do not include zero.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;interaction-with-continuous-variables&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Interaction with continuous variables&lt;/h1&gt;
+&lt;p&gt;Let’s start with the simpliest situation: &lt;span class=&#34;math inline&#34;&gt;\(x_1\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(x_2\)&lt;/span&gt; are continuous.&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ E(y) = \beta_1 x_1 + \beta_2 x_2 + \beta_{12} x_1*x_2 \]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;In this case, we recommend “centering” &lt;span class=&#34;math inline&#34;&gt;\(x_1\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(x_2\)&lt;/span&gt; if they are continuous; that is, subtracting the mean value from each continuous independent variable when they are involved in the interaction term. There are two reason for it:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;To reduce multi-collinearity. If the range of &lt;span class=&#34;math inline&#34;&gt;\(x_1\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(x_2\)&lt;/span&gt; include only positive numbers, then &lt;span class=&#34;math inline&#34;&gt;\(x_1*x_2\)&lt;/span&gt; can be highly correlated with both or one of &lt;span class=&#34;math inline&#34;&gt;\(x_1\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(x_2\)&lt;/span&gt;. This can lead to numerical problems and unstable coefficient estimates (multi-collinearity problem).&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;“Centering” can reduce the correlation between the interaction term and the independent variables. If the original variables are normally distributed, interaction term after centering is actually uncorrelated with the original variables. When they are not normally distributed, centering will still reduce the correlation to a large degree.&lt;/p&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;To help with interpretation. In a model with interaction, &lt;span class=&#34;math inline&#34;&gt;\(\beta_1\)&lt;/span&gt; represents the effect of &lt;span class=&#34;math inline&#34;&gt;\(x_1\)&lt;/span&gt; when &lt;span class=&#34;math inline&#34;&gt;\(x_2\)&lt;/span&gt; is zero. However, in many situations, zero is not within the range of &lt;span class=&#34;math inline&#34;&gt;\(x_2\)&lt;/span&gt;. After centering, centered &lt;span class=&#34;math inline&#34;&gt;\(x_2\)&lt;/span&gt; at zero simply means original &lt;span class=&#34;math inline&#34;&gt;\(x_2\)&lt;/span&gt; at its mean value.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;When we have dummy variable interacting with continuous variable, only continuous variable should be centered.&lt;/p&gt;
+&lt;p&gt;Again, Stata’s margins command is helpful.&lt;/p&gt;
+&lt;pre class=&#34;stata&#34;&gt;&lt;code&gt;sysuse auto
+sum mpg
+gen mpg_centered=mpg-r(mean)
+sum mpg_centered
+reg price i.foreign##c.mpg_centered
+margins foreign, at(mpg_centered=(-3 (1) 3))
+marginsplot
+graph export marginsplot.eps, replace&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## . sysuse auto
+## (1978 Automobile Data)
+## 
+## . sum mpg
+## 
+##     Variable |        Obs        Mean    Std. Dev.       Min        Max
+## -------------+---------------------------------------------------------
+##          mpg |         74     21.2973    5.785503         12         41
+## 
+## . gen mpg_centered=mpg-r(mean)
+## 
+## . sum mpg_centered
+## 
+##     Variable |        Obs        Mean    Std. Dev.       Min        Max
+## -------------+---------------------------------------------------------
+## mpg_centered |         74   -4.03e-08    5.785503  -9.297297    19.7027
+## 
+## . reg price i.foreign##c.mpg_centered
+## 
+##       Source |       SS           df       MS      Number of obs   =        74
+## -------------+----------------------------------   F(3, 70)        =      9.48
+##        Model |   183435285         3  61145094.9   Prob &amp;gt; F        =    0.0000
+##     Residual |   451630112        70  6451858.74   R-squared       =    0.2888
+## -------------+----------------------------------   Adj R-squared   =    0.2584
+##        Total |   635065396        73  8699525.97   Root MSE        =    2540.1
+## 
+## ------------------------------------------------------------------------------
+##        price |      Coef.   Std. Err.      t    P&amp;gt;|t|     [95% Conf. Interval]
+## -------------+----------------------------------------------------------------
+##      foreign |
+##     Foreign  |   1666.519    717.217     2.32   0.023     236.0751    3096.963
+## mpg_centered |  -329.2551   74.98545    -4.39   0.000    -478.8088   -179.7013
+##              |
+##      foreign#|
+##           c. |
+## mpg_centered |
+##     Foreign  |   78.88826   112.4812     0.70   0.485    -145.4485     303.225
+##              |
+##        _cons |   5588.295   369.0945    15.14   0.000     4852.159    6324.431
+## ------------------------------------------------------------------------------
+## 
+## . margins foreign, at(mpg_centered=(-3 (1) 3))
+## 
+## Adjusted predictions                            Number of obs     =         74
+## Model VCE    : OLS
+## 
+## Expression   : Linear prediction, predict()
+## 
+## 1._at        : mpg_centered    =          -3
+## 
+## 2._at        : mpg_centered    =          -2
+## 
+## 3._at        : mpg_centered    =          -1
+## 
+## 4._at        : mpg_centered    =           0
+## 
+## 5._at        : mpg_centered    =           1
+## 
+## 6._at        : mpg_centered    =           2
+## 
+## 7._at        : mpg_centered    =           3
+## 
+## ------------------------------------------------------------------------------
+##              |            Delta-method
+##              |     Margin   Std. Err.      t    P&amp;gt;|t|     [95% Conf. Interval]
+## -------------+----------------------------------------------------------------
+##  _at#foreign |
+##  1#Domestic  |    6576.06    370.446    17.75   0.000     5837.229    7314.891
+##   1#Foreign  |   8005.915   766.8178    10.44   0.000     6476.545    9535.284
+##  2#Domestic  |   6246.805   354.4734    17.62   0.000      5539.83     6953.78
+##   2#Foreign  |   7755.548   709.9327    10.92   0.000     6339.632    9171.464
+##  3#Domestic  |    5917.55   354.0032    16.72   0.000     5211.513    6623.587
+##   3#Foreign  |   7505.181   658.8306    11.39   0.000     6191.185    8819.177
+##  4#Domestic  |   5588.295   369.0945    15.14   0.000     4852.159    6324.431
+##   4#Foreign  |   7254.814   614.9548    11.80   0.000     6028.325    8481.303
+##  5#Domestic  |    5259.04    397.981    13.21   0.000     4465.292    6052.788
+##   5#Foreign  |   7004.447   579.9479    12.08   0.000     5847.778    8161.117
+##  6#Domestic  |   4929.785   437.9413    11.26   0.000     4056.338    5803.231
+##   6#Foreign  |   6754.081   555.4891    12.16   0.000     5646.192    7861.969
+##  7#Domestic  |    4600.53    486.253     9.46   0.000     3630.729    5570.331
+##   7#Foreign  |   6503.714   543.0057    11.98   0.000     5420.723    7586.704
+## ------------------------------------------------------------------------------
+## 
+## . marginsplot
+## 
+##   Variables that uniquely identify margins: mpg_centered foreign
+## 
+## . graph export marginsplot.eps, replace
+## (note: file marginsplot.eps not found)
+## (file marginsplot.eps written in EPS format)&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;figure&#34;&gt;
+&lt;img src=&#34;https://hbs-rcs.github.io/post/2017-02-16-interpret_interaction_files/marginsplot.png&#34; /&gt;
+
+&lt;/div&gt;
+&lt;p&gt;In this example, the graph shows the predicted price for foreign and domestic cars at different level of mpg.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Marginal effects in models with fixed effects</title>
+      <link>https://hbs-rcs.github.io/post/2017-02-16-margins_nonlinear/</link>
+      <pubDate>Tue, 14 Feb 2017 00:00:00 +0000</pubDate>
+      <guid>https://hbs-rcs.github.io/post/2017-02-16-margins_nonlinear/</guid>
+      <description>
+
+
+&lt;div id=&#34;marginal-effects-in-a-linear-model&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Marginal effects in a linear model&lt;/h1&gt;
+&lt;p&gt;Stata’s margins command has been a powerful tool for many economists. It can calculate predicted means as well as predicted marginal effects. However, we do need to be careful when we use it when fixed effects are included. In a linear model, everything works out fine. However, in a non-linear model, you may not want to use margins, since it’s not calculating what you have in mind.&lt;/p&gt;
+&lt;p&gt;In a linear model with fixed effects, we can do it either by “demeaning” every variable, or include dummy variables. They return the same results. Fortunately, marginal effects can be calculated the same way in both models.&lt;/p&gt;
+&lt;p&gt;For example:&lt;/p&gt;
+&lt;pre class=&#34;stata&#34;&gt;&lt;code&gt;clear
+sysuse auto
+xtset rep78
+xtreg price c.mpg##c.trunk, fe
+margins , dydx(mpg)
+reg price c.mpg##c.trunk i.rep78
+margins , dydx(mpg)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## . clear
+## 
+## . sysuse auto
+## (1978 Automobile Data)
+## 
+## . xtset rep78
+##        panel variable:  rep78 (unbalanced)
+## 
+## . xtreg price c.mpg##c.trunk, fe
+## 
+## Fixed-effects (within) regression               Number of obs     =         69
+## Group variable: rep78                           Number of groups  =          5
+## 
+## R-sq:                                           Obs per group:
+##      within  = 0.2570                                         min =          2
+##      between = 0.0653                                         avg =       13.8
+##      overall = 0.2237                                         max =         30
+## 
+##                                                 F(3,61)           =       7.03
+## corr(u_i, Xb)  = -0.4133                        Prob &amp;gt; F          =     0.0004
+## 
+## ------------------------------------------------------------------------------
+##        price |      Coef.   Std. Err.      t    P&amp;gt;|t|     [95% Conf. Interval]
+## -------------+----------------------------------------------------------------
+##          mpg |  -98.12003   226.8708    -0.43   0.667    -551.7763    355.5362
+##        trunk |   295.0544   343.3934     0.86   0.394    -391.6032     981.712
+##              |
+##        c.mpg#|
+##      c.trunk |  -12.23318   15.94713    -0.77   0.446    -44.12143    19.65506
+##              |
+##        _cons |    7574.85   5321.325     1.42   0.160    -3065.797     18215.5
+## -------------+----------------------------------------------------------------
+##      sigma_u |   992.2156
+##      sigma_e |  2631.2869
+##          rho |  .12449059   (fraction of variance due to u_i)
+## ------------------------------------------------------------------------------
+## F test that all u_i=0: F(4, 61) = 0.86                       Prob &amp;gt; F = 0.4948
+## 
+## . margins , dydx(mpg)
+## 
+## Average marginal effects                        Number of obs     =         69
+## Model VCE    : Conventional
+## 
+## Expression   : Linear prediction, predict()
+## dy/dx w.r.t. : mpg
+## 
+## ------------------------------------------------------------------------------
+##              |            Delta-method
+##              |      dy/dx   Std. Err.      z    P&amp;gt;|z|     [95% Conf. Interval]
+## -------------+----------------------------------------------------------------
+##          mpg |  -268.4981   74.12513    -3.62   0.000    -413.7807   -123.2156
+## ------------------------------------------------------------------------------
+## 
+## . reg price c.mpg##c.trunk i.rep78
+## 
+##       Source |       SS           df       MS      Number of obs   =        69
+## -------------+----------------------------------   F(7, 61)        =      3.19
+##        Model |   154453046         7  22064720.8   Prob &amp;gt; F        =    0.0061
+##     Residual |   422343913        61  6923670.71   R-squared       =    0.2678
+## -------------+----------------------------------   Adj R-squared   =    0.1838
+##        Total |   576796959        68  8482308.22   Root MSE        =    2631.3
+## 
+## ------------------------------------------------------------------------------
+##        price |      Coef.   Std. Err.      t    P&amp;gt;|t|     [95% Conf. Interval]
+## -------------+----------------------------------------------------------------
+##          mpg |  -98.12003   226.8708    -0.43   0.667    -551.7763    355.5362
+##        trunk |   295.0544   343.3934     0.86   0.394    -391.6032     981.712
+##              |
+##        c.mpg#|
+##      c.trunk |  -12.23318   15.94713    -0.77   0.446    -44.12143    19.65506
+##              |
+##        rep78 |
+##           2  |   438.0002   2161.922     0.20   0.840    -3885.031    4761.031
+##           3  |   987.1363   2022.606     0.49   0.627    -3057.315    5031.587
+##           4  |   1240.944   2046.417     0.61   0.547     -2851.12    5333.008
+##           5  |    2605.83   2161.837     1.21   0.233    -1717.031    6928.691
+##              |
+##        _cons |   6355.731   5209.899     1.22   0.227    -4062.105    16773.57
+## ------------------------------------------------------------------------------
+## 
+## . margins , dydx(mpg)
+## 
+## Average marginal effects                        Number of obs     =         69
+## Model VCE    : OLS
+## 
+## Expression   : Linear prediction, predict()
+## dy/dx w.r.t. : mpg
+## 
+## ------------------------------------------------------------------------------
+##              |            Delta-method
+##              |      dy/dx   Std. Err.      t    P&amp;gt;|t|     [95% Conf. Interval]
+## -------------+----------------------------------------------------------------
+##          mpg |  -268.4981   74.12513    -3.62   0.001    -416.7205   -120.2758
+## ------------------------------------------------------------------------------&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;All is fine.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;marginal-effects-in-a-non-linear-model&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Marginal effects in a non-linear model&lt;/h1&gt;
+&lt;p&gt;In a nonlinear model, we need to be more careful:&lt;/p&gt;
+&lt;pre class=&#34;stata&#34;&gt;&lt;code&gt;clear
+sysuse auto
+xtset rep78
+xtpoisson price mpg trunk, fe
+margins , dydx(mpg)
+margins , dydx(mpg) predict(nu0)
+poisson price mpg trunk i.rep78
+margins , dydx(mpg)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## 
+## . clear
+## 
+## . sysuse auto
+## (1978 Automobile Data)
+## 
+## . xtset rep78
+##        panel variable:  rep78 (unbalanced)
+## 
+## . xtpoisson price mpg trunk, fe
+## 
+## Iteration 0:   log likelihood = -39282.052  
+## Iteration 1:   log likelihood = -27527.055  
+## Iteration 2:   log likelihood = -27518.944  
+## Iteration 3:   log likelihood = -27518.944  
+## 
+## Conditional fixed-effects Poisson regression    Number of obs     =         69
+## Group variable: rep78                           Number of groups  =          5
+## 
+##                                                 Obs per group:
+##                                                               min =          2
+##                                                               avg =       13.8
+##                                                               max =         30
+## 
+##                                                 Wald chi2(2)      =   22890.68
+## Log likelihood  = -27518.944                    Prob &amp;gt; chi2       =     0.0000
+## 
+## ------------------------------------------------------------------------------
+##        price |      Coef.   Std. Err.      z    P&amp;gt;|z|     [95% Conf. Interval]
+## -------------+----------------------------------------------------------------
+##          mpg |  -.0450221   .0003814  -118.05   0.000    -.0457696   -.0442746
+##        trunk |   .0047349   .0004772     9.92   0.000     .0037996    .0056702
+## ------------------------------------------------------------------------------
+## 
+## . margins , dydx(mpg)
+## 
+## Average marginal effects                        Number of obs     =         69
+## Model VCE    : OIM
+## 
+## Expression   : Linear prediction, predict()
+## dy/dx w.r.t. : mpg
+## 
+## ------------------------------------------------------------------------------
+##              |            Delta-method
+##              |      dy/dx   Std. Err.      z    P&amp;gt;|z|     [95% Conf. Interval]
+## -------------+----------------------------------------------------------------
+##          mpg |  -.0450221   .0003814  -118.05   0.000    -.0457696   -.0442746
+## ------------------------------------------------------------------------------
+## 
+## . margins , dydx(mpg) predict(nu0)
+## 
+## Average marginal effects                        Number of obs     =         69
+## Model VCE    : OIM
+## 
+## Expression   : Predicted number of events (assuming u_i=0), predict(nu0)
+## dy/dx w.r.t. : mpg
+## 
+## ------------------------------------------------------------------------------
+##              |            Delta-method
+##              |      dy/dx   Std. Err.      z    P&amp;gt;|z|     [95% Conf. Interval]
+## -------------+----------------------------------------------------------------
+##          mpg |  -.0190939   .0001245  -153.35   0.000    -.0193379   -.0188498
+## ------------------------------------------------------------------------------
+## 
+## . poisson price mpg trunk i.rep78
+## 
+## Iteration 0:   log likelihood = -27550.942  
+## Iteration 1:   log likelihood = -27550.912  
+## Iteration 2:   log likelihood = -27550.912  
+## 
+## Poisson regression                              Number of obs     =         69
+##                                                 LR chi2(6)        =   24962.86
+##                                                 Prob &amp;gt; chi2       =     0.0000
+## Log likelihood = -27550.912                     Pseudo R2         =     0.3118
+## 
+## ------------------------------------------------------------------------------
+##        price |      Coef.   Std. Err.      z    P&amp;gt;|z|     [95% Conf. Interval]
+## -------------+----------------------------------------------------------------
+##          mpg |  -.0450221   .0003814  -118.05   0.000    -.0457696   -.0442746
+##        trunk |   .0047349   .0004772     9.92   0.000     .0037996    .0056702
+##              |
+##        rep78 |
+##           2  |   .1476657   .0117935    12.52   0.000     .1245509    .1707805
+##           3  |   .2295466   .0111741    20.54   0.000     .2076458    .2514474
+##           4  |   .2726354   .0112656    24.20   0.000     .2505552    .2947155
+##           5  |   .4682657   .0115137    40.67   0.000     .4456992    .4908321
+##              |
+##        _cons |   9.323117   .0149274   624.57   0.000      9.29386    9.352374
+## ------------------------------------------------------------------------------
+## 
+## . margins , dydx(mpg)
+## 
+## Average marginal effects                        Number of obs     =         69
+## Model VCE    : OIM
+## 
+## Expression   : Predicted number of events, predict()
+## dy/dx w.r.t. : mpg
+## 
+## ------------------------------------------------------------------------------
+##              |            Delta-method
+##              |      dy/dx   Std. Err.      z    P&amp;gt;|z|     [95% Conf. Interval]
+## -------------+----------------------------------------------------------------
+##          mpg |  -276.7079   2.382193  -116.16   0.000    -281.3769   -272.0389
+## ------------------------------------------------------------------------------
+## 
+## .&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In this example, “xtpoisson, fe” and “poisson i.rep78” returns the same results. Fixed effect Poisson model (sometimes called conditional fixed effect Poisson) is the same models as a Poisson model with dummies, just like a linear model (OLS with dummies is the same as fixed effect OLS). Poisson model and OLS are unique in this sense that there is no “incidental paramater” problem.&lt;/p&gt;
+&lt;p&gt;We see in this example, margins commands do not return the same marginal effects, even though the models are the same. The reason behind this is that in a conditional fixed effect Poisson, the fixed effects are not estimated (they are not in the final likelihood function that gets estimated). Therefore, we’ll have to make a decision what values to use as the values of the fixed effects. “margins, predict(nu0)” simply set all fixed effects to zero. On the other hand, margins after Poisson model with dummies does not do that. The fixed effect in that case gets estimated. Therefore the marginal effects in that case make more sense.&lt;/p&gt;
+&lt;p&gt;So our advise for a conditioanl Poisson model is that we should not use margins to calculate marginal effects afterwards; instead, we should simply stick with the original coefficient estimates.&lt;/p&gt;
+&lt;p&gt;The same logic applies to the conditional logit model. Fixed effects are not estimated in that model; simply setting them to zero does not make too much sense. In addition, conditional logit model is not the same model as a logit model with dummies, since there is the “incidental paramater” problem. Again, we should just focus on the coefficient estimates as the effect on the logged odds.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Running Cron Jobs on the Grid</title>
+      <link>https://hbs-rcs.github.io/post/2016-11-17-bsub-cron/</link>
+      <pubDate>Thu, 17 Nov 2016 00:00:00 +0000</pubDate>
+      <guid>https://hbs-rcs.github.io/post/2016-11-17-bsub-cron/</guid>
+      <description>
+&lt;script src=&#34;https://hbs-rcs.github.io/post/2016-11-17-bsub-cron/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;from datetime import datetime, timedelta
+import subprocess
+
+def main():
+    timestamp = datetime.now().isoformat()
+    print &amp;#39;Hello, World! It is currently %s.&amp;#39; % timestamp
+
+def reschedule(**kwargs):
+    when = datetime.now() + timedelta(**kwargs)
+    timestamp = when.strftime(&amp;#39;%Y:%m:%d:%H:%M&amp;#39;)
+    path = __file__
+    command = &amp;#39;bsub -b %(timestamp)s python %(path)s&amp;#39; % locals()
+    subprocess.call(command, shell=True)
+
+if __name__ == &amp;#39;__main__&amp;#39;:
+    reschedule(minutes=1)
+    main()&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Running Matlab on the Grid</title>
+      <link>https://hbs-rcs.github.io/post/2016-11-17-matlab/</link>
+      <pubDate>Thu, 17 Nov 2016 00:00:00 +0000</pubDate>
+      <guid>https://hbs-rcs.github.io/post/2016-11-17-matlab/</guid>
+      <description>
+&lt;script src=&#34;https://hbs-rcs.github.io/post/2016-11-17-matlab/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;div id=&#34;running-matlab-interactively-no-gui&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Running Matlab (interactively no GUI)&lt;/h1&gt;
+&lt;p&gt;I’m looking into this issue. One thing I’ve noticed is that starting Matlab takes a long time on the grid. When I start Matlab with the following command:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;bsub -q interactive -Is matlab -nodesktop -nojvm -nosplash&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;it takes about 45 seconds to start. If I tell Matlab where its license file is, it starts in about 5 seconds!&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;bsub -q interactive -Is matlab -nodesktop -nojvm -nosplash -c /usr/local/apps/matlab/matlab_2015a/licenses/network.lic&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I’m hoping this license file trick will speed up the parpool initialization. I’ll let you know what I find.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;running-a-parallel-loop&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Running a parallel loop&lt;/h1&gt;
+&lt;p&gt;I’ve attached an example script to confirm that parfor works on the grid. Here are some timing results from this script:&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;Running sequential loop ...
+Elapsed time is 23.157138 seconds.
+
+Starting parallel pool (parpool) using the &amp;#39;local&amp;#39; profile ... connected to 3 workers.
+Elapsed time is 11.678452 seconds.
+
+Running parallel loop ...
+Elapsed time is 7.676729 seconds.&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I ran this with three workers. The parallel loop is right around three times as fast as the sequential loop. Setting up the parallel pool takes a little while, but it’s sooooo much better than if I don’t tell Matlab where its license file is.&lt;/p&gt;
+&lt;p&gt;Here’s the bsub command I used to start an interactive Matlab session with 4 cores:&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;bsub -n 4 -q interactive -Is matlab -nodesktop -nosplash -c /usr/local/apps/matlab/matlab_2015a/licenses/network.lic&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If you want to run with more processors replace “-n 4” with something like “-n 12”. Twelve is the max number of processors available. Let me know if you have any questions.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;requesting-more-memory&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Requesting more memory&lt;/h1&gt;
+&lt;p&gt;To specify the amount of memory use the -M flag:&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;bsub -n 4 -M 10240 -q interactive -Is matlab -nodesktop -nosplash -c /usr/local/apps/matlab/matlab_2015a/licenses/network.lic&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Memory here is measured in megabytes, above I’m requesting 10 gigabytes. When submitting through bsub I’m not sure how much memory is requested by default, so it’s probably smart to use the -M flag whenever using bsub.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Installing Python and R packages on the Grid</title>
+      <link>https://hbs-rcs.github.io/post/2016-11-15-conda/</link>
+      <pubDate>Tue, 15 Nov 2016 00:00:00 +0000</pubDate>
+      <guid>https://hbs-rcs.github.io/post/2016-11-15-conda/</guid>
+      <description>
+&lt;script src=&#34;https://hbs-rcs.github.io/post/2016-11-15-conda/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;This post was last updated on 2021-10-26.&lt;/p&gt;
+&lt;p&gt;If you think Python 2.6.6 or R 3.0.2 sound old, I have good
+news for you. The &lt;a href=&#34;http://conda.pydata.org/docs/&#34;&gt;Conda&lt;/a&gt; package manager makes it easy
+to install the latest and greatest Python and R packages in your home
+directory. Conda facilitates the installation of Python 2.7.11, Python 3.5.2, and R 3.3.1.&lt;/p&gt;
+&lt;div id=&#34;installation&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Installation&lt;/h1&gt;
+&lt;p&gt;The first step to installing Python or R on the Grid is to install Miniconda. The steps below outline how to install Miniconda.&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Log in to the grid:&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;ssh researchgrid.hbs.edu&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Set up an alias so it’s easy to submit interactive jobs to
+back-end nodes:&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;alias my_run=&amp;quot;bsub -app generic-5g -q interactive -Is&amp;quot;&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Download the Miniconda installer:&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;my_run wget http://grid.rcs.hbs.org/files/miniconda2-linux-x86_64-4.1.12.sh.gz&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Unzip and run the installer&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;gunzip miniconda2-linux-x86_64-4.1.12.sh.gz
+chmod +x miniconda2-linux-x86_64-4.1.12.sh
+my_run ./miniconda2-linux-x86_64-4.1.12.sh&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Here’s how I answered the questions when running the installer:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Do you approve the license terms? yes&lt;/li&gt;
+&lt;li&gt;I pressed enter to install Miniconda2 in ~/miniconda2&lt;/li&gt;
+&lt;li&gt;Do you wish the installer to prepend the Miniconda2 install
+location to PATH in your ~/.bashrc ? no&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Make sure the Miniconda bin is on your search path:&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;export PATH=&amp;quot;~/miniconda2/bin:$PATH&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If you skip this step, trying to use Conda will throw error
+messages like &lt;code&gt;-bash: conda: command not found&lt;/code&gt;. It is also useful
+to put the same export command in your &lt;code&gt;~/.bash_profile&lt;/code&gt;
+file. This way when you log into the grid and call python in the
+future it will find the python in &lt;code&gt;~/miniconda2/bin&lt;/code&gt; first rather
+than using the old version in &lt;code&gt;/usr/local/bin&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Remove the Miniconda installer:&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;rm -f miniconda2-linux-x86_64-4.1.12.sh&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div id=&#34;python&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Python&lt;/h2&gt;
+&lt;p&gt;Note this step requires that you have already installed Miniconda. If you have not installed Miniconda yet, return to Section .&lt;/p&gt;
+&lt;p&gt;The following command installs the typical Python packages used in social science research:&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;my_run conda install anaconda&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If the Python packages included in Anaconda are insufficient for your needs, Conda’s documentation on &lt;a href=&#34;http://conda.pydata.org/docs/using/pkgs.html&#34;&gt;managing packages&lt;/a&gt; has excellent information on how to install additional packages. The general approach to installing additional packages proceeds as follows:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;See if the package is available through Conda with &lt;code&gt;conda search&lt;/code&gt;. If it is, install the package using &lt;code&gt;conda install&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;See if the package is available on &lt;a href=&#34;http://anaconda.org&#34;&gt;http://anaconda.org&lt;/a&gt;. If it is, install the package using &lt;code&gt;conda install&lt;/code&gt; being sure to specify the correct channel.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;To install a non-conda package, use &lt;code&gt;pip&lt;/code&gt; to install the package.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div id=&#34;r&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;R&lt;/h2&gt;
+&lt;p&gt;Note this step requires that you have already installed Miniconda. If you have not installed Miniconda yet, return to Section .&lt;/p&gt;
+&lt;p&gt;The following command installs the typical R packages used in social science research:&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;my_run conda install -c r r-essentials&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Notice that the above command installs &lt;code&gt;r-essentials&lt;/code&gt; from the &lt;code&gt;r&lt;/code&gt; channel. This package contains the latest version of R.&lt;/p&gt;
+&lt;p&gt;If you need additional R packages the general approach proceeds as follows:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Search &lt;a href=&#34;http://anaconda.org&#34;&gt;http://anaconda.org&lt;/a&gt;. If the package is available use &lt;code&gt;conda install&lt;/code&gt; specifying the appropriate channel.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;If the package is available through CRAN but not Conda, you can create a new Conda package from the CRAN repository. For documentation on this process see &lt;a href=&#34;http://conda.pydata.org/docs/build_tutorials/pkgs.html&#34;&gt;building conda packages&lt;/a&gt; and &lt;a href=&#34;http://conda.pydata.org/docs/commands/build/conda-skeleton-cran.html&#34;&gt;conda skeleton cran&lt;/a&gt;. This looks like a bit of work to do properly.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;This &lt;a href=&#34;http://stackoverflow.com/a/35023854/3756632&#34;&gt;Stack Overflow answer&lt;/a&gt; provides a quick and dirty workaround if you don’t want to build new Conda packages. The key insight is to open R and use &lt;code&gt;install.packages&lt;/code&gt; being sure the specify the correct path for where to install the package, something like:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;install.packages(&amp;quot;rstan&amp;quot;, lib = &amp;quot;~/miniconda2/lib/R/library&amp;quot;)&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div id=&#34;environments&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Environments&lt;/h2&gt;
+&lt;p&gt;One of Conda’s most useful features is the ability to create virtual environments. This is particularly helpful if you have multiple projects that depend on different versions of packages. With a virtual environment you can update the packages for one project without disturbing the packages of your other projects. Conda’s documentation on &lt;a href=&#34;http://conda.pydata.org/docs/using/envs.html&#34;&gt;managing environments&lt;/a&gt; is a good place to learn about this feature.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;execution&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Execution&lt;/h1&gt;
+&lt;p&gt;Now that you have installed python and R in &lt;code&gt;~/miniconda2/bin/&lt;/code&gt; you
+need to run these programs using bsub commands so your computationally
+intense jobs are run on back-end nodes rather than on front-end
+nodes. Below I give a quick introduction to submitting batch and
+interactive jobs through LSF.&lt;/p&gt;
+&lt;div id=&#34;batch&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Batch&lt;/h2&gt;
+&lt;p&gt;To start let’s create an alias describing a &lt;code&gt;bsub&lt;/code&gt; command for submitting batch jobs. If you want to learn more about bsub go to &lt;em&gt;this page in the documentation&lt;/em&gt;.&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;alias my_batch=&amp;quot;bsub -app generic-5g -q normal&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If you want to run a Python script named &lt;code&gt;your_file.py&lt;/code&gt; you would run:&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;my_batch ~/miniconda2/bin/python your_file.py&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Notice that it’s important to give the full path to your installation of Python. Similarly, here is how to run an R script named &lt;code&gt;your_file.R&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;my_batch ~/miniconda2/bin/Rscript your_file.R&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;interactive&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Interactive&lt;/h2&gt;
+&lt;p&gt;Note, I define the &lt;code&gt;my_run&lt;/code&gt; alias used below in Section .&lt;/p&gt;
+&lt;p&gt;There are a lot of ways to run interactive Python and R jobs on the Grid. I’m going to highlight the most enjoyable ways:&lt;/p&gt;
+&lt;div id=&#34;jupyter-console&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Jupyter Console&lt;/h3&gt;
+&lt;p&gt;If you want to work at the command line, the Jupyter Console makes interactive work quite pleasant and it works with both Python and R. To run Python use:&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;my_run jupyter console&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To run R use:&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;my_run jupyter console --kernel=ir&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;jupyter-notebook&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Jupyter Notebook&lt;/h3&gt;
+&lt;p&gt;The Jupyter Notebook is not currently supported on the Grid for security reasons.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;rstudio-desktop&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;RStudio Desktop&lt;/h3&gt;
+&lt;p&gt;It is possible to run RStudio Desktop on the grid. Here is how I run RStudio (note the spelling of the &lt;code&gt;Rstudio&lt;/code&gt; command has a capital &lt;code&gt;R&lt;/code&gt; and a lower-case &lt;code&gt;s&lt;/code&gt;):&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;export RSTUDIO_WHICH_R=~/miniconda2/bin/R
+Rstudio&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Unfortunately, install RStudio on the Grid is quite challenging and the currently installed version is quite old. You’re likely to have a more pleasant interactive experience using the Jupyter Notebook, which is easy to install.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;troubleshooting&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Troubleshooting&lt;/h1&gt;
+&lt;div id=&#34;lattice-was-built-before-r-3.0.0&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;code&gt;lattice&lt;/code&gt; was built before R 3.0.0&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;R&lt;/code&gt; is working great, but I’m getting the following error:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;&amp;gt; library(lattice)
+Error: package ‘lattice’ was built before R 3.0.0: please re-install it&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This is happening because &lt;code&gt;R&lt;/code&gt; is looking for packages in two places:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;&amp;gt; .libPaths()
+[1] &amp;quot;/usr/local/apps/R/packages&amp;quot;
+[2] &amp;quot;/export/home/dor/amarder/miniconda2/lib/R/library&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The first directory has old packages in it. When &lt;code&gt;R&lt;/code&gt; is loading &lt;code&gt;lattice&lt;/code&gt; it tries to import the version in &lt;code&gt;/usr/local/apps/R/packages&lt;/code&gt; first, unfortunately this version is too old and the import fails. To fix this issue remove this directory from &lt;code&gt;.libPaths&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;&amp;gt; .libPaths(.libPaths()[.libPaths() != &amp;quot;/usr/local/apps/R/packages&amp;quot;])
+&amp;gt; library(lattice)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You have successfully imported lattice in the current R session. To make this change affect all future &lt;code&gt;R&lt;/code&gt; sessions add the following line to your &lt;code&gt;~/.Rprofile&lt;/code&gt; file:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;.libPaths(.libPaths()[.libPaths() != &amp;quot;/usr/local/apps/R/packages&amp;quot;])&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>A comparison of various count data models with extra zeros</title>
+      <link>https://hbs-rcs.github.io/post/2014-09-17-poisson-models/</link>
+      <pubDate>Wed, 17 Sep 2014 00:00:00 +0000</pubDate>
+      <guid>https://hbs-rcs.github.io/post/2014-09-17-poisson-models/</guid>
+      <description>
+&lt;script src=&#34;https://hbs-rcs.github.io/post/2014-09-17-poisson-models/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;In empirical studies, data sets with a lot of zeros are often hard to model. There are various models to deal with it: zero-inflated Poisson model, Negative Binomial (NB)model, hurdle model, etc.&lt;/p&gt;
+&lt;p&gt;Here we are following a zero-inflated model’s thinking: model the data with two processes. One is a Bernoulli process, the other one is a count data process (Poisson or NB).&lt;/p&gt;
+&lt;p&gt;We’d like to see, in this simulation exercise, how different models perform with changes of sample size and percentage of zeros (we expect the less zero, the better a plain Poisson model would perform). Therefore we vary sample size &lt;span class=&#34;math inline&#34;&gt;\(n\)&lt;/span&gt; and an indicator of how much percentage of zeros in the data &lt;span class=&#34;math inline&#34;&gt;\(\theta\)&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;For the count data process (&lt;span class=&#34;math inline&#34;&gt;\(y_c\)&lt;/span&gt;):&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
+log(y_c) = 2 x + u
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;For the Bernoulli process (&lt;span class=&#34;math inline&#34;&gt;\(y_b\)&lt;/span&gt;):&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
+z_1 = 4 z + \theta
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
+logit(y_b) = z_1
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
+p_y = \frac{e^{z_1}}{1+e^{z_1}}
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Combining these two processes:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
+y = y_c \ \text{if} \ p_y=1
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
+y = y_b \ \text{if} \ p_y=0
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;div id=&#34;zero-inflated-poisson-models&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Zero-inflated Poisson models&lt;/h2&gt;
+&lt;p&gt;A zero-inflated Poisson needs specifying both the binary process and the count process correctly. Often than not, we don’t have a model for the binary process. Many people simply use the same explanatory variables for both processes. We simulate both situations. Case 1: suppose we observe &lt;span class=&#34;math inline&#34;&gt;\(z\)&lt;/span&gt;, and case 2: suppose we don’t observe &lt;span class=&#34;math inline&#34;&gt;\(z\)&lt;/span&gt;. In the graph below, they are labeled zip1 and zip2.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;poisson-model&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Poisson model&lt;/h2&gt;
+&lt;p&gt;A plain Poisson model returns a consistent estimator for the coefficients, with or without Poisson-distributed data. We expect Poisson model’s performance improve with sample size. Note that the standard errors from a Poisson model needs adjustment, which we do not discuss in this post.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;nb-model&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;NB model&lt;/h2&gt;
+&lt;p&gt;NB model is used widely to handle “overdispersion” problem. That is, the variance far exceeds the mean, therefore the Poisson model is considered inappropriate. NB model addresses that by allowing an extra parameter. However, many people also use it to model “extra zero” situation, we’ll see in our simulation it may not be better than a plain Poisson model.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;log-linear-model&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Log-linear model&lt;/h2&gt;
+&lt;p&gt;What about an OLS model with &lt;span class=&#34;math inline&#34;&gt;\(log(y+1)\)&lt;/span&gt;?&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;hurdle-model&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;hurdle model&lt;/h2&gt;
+&lt;p&gt;A hurdle model models the zero’s and other values separately; that is, the zero’s are from a binomial process only, the other positive values are from a truncated count data process. We assume here, in the simulation, we don’t observe &lt;span class=&#34;math inline&#34;&gt;\(z\)&lt;/span&gt;. Therefore, &lt;span class=&#34;math inline&#34;&gt;\(x\)&lt;/span&gt; is determining both binary and count processes. In the graph below, it’s labeled hurdle.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(MASS)
+library(pscl)
+library(msm)
+require(snowfall)
+set.seed(666)
+
+# initialize parallel cores.
+sfInit( parallel=TRUE, cpus=12)
+
+
+gen.sim &amp;lt;- function(df){
+    z &amp;lt;- rnorm(df[&amp;#39;nobs&amp;#39;],0,1)
+    x &amp;lt;- rnorm(df[&amp;#39;nobs&amp;#39;],0,1)
+    u &amp;lt;- rnorm(df[&amp;#39;nobs&amp;#39;],0,1)
+ #generate count data
+    log.mu &amp;lt;- 2*x + u
+    y.count &amp;lt;- floor(exp(log.mu))
+
+   # generate bernoulli data
+    z1 &amp;lt;- 4*z + df[&amp;#39;th&amp;#39;]
+    prob &amp;lt;- exp(z1)/(1+exp(z1))
+    y.logit &amp;lt;- rbinom(df[&amp;#39;nobs&amp;#39;],size=1,prob=prob)
+
+    # zero-inflated poisson
+    y &amp;lt;- ifelse(y.logit==1, y.count,y.logit)
+    m1 &amp;lt;- zeroinfl(y ~ x | z)
+    m1.x &amp;lt;- summary(m1)$coefficients$count[&amp;#39;x&amp;#39;,&amp;#39;Estimate&amp;#39;]-2
+    # zero-inflated without a z
+    m4 &amp;lt;- zeroinfl(y ~ x | x)
+    m4.x &amp;lt;- summary(m4)$coefficients$count[&amp;#39;x&amp;#39;,&amp;#39;Estimate&amp;#39;]-2
+
+    # poisson
+    m2 &amp;lt;- glm(y ~ x, family = &amp;quot;poisson&amp;quot;)
+    m2.x &amp;lt;- summary(m2)$coefficients[&amp;#39;x&amp;#39;,&amp;#39;Estimate&amp;#39;]-2
+    # log linear with plus 1
+    y.plus1 &amp;lt;- y +1
+    m3 &amp;lt;- lm(log(y.plus1) ~ x)
+    m3.x &amp;lt;- exp(summary(m3)$coefficients[&amp;#39;x&amp;#39;,&amp;#39;Estimate&amp;#39;])-2
+    #
+    #
+    # negative binomial
+#    m5.x &amp;lt;- tryCatch(nb1(y ~ x), error=function(e) NA)
+    m5 &amp;lt;- glm(y ~ x, family=negative.binomial(2))
+    m5.x &amp;lt;- summary(m5)$coefficients[&amp;#39;x&amp;#39;,&amp;#39;Estimate&amp;#39;]-2
+    # hurdle model
+    m6 &amp;lt;- hurdle(y ~ x)
+#    m5 &amp;lt;- glm(y ~ x, family=negative.binomial(2))
+    m6.x &amp;lt;- summary(m6)$coefficients$count[&amp;#39;x&amp;#39;,&amp;#39;Estimate&amp;#39;]-2
+
+
+    return(c(zip1=m1.x, poisson=m2.x, log.linear=m3.x, zip2=m4.x, nb=m5.x, hurdle=m6.x))
+}
+
+
+# set parameter space
+sim.grid = seq(1,100,1)
+th.grid = seq(-4, 4, 2)
+nobs.grid = ceiling(exp(seq(4,9,1))/100)*100
+
+data.grid &amp;lt;- expand.grid(nobs.grid, sim.grid, th.grid)
+names(data.grid) &amp;lt;- c(&amp;#39;nobs&amp;#39;, &amp;#39;nsim&amp;#39;,&amp;#39;th&amp;#39;)
+
+# export functions to the slaves
+# export data to the slaves if necessary
+sfExport(list=list(&amp;quot;gen.sim&amp;quot;))
+
+# export function to the slaves
+sfLibrary(msm)
+sfLibrary(pscl)
+
+results &amp;lt;- data.frame(t(sfApply(data.grid, 1, gen.sim)))
+
+# stop the cluster
+sfStop()
+
+forshiny &amp;lt;- cbind(data.grid, results)
+# write out for use in shiny.
+# write.csv(forshiny, &amp;#39;results.csv&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Count data models can be used even if data is not “counts”; for example, some positive non-integer numbers. In fact, Poisson model is consistent even if data is not Poisson-distributed, if the model specification is correct on modeling the log of expected counts. We simulate both scenarios: Case 1, data is generated from a Poisson process. Case 2, data is generated from a Normal distribution, but we use count data models to model it. The above code is for case 2.&lt;/p&gt;
+&lt;p&gt;We simulate 100 times with &lt;span class=&#34;math inline&#34;&gt;\(\theta\)&lt;/span&gt; ranging from -4 to 4, lower number means higher percentage of zeros; number of observations from &lt;span class=&#34;math inline&#34;&gt;\(e^4\)&lt;/span&gt; to &lt;span class=&#34;math inline&#34;&gt;\(e^9\)&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;Since there are many simulations, we used “snowfall” library to speed things up.&lt;/p&gt;
+&lt;p&gt;For raw code, please visit &lt;a href=&#34;https://github.com/xiangao/poisson&#34;&gt;case1: poisson&lt;/a&gt; and &lt;a href=&#34;https://github.com/xiangao/poisson2&#34;&gt;case2: normal&lt;/a&gt;.&lt;/p&gt;
+&lt;center&gt;
+&lt;iframe src=&#34;https://xiangao.shinyapps.io/poisson/&#34; style=&#34;border: none; width: 700px; height: 800px;&#34;&gt;
+&lt;/iframe&gt;
+&lt;/center&gt;
+&lt;center&gt;
+&lt;iframe src=&#34;https://xiangao.shinyapps.io/poisson2/&#34; style=&#34;border: none; width: 700px; height: 800px;&#34;&gt;
+&lt;/iframe&gt;
+&lt;/center&gt;
+&lt;p&gt;In the graph, there are two vertical lines. The lighter one is the bias, the other one is MSE.&lt;/p&gt;
+&lt;p&gt;If we can compare the situations that data generated from Poisson process and normal process, we can see using count data models to model normal distributed data is still valid, just with bigger standard deviations. With large sample, actually Poisson model out-performs NB, and Log-linear model, without having to model the extra zeros. NB model does not do well, in general. Log-linear model is the worst. Zero-inflated Poisson with correct specification of the binary process performs the best, naturally. But that relies on correct specification of the binary process, which is not always realistic. Zero-inflated Poisson or hurdle model without correct specification of the binary process are not too bad, especially when sample size is large. These two are very close since only the difference between the two is that hurdle is modeling all zeros from binary process and all positive numbers from count data process; while zip2 is modeling some zeros (probably most) from binary process and all other values (including some zeros) from a Poisson process.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>A comparison of Lewbel model vs. OLS and TSLS</title>
+      <link>https://hbs-rcs.github.io/post/2014-09-12-lewbel-vs-ols-vs-tsls/</link>
+      <pubDate>Fri, 12 Sep 2014 00:00:00 +0000</pubDate>
+      <guid>https://hbs-rcs.github.io/post/2014-09-12-lewbel-vs-ols-vs-tsls/</guid>
+      <description>
+&lt;script src=&#34;https://hbs-rcs.github.io/post/2014-09-12-lewbel-vs-ols-vs-tsls/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;This post is inspired by &lt;a href=&#34;http://diffuseprior.wordpress.com/2014/05/15/the-ivlewbel-package-a-new-way-to-tackle-endogenous-regressor-models/&#34;&gt;diffuse prior&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://www2.bc.edu/~lewbel/simhet16.pdf&#34;&gt;Lewbel’s 2012 paper&lt;/a&gt; proposed an estimator based on heteroscedasticity to address the problem of endogeneity without an instrument. This problem has been an issue for many (maybe most) empirical researchers with observational data. People are challenged with endogeneity and they have difficulty locating a valid instrument (who doesn’t?).&lt;/p&gt;
+&lt;p&gt;Using the “ivlewbel” package in R, I compare the performance of Lewbel’s estimator with OLS and TSLS (two stage least square) estimators, with different values of sample size, and heteroscedasticity.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(ivlewbel)
+require(snowfall)
+set.seed(666)
+
+## initialize parallel cores.
+sfInit( parallel=TRUE, cpus=12)
+
+gen.sim &amp;lt;- function(df){
+    k &amp;lt;- df[&amp;#39;k&amp;#39;]
+    nobs &amp;lt;- df[&amp;#39;nobs&amp;#39;]
+    x&amp;lt;-runif(nobs, min=-1, max=1)
+    u &amp;lt;- rnorm(nobs,0,1)
+    u1 &amp;lt;- rnorm(nobs,0,1)
+    u2 &amp;lt;- rnorm(nobs,0,1)
+    x1 &amp;lt;-runif(nobs, min=-1, max=1)
+    x2 &amp;lt;- rnorm(nobs,0,1)
+    z &amp;lt;- rnorm(nobs,0,1)
+    e1 = exp(.3*k*(x+x1))*u1
+    e2 = u2
+
+    ## y1 is the endogenous variable; z is the instrument; x1 is
+    ## omitted but determines heteroskedasticity of y1; e1 e2 are
+    ## correlated because of common factor of u; x is the only
+    ## observed exogenous variable.  The true coefficient on y1 should
+    ## be 1.  lewbel model use x as both the exogenous variable and
+    ## the heteroscedasticity factor.  tsls assumes we have an
+    ## instrument z.  k is to adjust for degree of heteroscedasticity.
+    y1 = 1 + z + x + x1 +  e1
+    y2 = 1 + y1  + x + x1 +  e2
+    data = data.frame(y2, y1, x1, x2, z, x)
+
+    lewbel.model &amp;lt;- lewbel(formula = y2 ~ y1  | x   | x  , data = data)
+    lm.model &amp;lt;- lm(y2 ~ y1 + x, data=data)
+    tsls.model &amp;lt;- tsls(y2 ~ y1 + x   , ~ z + x  , data=data)
+
+    lm.y1 &amp;lt;- summary(lm.model)$coefficients[&amp;#39;y1&amp;#39;,&amp;#39;Estimate&amp;#39;]-1
+    tsls.y1 &amp;lt;- tsls.model$coefficients[&amp;#39;y1&amp;#39;]-1
+    lewbel.y1 &amp;lt;- lewbel.model$coef.est[&amp;#39;y1&amp;#39;, &amp;#39;Estimate&amp;#39;]-1
+    return(c(lm=lm.y1, lewbel=lewbel.y1,tsls=tsls.y1))
+}
+
+
+## set parameter space
+sim.grid = seq(1,100,1)
+k.grid=seq(1,10,1)
+nobs.grid = ceiling(exp(seq(4, 8, 1))/100)*100
+data.grid &amp;lt;- expand.grid(nobs.grid, sim.grid, k.grid)
+names(data.grid) &amp;lt;- c(&amp;#39;nobs&amp;#39;, &amp;#39;nsim&amp;#39;, &amp;#39;k&amp;#39;)
+
+## export functions to the slaves
+## export data to the slaves if necessary
+sfExport(list=list(&amp;quot;gen.sim&amp;quot;))
+
+## export function to the slaves
+sfLibrary(ivlewbel)
+
+## parallel computing
+results &amp;lt;- data.frame(t(sfApply(data.grid, 1, gen.sim)))
+
+## stop the cluster
+sfStop()
+
+names(results) &amp;lt;- c(&amp;#39;lm&amp;#39;,&amp;#39;lewbel&amp;#39;,&amp;#39;tsls&amp;#39;)
+forshiny &amp;lt;- cbind(data.grid, results)
+## write out for use in shiny.
+## write.csv(forshiny, &amp;#39;results.csv&amp;#39;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The data generating processes in this simulation study are: &lt;span class=&#34;math display&#34;&gt;\[y_2\]&lt;/span&gt; is the dependent variable.&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
+y_2 = y_1 + x + x_1 + e_2
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
+y_1 = z + x + x_1 + e_1
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Here &lt;span class=&#34;math display&#34;&gt;\[e_1\]&lt;/span&gt; and &lt;span class=&#34;math display&#34;&gt;\[e_2\]&lt;/span&gt; are the error terms. Among the independent variables of &lt;span class=&#34;math display&#34;&gt;\[y_2\]&lt;/span&gt;, &lt;span class=&#34;math display&#34;&gt;\[x\]&lt;/span&gt; is observed; &lt;span class=&#34;math display&#34;&gt;\[x_1\]&lt;/span&gt; is unobserved, &lt;span class=&#34;math display&#34;&gt;\[z\]&lt;/span&gt; is the intended instruments. &lt;span class=&#34;math display&#34;&gt;\[y_1\]&lt;/span&gt; is the endogenous variable, since it’s determined by &lt;span class=&#34;math display&#34;&gt;\[x_1\]&lt;/span&gt;, and &lt;span class=&#34;math display&#34;&gt;\[x_1\]&lt;/span&gt; is part of &lt;span class=&#34;math display&#34;&gt;\[y_2\]&lt;/span&gt;’s error term since &lt;span class=&#34;math display&#34;&gt;\[x_1\]&lt;/span&gt; is unobserved. If we have &lt;span class=&#34;math display&#34;&gt;\[z\]&lt;/span&gt;, then we can use TSLS to estimate the model. If not, then we’ll try Lewbel’s model to see if it works.&lt;/p&gt;
+&lt;p&gt;The ‘gen_sim’ function returns the three estimates (OLS, TSLS and Lewbel). &lt;span class=&#34;math display&#34;&gt;\[e_1\]&lt;/span&gt; is assumed to have some degree of heteroscedasticity:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
+e_1 = e^{0.3*k*(x+x_1)}*u_1
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;where &lt;span class=&#34;math display&#34;&gt;\[u_1\]&lt;/span&gt; is a standard normal variable. &lt;span class=&#34;math display&#34;&gt;\[k\]&lt;/span&gt; is a variable used to adjust for degree of heteroscedasticity. Here we assume we know a variable that determines the heteroscedasticity: &lt;span class=&#34;math display&#34;&gt;\[x\]&lt;/span&gt;. But &lt;span class=&#34;math display&#34;&gt;\[x_1\]&lt;/span&gt; remains unobserved.&lt;/p&gt;
+&lt;p&gt;We then simulate 100 times with &lt;span class=&#34;math display&#34;&gt;\[k\]&lt;/span&gt; ranging from 1 to 10; number of observations from &lt;span class=&#34;math display&#34;&gt;\[e^4\]&lt;/span&gt; to &lt;span class=&#34;math display&#34;&gt;\[e^8\]&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;Since there are many simulations, we used “snowfall” library to speed things up.&lt;/p&gt;
+&lt;p&gt;For raw code, please visit &lt;a href=&#34;https://github.com/xiangao/lewbel2&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;center&gt;
+&lt;iframe src=&#34;https://xiangao.shinyapps.io/lewbel2/&#34; style=&#34;border: none; width: 700px; height: 700px;&#34;&gt;
+&lt;/iframe&gt;
+&lt;/center&gt;
+&lt;p&gt;We can see at moderate degree of heteroscedasticity, Lewbel’s estimator performs well, at reasonably large sample size. TSLS performs well since we assume we observe &lt;span class=&#34;math display&#34;&gt;\[z\]&lt;/span&gt;. At very high degree of heteroscedasticity, both OLS and Lewbel’s estimator perform well. My explanation is that when there is very high degree of heteroscedasticity, heteroscedasticity just outplays endogeneity so that OLS’ bias goes down (since we know that OLS under heteroscedasticity is consistent.), with large sample size.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

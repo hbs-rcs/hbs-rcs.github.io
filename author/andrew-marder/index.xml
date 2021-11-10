@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Andrew Marder | HBS Research Computing Services Blog</title>
+    <link>https://hbs-rcs.github.io/author/andrew-marder/</link>
+      <atom:link href="https://hbs-rcs.github.io/author/andrew-marder/index.xml" rel="self" type="application/rss+xml" />
+    <description>Andrew Marder</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Thu, 08 Aug 2019 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://hbs-rcs.github.io/media/icon_hua2ec155b4296a9c9791d015323e16eb5_11927_512x512_fill_lanczos_center_3.png</url>
+      <title>Andrew Marder</title>
+      <link>https://hbs-rcs.github.io/author/andrew-marder/</link>
+    </image>
+    
+    <item>
+      <title>Web Scraping in R</title>
+      <link>https://hbs-rcs.github.io/post/2019-08-08-web-scraping-in-r/</link>
+      <pubDate>Thu, 08 Aug 2019 00:00:00 +0000</pubDate>
+      <guid>https://hbs-rcs.github.io/post/2019-08-08-web-scraping-in-r/</guid>
+      <description>
+
+
+&lt;p&gt;Let’s walk through some steps for web scraping with R. On &lt;a href=&#34;https://en.wikipedia.org/wiki/Visa_requirements_for_United_States_citizens&#34;&gt;this Wikipedia page&lt;/a&gt; there is a table of visa requirements that I want to scrape. Let’s use the &lt;a href=&#34;https://github.com/hadley/rvest&#34;&gt;rvest&lt;/a&gt; package to get the HTML associated with that page:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(rvest)
+
+html &amp;lt;- read_html(&amp;quot;https://en.wikipedia.org/wiki/Visa_requirements_for_United_States_citizens&amp;quot;)
+html&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## {html_document}
+## &amp;lt;html class=&amp;quot;client-nojs&amp;quot; lang=&amp;quot;en&amp;quot; dir=&amp;quot;ltr&amp;quot;&amp;gt;
+## [1] &amp;lt;head&amp;gt;\n&amp;lt;meta http-equiv=&amp;quot;Content-Type&amp;quot; content=&amp;quot;text/html; charset= ...
+## [2] &amp;lt;body class=&amp;quot;mediawiki ltr sitedir-ltr mw-hide-empty-elt ns-0 ns-sub ...&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now let’s use the &lt;code&gt;html_nodes()&lt;/code&gt; function to extract the table of interest. I used Chrome’s Developer Tools to get the XPath of the table (see notes at the end of the post on how to do it):&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;referenced_by &amp;lt;- html_node(html, xpath=&amp;#39;//*[@id=&amp;quot;mw-content-text&amp;quot;]/div/table[1]&amp;#39;)
+referenced_by&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## {html_node}
+## &amp;lt;table class=&amp;quot;sortable wikitable&amp;quot;&amp;gt;
+## [1] &amp;lt;tbody&amp;gt;\n&amp;lt;tr&amp;gt;\n&amp;lt;th style=&amp;quot;width:18%;&amp;quot;&amp;gt;Country\n&amp;lt;/th&amp;gt;\n&amp;lt;th style=&amp;quot;wid ...&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now let’s convert that HTML table into a data frame.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;visa_requirements &amp;lt;- html_table(referenced_by)
+head(visa_requirements[,1:3])&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##               Country          Visa requirement     Allowed stay
+## 1         Afghanistan       Visa required[2][3]                 
+## 2             Albania   Visa not required[5][6]        1 year[7]
+## 3             Algeria       Visa required[8][9]                 
+## 4             Andorra     Visa not required[10] 3 months[11][12]
+## 5              Angola         eVisa[13][14][15]          30 days
+## 6 Antigua and Barbuda Visa not required[18][19]     6 months[20]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Finally, we can clean footnote references from columns 2 and 3 using &lt;code&gt;gsub()&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;visa_requirements &amp;lt;- html_table(referenced_by)
+visa_requirements$`Visa requirement` &amp;lt;- gsub(&amp;quot;\\[.*&amp;quot;,&amp;quot;&amp;quot;,visa_requirements$`Visa requirement`)
+visa_requirements$`Allowed stay` &amp;lt;-  gsub(&amp;quot;\\[.*&amp;quot;,&amp;quot;&amp;quot;,visa_requirements$`Allowed stay`)
+head(visa_requirements[,1:3])&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##               Country  Visa requirement Allowed stay
+## 1         Afghanistan     Visa required             
+## 2             Albania Visa not required       1 year
+## 3             Algeria     Visa required             
+## 4             Andorra Visa not required     3 months
+## 5              Angola             eVisa      30 days
+## 6 Antigua and Barbuda Visa not required     6 months&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We’ve only scratched the surface here, but hope this example shows off the convenience of the &lt;code&gt;rvest&lt;/code&gt; package.&lt;/p&gt;
+&lt;p&gt;Notes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Chrome’s Developer Tools can be launched by right-clicking on the page and selecting Inspect. Then, mouse over the html code listed under elements and find a place that highlights the table of interest on the right. Then right-click again, select Copy -&amp;gt; Copy XPath.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;If writing custom scraping scripts in R is not the route you’d want to take, our team has recently discovered a very nice and flexible commercial tool &lt;a href=&#34;https://www.mozenda.com/&#34;&gt;Mozenda&lt;/a&gt;. As of 8/8/2019, they offer a 30-day trial of a full product.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

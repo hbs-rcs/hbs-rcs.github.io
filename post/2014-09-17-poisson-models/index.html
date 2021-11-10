@@ -1,0 +1,1259 @@
+<!DOCTYPE html><html lang="en-us" >
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  
+  
+    <meta name="generator" content="Wowchemy 5.3.0 for Hugo" />
+  
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  
+
+  
+  
+  
+    
+  
+  <meta name="description" content="In empirical studies, data sets with a lot of zeros are often hard to model. There are various models to deal with it: zero-inflated Poisson model, Negative Binomial (NB)model, hurdle model, etc." />
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://hbs-rcs.github.io/post/2014-09-17-poisson-models/" />
+
+  
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  
+
+  
+  
+  
+    <meta name="theme-color" content="#1565c0" />
+  
+
+  
+  
+    
+    <script src="/js/mathjax-config.js"></script>
+  
+
+  
+
+  <link rel="stylesheet" href="/css/vendor-bundle.min.f1ecf783c14edc00c9320c205831ad8e.css" media="print" onload="this.media='all'">
+
+  
+  
+  
+    
+    
+
+    
+    
+    
+    
+      
+      
+    
+    
+    
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/styles/github.min.css" crossorigin="anonymous" title="hl-light" media="print" onload="this.media='all'">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" media="print" onload="this.media='all'" disabled>
+        
+      
+    
+
+    
+    
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.min.css" integrity="sha512-1xoFisiGdy9nvho8EgXuXvnpR5GAMSjFwp40gSRE3NwdUdIMIKuPa7bqoUhLD0O/5tPNhteAsE5XyyMi5reQVA==" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+
+    
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+  
+
+  
+  
+  
+    
+      
+      <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono&family=Roboto:wght@400;700&display=swap">
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono&family=Roboto:wght@400;700&display=swap" media="print" onload="this.media='all'">
+    
+  
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/wowchemy.9f457a613f02e9027025db7311c58ccf.css" />
+
+  
+
+
+
+  
+
+  
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+    <link rel="manifest" href="/manifest.webmanifest" />
+  
+
+  <link rel="icon" type="image/png" href="/media/icon_hua2ec155b4296a9c9791d015323e16eb5_11927_32x32_fill_lanczos_center_3.png" />
+  <link rel="apple-touch-icon" type="image/png" href="/media/icon_hua2ec155b4296a9c9791d015323e16eb5_11927_180x180_fill_lanczos_center_3.png" />
+
+  <link rel="canonical" href="https://hbs-rcs.github.io/post/2014-09-17-poisson-models/" />
+
+  
+  
+  
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary" />
+  
+  <meta property="og:site_name" content="HBS Research Computing Services Blog" />
+  <meta property="og:url" content="https://hbs-rcs.github.io/post/2014-09-17-poisson-models/" />
+  <meta property="og:title" content="A comparison of various count data models with extra zeros | HBS Research Computing Services Blog" />
+  <meta property="og:description" content="In empirical studies, data sets with a lot of zeros are often hard to model. There are various models to deal with it: zero-inflated Poisson model, Negative Binomial (NB)model, hurdle model, etc." /><meta property="og:image" content="https://hbs-rcs.github.io/media/icon_hua2ec155b4296a9c9791d015323e16eb5_11927_512x512_fill_lanczos_center_3.png" />
+    <meta property="twitter:image" content="https://hbs-rcs.github.io/media/icon_hua2ec155b4296a9c9791d015323e16eb5_11927_512x512_fill_lanczos_center_3.png" /><meta property="og:locale" content="en-us" />
+  
+    
+      <meta
+        property="article:published_time"
+        content="2014-09-17T00:00:00&#43;00:00"
+      />
+    
+    <meta property="article:modified_time" content="2014-09-17T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://hbs-rcs.github.io/post/2014-09-17-poisson-models/"
+  },
+  "headline": "A comparison of various count data models with extra zeros",
+  
+  "datePublished": "2014-09-17T00:00:00Z",
+  "dateModified": "2014-09-17T00:00:00Z",
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "HBS Research Computing Services Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://hbs-rcs.github.io/media/icon_hua2ec155b4296a9c9791d015323e16eb5_11927_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "In empirical studies, data sets with a lot of zeros are often hard to model. There are various models to deal with it: zero-inflated Poisson model, Negative Binomial (NB)model, hurdle model, etc."
+}
+</script>
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+  <title>A comparison of various count data models with extra zeros | HBS Research Computing Services Blog</title>
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="page-wrapper   " data-wc-page-id="3bedbb6880b8eca22008d2398395933c" >
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <script src="/js/wowchemy-init.min.8988fb2a4bba758785868cfcb5244555.js"></script>
+
+  
+
+
+<aside class="search-modal" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#" aria-label="Close"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control"
+        aria-label="Search...">
+        
+      </div>
+
+      
+      
+
+      
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+
+  <div class="page-header">
+    
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container-xl">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">HBS Research Computing Services Blog</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">HBS Research Computing Services Blog</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://www.hbs.edu/research-computing-services/about-us/" target="_blank" rel="noopener"><span>About</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+            
+            
+            
+              
+            
+            
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#posts"><span>Posts</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://www.hbs.edu/research-computing-services/faculty-projects/" target="_blank" rel="noopener"><span>Projects</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://www.hbs.edu/research-computing-services/training/" target="_blank" rel="noopener"><span>Events</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://www.hbs.edu/research-computing-services/contact-us/" target="_blank" rel="noopener"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+
+      
+      
+
+      
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#" aria-label="Search"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+      
+      <li class="nav-item dropdown theme-dropdown">
+        <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-label="Display preferences">
+          <i class="fas fa-moon" aria-hidden="true"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a href="#" class="dropdown-item js-set-theme-light">
+            <span>Light</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-dark">
+            <span>Dark</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-auto">
+            <span>Automatic</span>
+          </a>
+        </div>
+      </li>
+      
+
+      
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  </div>
+
+  <div class="page-body">
+    <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>A comparison of various count data models with extra zeros</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Sep 17, 2014
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    5 min read
+  </span>
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+
+</div>
+
+    
+
+
+
+
+
+  
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      
+<script src="https://hbs-rcs.github.io/post/2014-09-17-poisson-models/index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>In empirical studies, data sets with a lot of zeros are often hard to model. There are various models to deal with it: zero-inflated Poisson model, Negative Binomial (NB)model, hurdle model, etc.</p>
+<p>Here we are following a zero-inflated model’s thinking: model the data with two processes. One is a Bernoulli process, the other one is a count data process (Poisson or NB).</p>
+<p>We’d like to see, in this simulation exercise, how different models perform with changes of sample size and percentage of zeros (we expect the less zero, the better a plain Poisson model would perform). Therefore we vary sample size <span class="math inline">\(n\)</span> and an indicator of how much percentage of zeros in the data <span class="math inline">\(\theta\)</span>.</p>
+<p>For the count data process (<span class="math inline">\(y_c\)</span>):</p>
+<p><span class="math display">\[
+log(y_c) = 2 x + u
+\]</span></p>
+<p>For the Bernoulli process (<span class="math inline">\(y_b\)</span>):</p>
+<p><span class="math display">\[
+z_1 = 4 z + \theta
+\]</span></p>
+<p><span class="math display">\[
+logit(y_b) = z_1
+\]</span></p>
+<p><span class="math display">\[
+p_y = \frac{e^{z_1}}{1+e^{z_1}}
+\]</span></p>
+<p>Combining these two processes:</p>
+<p><span class="math display">\[
+y = y_c \ \text{if} \ p_y=1
+\]</span></p>
+<p><span class="math display">\[
+y = y_b \ \text{if} \ p_y=0
+\]</span></p>
+<div id="zero-inflated-poisson-models" class="section level2">
+<h2>Zero-inflated Poisson models</h2>
+<p>A zero-inflated Poisson needs specifying both the binary process and the count process correctly. Often than not, we don’t have a model for the binary process. Many people simply use the same explanatory variables for both processes. We simulate both situations. Case 1: suppose we observe <span class="math inline">\(z\)</span>, and case 2: suppose we don’t observe <span class="math inline">\(z\)</span>. In the graph below, they are labeled zip1 and zip2.</p>
+</div>
+<div id="poisson-model" class="section level2">
+<h2>Poisson model</h2>
+<p>A plain Poisson model returns a consistent estimator for the coefficients, with or without Poisson-distributed data. We expect Poisson model’s performance improve with sample size. Note that the standard errors from a Poisson model needs adjustment, which we do not discuss in this post.</p>
+</div>
+<div id="nb-model" class="section level2">
+<h2>NB model</h2>
+<p>NB model is used widely to handle “overdispersion” problem. That is, the variance far exceeds the mean, therefore the Poisson model is considered inappropriate. NB model addresses that by allowing an extra parameter. However, many people also use it to model “extra zero” situation, we’ll see in our simulation it may not be better than a plain Poisson model.</p>
+</div>
+<div id="log-linear-model" class="section level2">
+<h2>Log-linear model</h2>
+<p>What about an OLS model with <span class="math inline">\(log(y+1)\)</span>?</p>
+</div>
+<div id="hurdle-model" class="section level2">
+<h2>hurdle model</h2>
+<p>A hurdle model models the zero’s and other values separately; that is, the zero’s are from a binomial process only, the other positive values are from a truncated count data process. We assume here, in the simulation, we don’t observe <span class="math inline">\(z\)</span>. Therefore, <span class="math inline">\(x\)</span> is determining both binary and count processes. In the graph below, it’s labeled hurdle.</p>
+<pre class="r"><code>library(MASS)
+library(pscl)
+library(msm)
+require(snowfall)
+set.seed(666)
+
+# initialize parallel cores.
+sfInit( parallel=TRUE, cpus=12)
+
+
+gen.sim &lt;- function(df){
+    z &lt;- rnorm(df[&#39;nobs&#39;],0,1)
+    x &lt;- rnorm(df[&#39;nobs&#39;],0,1)
+    u &lt;- rnorm(df[&#39;nobs&#39;],0,1)
+ #generate count data
+    log.mu &lt;- 2*x + u
+    y.count &lt;- floor(exp(log.mu))
+
+   # generate bernoulli data
+    z1 &lt;- 4*z + df[&#39;th&#39;]
+    prob &lt;- exp(z1)/(1+exp(z1))
+    y.logit &lt;- rbinom(df[&#39;nobs&#39;],size=1,prob=prob)
+
+    # zero-inflated poisson
+    y &lt;- ifelse(y.logit==1, y.count,y.logit)
+    m1 &lt;- zeroinfl(y ~ x | z)
+    m1.x &lt;- summary(m1)$coefficients$count[&#39;x&#39;,&#39;Estimate&#39;]-2
+    # zero-inflated without a z
+    m4 &lt;- zeroinfl(y ~ x | x)
+    m4.x &lt;- summary(m4)$coefficients$count[&#39;x&#39;,&#39;Estimate&#39;]-2
+
+    # poisson
+    m2 &lt;- glm(y ~ x, family = &quot;poisson&quot;)
+    m2.x &lt;- summary(m2)$coefficients[&#39;x&#39;,&#39;Estimate&#39;]-2
+    # log linear with plus 1
+    y.plus1 &lt;- y +1
+    m3 &lt;- lm(log(y.plus1) ~ x)
+    m3.x &lt;- exp(summary(m3)$coefficients[&#39;x&#39;,&#39;Estimate&#39;])-2
+    #
+    #
+    # negative binomial
+#    m5.x &lt;- tryCatch(nb1(y ~ x), error=function(e) NA)
+    m5 &lt;- glm(y ~ x, family=negative.binomial(2))
+    m5.x &lt;- summary(m5)$coefficients[&#39;x&#39;,&#39;Estimate&#39;]-2
+    # hurdle model
+    m6 &lt;- hurdle(y ~ x)
+#    m5 &lt;- glm(y ~ x, family=negative.binomial(2))
+    m6.x &lt;- summary(m6)$coefficients$count[&#39;x&#39;,&#39;Estimate&#39;]-2
+
+
+    return(c(zip1=m1.x, poisson=m2.x, log.linear=m3.x, zip2=m4.x, nb=m5.x, hurdle=m6.x))
+}
+
+
+# set parameter space
+sim.grid = seq(1,100,1)
+th.grid = seq(-4, 4, 2)
+nobs.grid = ceiling(exp(seq(4,9,1))/100)*100
+
+data.grid &lt;- expand.grid(nobs.grid, sim.grid, th.grid)
+names(data.grid) &lt;- c(&#39;nobs&#39;, &#39;nsim&#39;,&#39;th&#39;)
+
+# export functions to the slaves
+# export data to the slaves if necessary
+sfExport(list=list(&quot;gen.sim&quot;))
+
+# export function to the slaves
+sfLibrary(msm)
+sfLibrary(pscl)
+
+results &lt;- data.frame(t(sfApply(data.grid, 1, gen.sim)))
+
+# stop the cluster
+sfStop()
+
+forshiny &lt;- cbind(data.grid, results)
+# write out for use in shiny.
+# write.csv(forshiny, &#39;results.csv&#39;)</code></pre>
+<p>Count data models can be used even if data is not “counts”; for example, some positive non-integer numbers. In fact, Poisson model is consistent even if data is not Poisson-distributed, if the model specification is correct on modeling the log of expected counts. We simulate both scenarios: Case 1, data is generated from a Poisson process. Case 2, data is generated from a Normal distribution, but we use count data models to model it. The above code is for case 2.</p>
+<p>We simulate 100 times with <span class="math inline">\(\theta\)</span> ranging from -4 to 4, lower number means higher percentage of zeros; number of observations from <span class="math inline">\(e^4\)</span> to <span class="math inline">\(e^9\)</span>.</p>
+<p>Since there are many simulations, we used “snowfall” library to speed things up.</p>
+<p>For raw code, please visit <a href="https://github.com/xiangao/poisson">case1: poisson</a> and <a href="https://github.com/xiangao/poisson2">case2: normal</a>.</p>
+<center>
+<iframe src="https://xiangao.shinyapps.io/poisson/" style="border: none; width: 700px; height: 800px;">
+</iframe>
+</center>
+<center>
+<iframe src="https://xiangao.shinyapps.io/poisson2/" style="border: none; width: 700px; height: 800px;">
+</iframe>
+</center>
+<p>In the graph, there are two vertical lines. The lighter one is the bias, the other one is MSE.</p>
+<p>If we can compare the situations that data generated from Poisson process and normal process, we can see using count data models to model normal distributed data is still valid, just with bigger standard deviations. With large sample, actually Poisson model out-performs NB, and Log-linear model, without having to model the extra zeros. NB model does not do well, in general. Log-linear model is the worst. Zero-inflated Poisson with correct specification of the binary process performs the best, naturally. But that relies on correct specification of the binary process, which is not always realistic. Zero-inflated Poisson or hurdle model without correct specification of the binary process are not too bad, especially when sample size is large. These two are very close since only the difference between the two is that hurdle is modeling all zeros from binary process and all positive numbers from count data process; while zip2 is modeling some zeros (probably most) from binary process and all other values (including some zeros) from a Poisson process.</p>
+</div>
+
+    </div>
+
+    
+
+
+
+
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tag/statistics/">statistics</a>
+  
+</div>
+
+
+
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://hbs-rcs.github.io/post/2014-09-17-poisson-models/&amp;text=A%20comparison%20of%20various%20count%20data%20models%20with%20extra%20zeros" target="_blank" rel="noopener" class="share-btn-twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://hbs-rcs.github.io/post/2014-09-17-poisson-models/&amp;t=A%20comparison%20of%20various%20count%20data%20models%20with%20extra%20zeros" target="_blank" rel="noopener" class="share-btn-facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=A%20comparison%20of%20various%20count%20data%20models%20with%20extra%20zeros&amp;body=https://hbs-rcs.github.io/post/2014-09-17-poisson-models/" target="_blank" rel="noopener" class="share-btn-email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://hbs-rcs.github.io/post/2014-09-17-poisson-models/&amp;title=A%20comparison%20of%20various%20count%20data%20models%20with%20extra%20zeros" target="_blank" rel="noopener" class="share-btn-linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=A%20comparison%20of%20various%20count%20data%20models%20with%20extra%20zeros%20https://hbs-rcs.github.io/post/2014-09-17-poisson-models/" target="_blank" rel="noopener" class="share-btn-whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=https://hbs-rcs.github.io/post/2014-09-17-poisson-models/&amp;title=A%20comparison%20of%20various%20count%20data%20models%20with%20extra%20zeros" target="_blank" rel="noopener" class="share-btn-weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <a href="https://hbs-rcs.github.io"><img class="avatar mr-3 avatar-circle" src="/author/avatar_hu52a603635ecebd45650b162dadabb4e5_12861_270x270_fill_q75_lanczos_center.jpg" alt=""></a>
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://hbs-rcs.github.io"></a></h5>
+      <h6 class="card-subtitle">Senior Statistician / Data Scientist</h6>
+      <p class="card-text">I enjoy statistics and programming.</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/2017-03-01-causal_tmle/">Use machine learning for causal effect in observational study</a></li>
+      
+      <li><a href="/post/2017-02-16-nonlinear_interaction/">Interaction term in a non-linear model</a></li>
+      
+      <li><a href="/post/2017-02-16-interpret_interaction/">Interpreting interaction term in a regression model</a></li>
+      
+      <li><a href="/post/2017-02-16-margins_nonlinear/">Marginal effects in models with fixed effects</a></li>
+      
+      <li><a href="/post/2014-09-12-lewbel-vs-ols-vs-tsls/">A comparison of Lewbel model vs. OLS and TSLS</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+
+
+  </div>
+</article>
+  </div>
+
+  <div class="page-footer">
+    
+    
+    <div class="container">
+      <footer class="site-footer">
+
+  
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+
+
+
+
+
+  <p class="powered-by">
+    
+    
+    
+      
+      
+      
+      
+      
+      
+      Published with <a href="https://wowchemy.com/?utm_campaign=poweredby" target="_blank" rel="noopener">Wowchemy</a> — the free, <a href="https://github.com/wowchemy/wowchemy-hugo-modules" target="_blank" rel="noopener">open source</a> website builder that empowers creators.
+    
+  </p>
+</footer>
+
+    </div>
+    
+  </div>
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      
+
+    
+    <script src="/js/vendor-bundle.min.b73dfaac3b6499dc997741748a7c3fe2.js"></script>
+
+    
+    
+    
+      
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      
+
+      
+      
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/highlight.min.js" integrity="sha512-TDKKr+IvoqZnPzc3l35hdjpHD0m+b2EC2SrLEgKDRWpxf2rFCxemkgvJ5kfU48ip+Y+m2XVKyOCD85ybtlZDmw==" crossorigin="anonymous"></script>
+        
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/r.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/python.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/latex.min.js" crossorigin="anonymous"></script>
+        
+      
+
+    
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.min.js" integrity="sha512-SeiQaaDh73yrb56sTW/RgVdi/mMqNeM2oBwubFHagc5BkixSpP1fvqF47mKzPGWYSSy4RwbBunrJBQ4Co8fRWA==" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+      
+      <script id="search-hit-fuse-template" type="text/x-template">
+        <div class="search-hit" id="summary-{{key}}">
+          <div class="search-hit-content">
+            <div class="search-hit-name">
+              <a href="{{relpermalink}}">{{title}}</a>
+              <div class="article-metadata search-hit-type">{{type}}</div>
+              <p class="search-hit-description">{{snippet}}</p>
+            </div>
+          </div>
+        </div>
+      </script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+      
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+      
+      
+      
+      
+      
+      
+      
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+      
+      
+    
+    
+    <script src="/en/js/wowchemy.min.d68ecd57c0ec1f1f61d65fd568f1c3a0.js"></script>
+
+    
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+
+
+</body>
+</html>

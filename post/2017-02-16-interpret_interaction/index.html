@@ -1,0 +1,1357 @@
+<!DOCTYPE html><html lang="en-us" >
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  
+  
+    <meta name="generator" content="Wowchemy 5.3.0 for Hugo" />
+  
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Interaction with two binary variables In a regression model with interaction term, people tend to pay attention to only the coefficient of the interaction term.
+Let’s start with the simpliest situation: \(x_1\) and \(x_2\) are binary and coded 0/1." />
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://hbs-rcs.github.io/post/2017-02-16-interpret_interaction/" />
+
+  
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  
+
+  
+  
+  
+    <meta name="theme-color" content="#1565c0" />
+  
+
+  
+  
+    
+    <script src="/js/mathjax-config.js"></script>
+  
+
+  
+
+  <link rel="stylesheet" href="/css/vendor-bundle.min.f1ecf783c14edc00c9320c205831ad8e.css" media="print" onload="this.media='all'">
+
+  
+  
+  
+    
+    
+
+    
+    
+    
+    
+      
+      
+    
+    
+    
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/styles/github.min.css" crossorigin="anonymous" title="hl-light" media="print" onload="this.media='all'">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" media="print" onload="this.media='all'" disabled>
+        
+      
+    
+
+    
+    
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.min.css" integrity="sha512-1xoFisiGdy9nvho8EgXuXvnpR5GAMSjFwp40gSRE3NwdUdIMIKuPa7bqoUhLD0O/5tPNhteAsE5XyyMi5reQVA==" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+
+    
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+  
+
+  
+  
+  
+    
+      
+      <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono&family=Roboto:wght@400;700&display=swap">
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono&family=Roboto:wght@400;700&display=swap" media="print" onload="this.media='all'">
+    
+  
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/wowchemy.9f457a613f02e9027025db7311c58ccf.css" />
+
+  
+
+
+
+  
+
+  
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+    <link rel="manifest" href="/manifest.webmanifest" />
+  
+
+  <link rel="icon" type="image/png" href="/media/icon_hua2ec155b4296a9c9791d015323e16eb5_11927_32x32_fill_lanczos_center_3.png" />
+  <link rel="apple-touch-icon" type="image/png" href="/media/icon_hua2ec155b4296a9c9791d015323e16eb5_11927_180x180_fill_lanczos_center_3.png" />
+
+  <link rel="canonical" href="https://hbs-rcs.github.io/post/2017-02-16-interpret_interaction/" />
+
+  
+  
+  
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary" />
+  
+  <meta property="og:site_name" content="HBS Research Computing Services Blog" />
+  <meta property="og:url" content="https://hbs-rcs.github.io/post/2017-02-16-interpret_interaction/" />
+  <meta property="og:title" content="Interpreting interaction term in a regression model | HBS Research Computing Services Blog" />
+  <meta property="og:description" content="Interaction with two binary variables In a regression model with interaction term, people tend to pay attention to only the coefficient of the interaction term.
+Let’s start with the simpliest situation: \(x_1\) and \(x_2\) are binary and coded 0/1." /><meta property="og:image" content="https://hbs-rcs.github.io/media/icon_hua2ec155b4296a9c9791d015323e16eb5_11927_512x512_fill_lanczos_center_3.png" />
+    <meta property="twitter:image" content="https://hbs-rcs.github.io/media/icon_hua2ec155b4296a9c9791d015323e16eb5_11927_512x512_fill_lanczos_center_3.png" /><meta property="og:locale" content="en-us" />
+  
+    
+      <meta
+        property="article:published_time"
+        content="2017-02-14T00:00:00&#43;00:00"
+      />
+    
+    <meta property="article:modified_time" content="2017-02-14T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://hbs-rcs.github.io/post/2017-02-16-interpret_interaction/"
+  },
+  "headline": "Interpreting interaction term in a regression model",
+  
+  "datePublished": "2017-02-14T00:00:00Z",
+  "dateModified": "2017-02-14T00:00:00Z",
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "HBS Research Computing Services Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://hbs-rcs.github.io/media/icon_hua2ec155b4296a9c9791d015323e16eb5_11927_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "Interaction with two binary variables In a regression model with interaction term, people tend to pay attention to only the coefficient of the interaction term.\nLet’s start with the simpliest situation: \\(x_1\\) and \\(x_2\\) are binary and coded 0/1."
+}
+</script>
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+  <title>Interpreting interaction term in a regression model | HBS Research Computing Services Blog</title>
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="page-wrapper   " data-wc-page-id="d24ffe71b2fec810bac496234a61babd" >
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <script src="/js/wowchemy-init.min.8988fb2a4bba758785868cfcb5244555.js"></script>
+
+  
+
+
+<aside class="search-modal" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#" aria-label="Close"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control"
+        aria-label="Search...">
+        
+      </div>
+
+      
+      
+
+      
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+
+  <div class="page-header">
+    
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container-xl">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">HBS Research Computing Services Blog</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">HBS Research Computing Services Blog</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://www.hbs.edu/research-computing-services/about-us/" target="_blank" rel="noopener"><span>About</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+            
+            
+            
+              
+            
+            
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#posts"><span>Posts</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://www.hbs.edu/research-computing-services/faculty-projects/" target="_blank" rel="noopener"><span>Projects</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://www.hbs.edu/research-computing-services/training/" target="_blank" rel="noopener"><span>Events</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://www.hbs.edu/research-computing-services/contact-us/" target="_blank" rel="noopener"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+
+      
+      
+
+      
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#" aria-label="Search"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+      
+      <li class="nav-item dropdown theme-dropdown">
+        <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-label="Display preferences">
+          <i class="fas fa-moon" aria-hidden="true"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a href="#" class="dropdown-item js-set-theme-light">
+            <span>Light</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-dark">
+            <span>Dark</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-auto">
+            <span>Automatic</span>
+          </a>
+        </div>
+      </li>
+      
+
+      
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  </div>
+
+  <div class="page-body">
+    <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>Interpreting interaction term in a regression model</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Feb 14, 2017
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    8 min read
+  </span>
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+
+</div>
+
+    
+
+
+
+
+
+  
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      
+
+
+<div id="interaction-with-two-binary-variables" class="section level1">
+<h1>Interaction with two binary variables</h1>
+<p>In a regression model with interaction term, people tend to pay attention to only the coefficient of the interaction term.</p>
+<p>Let’s start with the simpliest situation: <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> are binary and coded 0/1.</p>
+<p><span class="math display">\[ E(y) = \beta_1 x_1 + \beta_2 x_2 + \beta_{12} x_1x_2 \]</span></p>
+<p>In this case, we have a saturated model; that is, we have three coefficients representing additive effects from the baseline situation (both <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> being 0). There are four different situations, with four combinations of <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>.</p>
+<p>A lot of people just pay attention to the interaction term. In the case of studying treatment effects between two groups, say female and male, that makes sense, the interaction term representing the difference between male and female in terms of treatment effect.</p>
+<p>In this model:</p>
+<p><span class="math display">\[ E(y) = \beta_1 female + \beta_2 treatment + \beta_{12} female*treatment \]</span></p>
+<p>The two dummy-coded binary variables, female and treatment, form four combinations. The following 2x2 table represents the expected means of the four cells(combinations).</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="center">male</th>
+<th align="center">female</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>control</td>
+<td align="center"><span class="math inline">\(\beta_0\)</span></td>
+<td align="center"><span class="math inline">\(\beta_0 + \beta_1\)</span></td>
+</tr>
+<tr class="even">
+<td>treatment</td>
+<td align="center"><span class="math inline">\(\beta_0 + \beta_2\)</span></td>
+<td align="center"><span class="math inline">\(\beta_0 + \beta_1 + \beta_2 + \beta_{12}\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>We can see from this table that, for example,</p>
+<p><span class="math display">\[\beta_0=E(Y|(0,0))\]</span></p>
+<p>that is, <span class="math inline">\(\beta_0\)</span> is the expected mean of the cell (0,0) (male and control).</p>
+<p><span class="math display">\[\beta_0 + \beta_1 =E(Y|(1,0))\]</span></p>
+<p>that is ,<span class="math inline">\(\beta_0 + \beta_1\)</span> is the expected mean of the cell (1,0) (female and control). And so on.</p>
+<p>Now,</p>
+<p><span class="math display">\[ \beta_{12} = (E(Y|(1,1))-E(Y|(0,1)))-(E(Y|(1,0))-E(Y|(0,0))) \]</span></p>
+<p>that is, the coefficient on the interaction term is actually the difference in difference. That’s why in many situations, people are only interested in the interaction coefficient, since they are only interested in the diff-in-diff estimates. The usually diff-in-diff estimator in causal inference literature refer to something similar, instead of female vs. male, people are interested in the treatment effect difference in before and after treatment. If we simply replace female/male dummy with before/after dummy, we can use the same logic. In those situations, it’s fine to mainly focus on the interaction term coefficient.</p>
+<p>In some other situations, the three coefficients are equally important. It depends on your interest. For example, if we are interested in studying differences between union member and non-union member and black vs. non-black, we may not be only interested in the interaction effect. Instead, we might be interested in all four cells, maybe all possible pairwise comparisons. In that case, we should pay attention to all three coefficients. Stata’s “margins” command is of great help if we’d like to compare the cell means.</p>
+<p>Let’s take a look from a sample example in Stata:</p>
+<pre class="stata"><code>webuse union3
+reg ln_wage i.union##i.black, r
+margins union#black
+margins union#black, pwcompare
+</code></pre>
+<pre><code>## 
+## . webuse union3
+## (National Longitudinal Survey.  Young Women 14-26 years of age in 1968)
+## 
+## . reg ln_wage i.union##i.black, r
+## 
+## Linear regression                               Number of obs     =      1,244
+##                                                 F(3, 1240)        =      34.76
+##                                                 Prob &gt; F          =     0.0000
+##                                                 R-squared         =     0.0762
+##                                                 Root MSE          =     .37699
+## 
+## ------------------------------------------------------------------------------
+##              |               Robust
+##      ln_wage |      Coef.   Std. Err.      t    P&gt;|t|     [95% Conf. Interval]
+## -------------+----------------------------------------------------------------
+##      1.union |   .2045053   .0291682     7.01   0.000     .1472808    .2617298
+##      1.black |  -.1709034   .0308067    -5.55   0.000    -.2313425   -.1104644
+##              |
+##  union#black |
+##         1 1  |   .0386275   .0516609     0.75   0.455     -.062725      .13998
+##              |
+##        _cons |   1.657525   .0138278   119.87   0.000     1.630396    1.684653
+## ------------------------------------------------------------------------------
+## 
+## . margins union#black
+## 
+## Adjusted predictions                            Number of obs     =      1,244
+## Model VCE    : Robust
+## 
+## Expression   : Linear prediction, predict()
+## 
+## ------------------------------------------------------------------------------
+##              |            Delta-method
+##              |     Margin   Std. Err.      t    P&gt;|t|     [95% Conf. Interval]
+## -------------+----------------------------------------------------------------
+##  union#black |
+##         0 0  |   1.657525   .0138278   119.87   0.000     1.630396    1.684653
+##         0 1  |   1.486621    .027529    54.00   0.000     1.432613     1.54063
+##         1 0  |    1.86203   .0256822    72.50   0.000     1.811644    1.912415
+##         1 1  |   1.729754   .0325611    53.12   0.000     1.665873    1.793635
+## ------------------------------------------------------------------------------
+## 
+## . margins union#black, pwcompare
+## 
+## Pairwise comparisons of adjusted predictions
+## Model VCE    : Robust
+## 
+## Expression   : Linear prediction, predict()
+## 
+## -----------------------------------------------------------------
+##                 |            Delta-method         Unadjusted
+##                 |   Contrast   Std. Err.     [95% Conf. Interval]
+## ----------------+------------------------------------------------
+##     union#black |
+## (0 1) vs (0 0)  |  -.1709034   .0308067     -.2313425   -.1104644
+## (1 0) vs (0 0)  |   .2045053   .0291682      .1472808    .2617298
+## (1 1) vs (0 0)  |   .0722294   .0353756      .0028268     .141632
+## (1 0) vs (0 1)  |   .3754087   .0376487      .3015466    .4492709
+## (1 1) vs (0 1)  |   .2431328   .0426388      .1594807     .326785
+## (1 1) vs (1 0)  |  -.1322759   .0414705     -.2136359   -.0509159
+## -----------------------------------------------------------------
+## 
+## .</code></pre>
+<p>What we get by using “margins union#black” is the four cell means of <span class="math inline">\(E(Y)\)</span>, in this case, log of wage. Then “margins union#black, pwcompare” tells us all pairwise comparison of these four cell means. Instead of only paying attention to the interaction coefficient, in this case we might be interested in some comparisons of the four different situations of union and black. In fact, in this example, despite the interaction term being insignificant, all six comparisons of the cell means turn out to have 95% confidence intervals that do not include zero.</p>
+</div>
+<div id="interaction-with-continuous-variables" class="section level1">
+<h1>Interaction with continuous variables</h1>
+<p>Let’s start with the simpliest situation: <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> are continuous.</p>
+<p><span class="math display">\[ E(y) = \beta_1 x_1 + \beta_2 x_2 + \beta_{12} x_1*x_2 \]</span></p>
+<p>In this case, we recommend “centering” <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> if they are continuous; that is, subtracting the mean value from each continuous independent variable when they are involved in the interaction term. There are two reason for it:</p>
+<ol style="list-style-type: decimal">
+<li>To reduce multi-collinearity. If the range of <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> include only positive numbers, then <span class="math inline">\(x_1*x_2\)</span> can be highly correlated with both or one of <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>. This can lead to numerical problems and unstable coefficient estimates (multi-collinearity problem).</li>
+</ol>
+<p>“Centering” can reduce the correlation between the interaction term and the independent variables. If the original variables are normally distributed, interaction term after centering is actually uncorrelated with the original variables. When they are not normally distributed, centering will still reduce the correlation to a large degree.</p>
+<ol start="2" style="list-style-type: decimal">
+<li>To help with interpretation. In a model with interaction, <span class="math inline">\(\beta_1\)</span> represents the effect of <span class="math inline">\(x_1\)</span> when <span class="math inline">\(x_2\)</span> is zero. However, in many situations, zero is not within the range of <span class="math inline">\(x_2\)</span>. After centering, centered <span class="math inline">\(x_2\)</span> at zero simply means original <span class="math inline">\(x_2\)</span> at its mean value.</li>
+</ol>
+<p>When we have dummy variable interacting with continuous variable, only continuous variable should be centered.</p>
+<p>Again, Stata’s margins command is helpful.</p>
+<pre class="stata"><code>sysuse auto
+sum mpg
+gen mpg_centered=mpg-r(mean)
+sum mpg_centered
+reg price i.foreign##c.mpg_centered
+margins foreign, at(mpg_centered=(-3 (1) 3))
+marginsplot
+graph export marginsplot.eps, replace</code></pre>
+<pre><code>## 
+## . sysuse auto
+## (1978 Automobile Data)
+## 
+## . sum mpg
+## 
+##     Variable |        Obs        Mean    Std. Dev.       Min        Max
+## -------------+---------------------------------------------------------
+##          mpg |         74     21.2973    5.785503         12         41
+## 
+## . gen mpg_centered=mpg-r(mean)
+## 
+## . sum mpg_centered
+## 
+##     Variable |        Obs        Mean    Std. Dev.       Min        Max
+## -------------+---------------------------------------------------------
+## mpg_centered |         74   -4.03e-08    5.785503  -9.297297    19.7027
+## 
+## . reg price i.foreign##c.mpg_centered
+## 
+##       Source |       SS           df       MS      Number of obs   =        74
+## -------------+----------------------------------   F(3, 70)        =      9.48
+##        Model |   183435285         3  61145094.9   Prob &gt; F        =    0.0000
+##     Residual |   451630112        70  6451858.74   R-squared       =    0.2888
+## -------------+----------------------------------   Adj R-squared   =    0.2584
+##        Total |   635065396        73  8699525.97   Root MSE        =    2540.1
+## 
+## ------------------------------------------------------------------------------
+##        price |      Coef.   Std. Err.      t    P&gt;|t|     [95% Conf. Interval]
+## -------------+----------------------------------------------------------------
+##      foreign |
+##     Foreign  |   1666.519    717.217     2.32   0.023     236.0751    3096.963
+## mpg_centered |  -329.2551   74.98545    -4.39   0.000    -478.8088   -179.7013
+##              |
+##      foreign#|
+##           c. |
+## mpg_centered |
+##     Foreign  |   78.88826   112.4812     0.70   0.485    -145.4485     303.225
+##              |
+##        _cons |   5588.295   369.0945    15.14   0.000     4852.159    6324.431
+## ------------------------------------------------------------------------------
+## 
+## . margins foreign, at(mpg_centered=(-3 (1) 3))
+## 
+## Adjusted predictions                            Number of obs     =         74
+## Model VCE    : OLS
+## 
+## Expression   : Linear prediction, predict()
+## 
+## 1._at        : mpg_centered    =          -3
+## 
+## 2._at        : mpg_centered    =          -2
+## 
+## 3._at        : mpg_centered    =          -1
+## 
+## 4._at        : mpg_centered    =           0
+## 
+## 5._at        : mpg_centered    =           1
+## 
+## 6._at        : mpg_centered    =           2
+## 
+## 7._at        : mpg_centered    =           3
+## 
+## ------------------------------------------------------------------------------
+##              |            Delta-method
+##              |     Margin   Std. Err.      t    P&gt;|t|     [95% Conf. Interval]
+## -------------+----------------------------------------------------------------
+##  _at#foreign |
+##  1#Domestic  |    6576.06    370.446    17.75   0.000     5837.229    7314.891
+##   1#Foreign  |   8005.915   766.8178    10.44   0.000     6476.545    9535.284
+##  2#Domestic  |   6246.805   354.4734    17.62   0.000      5539.83     6953.78
+##   2#Foreign  |   7755.548   709.9327    10.92   0.000     6339.632    9171.464
+##  3#Domestic  |    5917.55   354.0032    16.72   0.000     5211.513    6623.587
+##   3#Foreign  |   7505.181   658.8306    11.39   0.000     6191.185    8819.177
+##  4#Domestic  |   5588.295   369.0945    15.14   0.000     4852.159    6324.431
+##   4#Foreign  |   7254.814   614.9548    11.80   0.000     6028.325    8481.303
+##  5#Domestic  |    5259.04    397.981    13.21   0.000     4465.292    6052.788
+##   5#Foreign  |   7004.447   579.9479    12.08   0.000     5847.778    8161.117
+##  6#Domestic  |   4929.785   437.9413    11.26   0.000     4056.338    5803.231
+##   6#Foreign  |   6754.081   555.4891    12.16   0.000     5646.192    7861.969
+##  7#Domestic  |    4600.53    486.253     9.46   0.000     3630.729    5570.331
+##   7#Foreign  |   6503.714   543.0057    11.98   0.000     5420.723    7586.704
+## ------------------------------------------------------------------------------
+## 
+## . marginsplot
+## 
+##   Variables that uniquely identify margins: mpg_centered foreign
+## 
+## . graph export marginsplot.eps, replace
+## (note: file marginsplot.eps not found)
+## (file marginsplot.eps written in EPS format)</code></pre>
+<div class="figure">
+<img src="/post/2017-02-16-interpret_interaction_files/marginsplot.png" />
+
+</div>
+<p>In this example, the graph shows the predicted price for foreign and domestic cars at different level of mpg.</p>
+</div>
+
+    </div>
+
+    
+
+
+
+
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tag/statistics/">statistics</a>
+  
+  <a class="badge badge-light" href="/tag/stata/">Stata</a>
+  
+</div>
+
+
+
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://hbs-rcs.github.io/post/2017-02-16-interpret_interaction/&amp;text=Interpreting%20interaction%20term%20in%20a%20regression%20model" target="_blank" rel="noopener" class="share-btn-twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://hbs-rcs.github.io/post/2017-02-16-interpret_interaction/&amp;t=Interpreting%20interaction%20term%20in%20a%20regression%20model" target="_blank" rel="noopener" class="share-btn-facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Interpreting%20interaction%20term%20in%20a%20regression%20model&amp;body=https://hbs-rcs.github.io/post/2017-02-16-interpret_interaction/" target="_blank" rel="noopener" class="share-btn-email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://hbs-rcs.github.io/post/2017-02-16-interpret_interaction/&amp;title=Interpreting%20interaction%20term%20in%20a%20regression%20model" target="_blank" rel="noopener" class="share-btn-linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Interpreting%20interaction%20term%20in%20a%20regression%20model%20https://hbs-rcs.github.io/post/2017-02-16-interpret_interaction/" target="_blank" rel="noopener" class="share-btn-whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=https://hbs-rcs.github.io/post/2017-02-16-interpret_interaction/&amp;title=Interpreting%20interaction%20term%20in%20a%20regression%20model" target="_blank" rel="noopener" class="share-btn-weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <a href="https://hbs-rcs.github.io"><img class="avatar mr-3 avatar-circle" src="/author/avatar_hu52a603635ecebd45650b162dadabb4e5_12861_270x270_fill_q75_lanczos_center.jpg" alt=""></a>
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://hbs-rcs.github.io"></a></h5>
+      <h6 class="card-subtitle">Senior Statistician / Data Scientist</h6>
+      <p class="card-text">I enjoy statistics and programming.</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/2017-02-16-margins_nonlinear/">Marginal effects in models with fixed effects</a></li>
+      
+      <li><a href="/post/specification-curve-analysis/">Specification Curve Analysis: Overview and Stata Example</a></li>
+      
+      <li><a href="/post/2017-03-01-causal_tmle/">Use machine learning for causal effect in observational study</a></li>
+      
+      <li><a href="/post/2017-02-16-nonlinear_interaction/">Interaction term in a non-linear model</a></li>
+      
+      <li><a href="/post/2014-09-17-poisson-models/">A comparison of various count data models with extra zeros</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+
+
+  </div>
+</article>
+  </div>
+
+  <div class="page-footer">
+    
+    
+    <div class="container">
+      <footer class="site-footer">
+
+  
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+
+
+
+
+
+  <p class="powered-by">
+    
+    
+    
+      
+      
+      
+      
+      
+      
+      Published with <a href="https://wowchemy.com/?utm_campaign=poweredby" target="_blank" rel="noopener">Wowchemy</a> — the free, <a href="https://github.com/wowchemy/wowchemy-hugo-modules" target="_blank" rel="noopener">open source</a> website builder that empowers creators.
+    
+  </p>
+</footer>
+
+    </div>
+    
+  </div>
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      
+
+    
+    <script src="/js/vendor-bundle.min.b73dfaac3b6499dc997741748a7c3fe2.js"></script>
+
+    
+    
+    
+      
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      
+
+      
+      
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/highlight.min.js" integrity="sha512-TDKKr+IvoqZnPzc3l35hdjpHD0m+b2EC2SrLEgKDRWpxf2rFCxemkgvJ5kfU48ip+Y+m2XVKyOCD85ybtlZDmw==" crossorigin="anonymous"></script>
+        
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/r.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/python.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/latex.min.js" crossorigin="anonymous"></script>
+        
+      
+
+    
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.min.js" integrity="sha512-SeiQaaDh73yrb56sTW/RgVdi/mMqNeM2oBwubFHagc5BkixSpP1fvqF47mKzPGWYSSy4RwbBunrJBQ4Co8fRWA==" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+      
+      <script id="search-hit-fuse-template" type="text/x-template">
+        <div class="search-hit" id="summary-{{key}}">
+          <div class="search-hit-content">
+            <div class="search-hit-name">
+              <a href="{{relpermalink}}">{{title}}</a>
+              <div class="article-metadata search-hit-type">{{type}}</div>
+              <p class="search-hit-description">{{snippet}}</p>
+            </div>
+          </div>
+        </div>
+      </script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+      
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+      
+      
+      
+      
+      
+      
+      
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+      
+      
+    
+    
+    <script src="/en/js/wowchemy.min.d68ecd57c0ec1f1f61d65fd568f1c3a0.js"></script>
+
+    
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+
+
+</body>
+</html>

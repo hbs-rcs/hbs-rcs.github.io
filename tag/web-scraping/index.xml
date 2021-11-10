@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>web scraping | HBS Research Computing Services Blog</title>
+    <link>https://hbs-rcs.github.io/tag/web-scraping/</link>
+      <atom:link href="https://hbs-rcs.github.io/tag/web-scraping/index.xml" rel="self" type="application/rss+xml" />
+    <description>web scraping</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Fri, 10 Jan 2020 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://hbs-rcs.github.io/media/icon_hua2ec155b4296a9c9791d015323e16eb5_11927_512x512_fill_lanczos_center_3.png</url>
+      <title>web scraping</title>
+      <link>https://hbs-rcs.github.io/tag/web-scraping/</link>
+    </image>
+    
+    <item>
+      <title>Easier web scraping in R with tidyverse</title>
+      <link>https://hbs-rcs.github.io/post/easier-web-scraping-in-r-with-tidyverse/</link>
+      <pubDate>Fri, 10 Jan 2020 00:00:00 +0000</pubDate>
+      <guid>https://hbs-rcs.github.io/post/easier-web-scraping-in-r-with-tidyverse/</guid>
+      <description>
+
+
+&lt;p&gt;I recently used R for a moderately complicated scraping task, and found that using
+tools and techniques from the &lt;em&gt;tidyverse&lt;/em&gt; made for a very pleasant web scraping
+experience, especially for retrieving nested data. In particular, the &lt;em&gt;nest/unnest&lt;/em&gt;
+functions in the &lt;code&gt;tidyr&lt;/code&gt; package make it easy to implement breadth-first scrapers in R by
+nesting the results from each level and then expanding to a tabular structure. This
+approach has the advantage of making it easy to follow the program logic, and it also
+makes it very easy to store retrieved values in a convenient format.&lt;/p&gt;
+&lt;div id=&#34;example-hbs-workshops&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Example: HBS workshops&lt;/h2&gt;
+&lt;p&gt;As a simple example of a website with a nested structure consider &lt;a href=&#34;https://training.rcs.hbs.org/workshops&#34; class=&#34;uri&#34;&gt;https://training.rcs.hbs.org/workshops&lt;/a&gt;.
+This site lists workshops nested within categories.&lt;/p&gt;
+&lt;div id=&#34;start-at-the-top-and-store-results-in-tibbles&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Start at the top and store results in tibbles&lt;/h3&gt;
+&lt;p&gt;Using the &lt;em&gt;tidyverse&lt;/em&gt; packages along with &lt;em&gt;rvest&lt;/em&gt; make web scraping in R more convenient.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+library(rvest)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To retrieve workshop information from &lt;a href=&#34;https://training.rcs.hbs.org&#34; class=&#34;uri&#34;&gt;https://training.rcs.hbs.org&lt;/a&gt; we can start by creating
+a &lt;code&gt;tibble&lt;/code&gt; to store the data we will retrieve from the site. To begin with this &lt;code&gt;tibble&lt;/code&gt; has
+only one row and one column containing the URL of the starting page. This might seem like
+a strange way to start, but it helps us keep a consistent and clean pattern as we descend
+through the nested structure of the website.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ws_data &amp;lt;- tibble(start_url = &amp;quot;https://training.rcs.hbs.org/workshops&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;store-retrieved-data-in-list-columns-and-unnest-as-needed&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Store retrieved data in list columns and unnest as needed&lt;/h3&gt;
+&lt;p&gt;Next we &lt;em&gt;mutate&lt;/em&gt; the data, reading the page containing the outer-most collection
+and extracting the information we need. The information we extract includes URLs
+at the next level of the tree we are traversing. Because we will retrieve multiple
+elements we store the result in a list-column.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ws_data &amp;lt;- ws_data %&amp;gt;%
+  mutate(category = map(start_url,
+                        ~ read_html(.) %&amp;gt;%
+                          html_nodes(&amp;quot;.menu-depth-2 a&amp;quot;) %&amp;gt;%
+                          {tibble(name = html_text(.),
+                                  url = html_attr(., &amp;quot;href&amp;quot;))})
+  )
+
+glimpse(ws_data)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Observations: 1
+## Variables: 2
+## $ start_url &amp;lt;chr&amp;gt; &amp;quot;https://training.rcs.hbs.org/workshops&amp;quot;
+## $ category  &amp;lt;list&amp;gt; [&amp;lt;tbl_df[7 x 2]&amp;gt;]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Our data structure still only has one row, but we can easily expand it so that it has
+one row per category.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ws_data &amp;lt;- ws_data %&amp;gt;%
+  unnest(category, names_sep = &amp;quot;_&amp;quot;, keep_empty = TRUE)
+
+glimpse(ws_data)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Observations: 7
+## Variables: 3
+## $ start_url     &amp;lt;chr&amp;gt; &amp;quot;https://training.rcs.hbs.org/workshops&amp;quot;, &amp;quot;https://tr...
+## $ category_name &amp;lt;chr&amp;gt; &amp;quot;HBS Grid Training &amp;quot;, &amp;quot;R&amp;quot;, &amp;quot;Stata&amp;quot;, &amp;quot;Python&amp;quot;, &amp;quot;Other ...
+## $ category_url  &amp;lt;chr&amp;gt; &amp;quot;https://training.rcs.hbs.org/compute-grid-training&amp;quot;,...&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Each of the categories contains one or more workshops, so the next step is to iterate
+over categories and retrieve the all the workshop links. Because we want to retrieve
+more than one value for each category we store the result in a list-column.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ws_data &amp;lt;- ws_data %&amp;gt;%
+  mutate(workshop = map(category_url,
+                        ~ read_html(.) %&amp;gt;%
+                          html_nodes(&amp;quot;.menu-depth-3 a&amp;quot;) %&amp;gt;%
+                          {tibble(name = html_text(.),
+                                  url = html_attr(., &amp;quot;href&amp;quot;))})
+  )
+
+glimpse(ws_data)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Observations: 7
+## Variables: 4
+## $ start_url     &amp;lt;chr&amp;gt; &amp;quot;https://training.rcs.hbs.org/workshops&amp;quot;, &amp;quot;https://tr...
+## $ category_name &amp;lt;chr&amp;gt; &amp;quot;HBS Grid Training &amp;quot;, &amp;quot;R&amp;quot;, &amp;quot;Stata&amp;quot;, &amp;quot;Python&amp;quot;, &amp;quot;Other ...
+## $ category_url  &amp;lt;chr&amp;gt; &amp;quot;https://training.rcs.hbs.org/compute-grid-training&amp;quot;,...
+## $ workshop      &amp;lt;list&amp;gt; [&amp;lt;tbl_df[0 x 2]&amp;gt;, &amp;lt;tbl_df[5 x 2]&amp;gt;, &amp;lt;tbl_df[2 x 2]&amp;gt;, ...&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;As before we unnest the data, making sure to keep empty rows.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;ws_data &amp;lt;- ws_data %&amp;gt;%
+  unnest(workshop, names_sep = &amp;quot;_&amp;quot;, keep_empty = TRUE)
+
+glimpse(ws_data)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Observations: 18
+## Variables: 5
+## $ start_url     &amp;lt;chr&amp;gt; &amp;quot;https://training.rcs.hbs.org/workshops&amp;quot;, &amp;quot;https://tr...
+## $ category_name &amp;lt;chr&amp;gt; &amp;quot;HBS Grid Training &amp;quot;, &amp;quot;R&amp;quot;, &amp;quot;R&amp;quot;, &amp;quot;R&amp;quot;, &amp;quot;R&amp;quot;, &amp;quot;R&amp;quot;, &amp;quot;Stata...
+## $ category_url  &amp;lt;chr&amp;gt; &amp;quot;https://training.rcs.hbs.org/compute-grid-training&amp;quot;,...
+## $ workshop_name &amp;lt;chr&amp;gt; NA, &amp;quot;Introduction to R&amp;quot;, &amp;quot;Introduction to R Graphics ...
+## $ workshop_url  &amp;lt;chr&amp;gt; NA, &amp;quot;https://training.rcs.hbs.org/introduction-r&amp;quot;, &amp;quot;h...&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;putting-it-all-together&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Putting it all together&lt;/h3&gt;
+&lt;p&gt;As simple as it is, the code examples above can be simplified even further by modularizing
+the data processing functions. Here is the whole simplified program for retrieving workshop
+information, in less than 20 lines of code.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(tidyverse)
+library(rvest)
+
+get_links &amp;lt;- function(url, css) {
+  read_html(url) %&amp;gt;%
+    html_nodes(css) %&amp;gt;%
+    {tibble(name = html_text(.),
+            url = html_attr(., &amp;quot;href&amp;quot;))}
+}
+
+ws_data &amp;lt;- tibble(start_url = &amp;quot;https://training.rcs.hbs.org/workshops&amp;quot;)
+
+ws_data &amp;lt;- ws_data %&amp;gt;%
+  mutate(category = map(start_url, get_links, css = &amp;quot;.menu-depth-2 a&amp;quot;)) %&amp;gt;%
+  unnest(category, names_sep = &amp;quot;_&amp;quot;, keep_empty = TRUE) %&amp;gt;%
+  mutate(workshop = map(category_url, get_links, css = &amp;quot;.menu-depth-3 a&amp;quot;)) %&amp;gt;%
+  unnest(workshop, names_sep = &amp;quot;_&amp;quot;, keep_empty = TRUE)
+
+glimpse(ws_data)&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## Observations: 18
+## Variables: 5
+## $ start_url     &amp;lt;chr&amp;gt; &amp;quot;https://training.rcs.hbs.org/workshops&amp;quot;, &amp;quot;https://tr...
+## $ category_name &amp;lt;chr&amp;gt; &amp;quot;HBS Grid Training &amp;quot;, &amp;quot;R&amp;quot;, &amp;quot;R&amp;quot;, &amp;quot;R&amp;quot;, &amp;quot;R&amp;quot;, &amp;quot;R&amp;quot;, &amp;quot;Stata...
+## $ category_url  &amp;lt;chr&amp;gt; &amp;quot;https://training.rcs.hbs.org/compute-grid-training&amp;quot;,...
+## $ workshop_name &amp;lt;chr&amp;gt; NA, &amp;quot;Introduction to R&amp;quot;, &amp;quot;Introduction to R Graphics ...
+## $ workshop_url  &amp;lt;chr&amp;gt; NA, &amp;quot;https://training.rcs.hbs.org/introduction-r&amp;quot;, &amp;quot;h...&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Conclusions&lt;/h2&gt;
+&lt;p&gt;The key pattern is &lt;code&gt;mutate&lt;/code&gt; to a list-column
+containing &lt;code&gt;tibbles&lt;/code&gt; and then &lt;code&gt;unnest&lt;/code&gt; to maintain a tabular record of URLs and results at
+each level. This expands the data structure as you descend
+through each level, resulting in a nice clean tabular structure at the end. At each level
+&lt;code&gt;unest(names_sep = &#34;_&#34;)&lt;/code&gt; produces a consistent naming scheme with minimal effort. Finally,
+this pattern generalizes easily to cases where you wish to retrieve multiple pieces of
+information at each level.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Web Scraping in R</title>
+      <link>https://hbs-rcs.github.io/post/2019-08-08-web-scraping-in-r/</link>
+      <pubDate>Thu, 08 Aug 2019 00:00:00 +0000</pubDate>
+      <guid>https://hbs-rcs.github.io/post/2019-08-08-web-scraping-in-r/</guid>
+      <description>
+
+
+&lt;p&gt;Let’s walk through some steps for web scraping with R. On &lt;a href=&#34;https://en.wikipedia.org/wiki/Visa_requirements_for_United_States_citizens&#34;&gt;this Wikipedia page&lt;/a&gt; there is a table of visa requirements that I want to scrape. Let’s use the &lt;a href=&#34;https://github.com/hadley/rvest&#34;&gt;rvest&lt;/a&gt; package to get the HTML associated with that page:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;library(rvest)
+
+html &amp;lt;- read_html(&amp;quot;https://en.wikipedia.org/wiki/Visa_requirements_for_United_States_citizens&amp;quot;)
+html&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## {html_document}
+## &amp;lt;html class=&amp;quot;client-nojs&amp;quot; lang=&amp;quot;en&amp;quot; dir=&amp;quot;ltr&amp;quot;&amp;gt;
+## [1] &amp;lt;head&amp;gt;\n&amp;lt;meta http-equiv=&amp;quot;Content-Type&amp;quot; content=&amp;quot;text/html; charset= ...
+## [2] &amp;lt;body class=&amp;quot;mediawiki ltr sitedir-ltr mw-hide-empty-elt ns-0 ns-sub ...&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now let’s use the &lt;code&gt;html_nodes()&lt;/code&gt; function to extract the table of interest. I used Chrome’s Developer Tools to get the XPath of the table (see notes at the end of the post on how to do it):&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;referenced_by &amp;lt;- html_node(html, xpath=&amp;#39;//*[@id=&amp;quot;mw-content-text&amp;quot;]/div/table[1]&amp;#39;)
+referenced_by&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;## {html_node}
+## &amp;lt;table class=&amp;quot;sortable wikitable&amp;quot;&amp;gt;
+## [1] &amp;lt;tbody&amp;gt;\n&amp;lt;tr&amp;gt;\n&amp;lt;th style=&amp;quot;width:18%;&amp;quot;&amp;gt;Country\n&amp;lt;/th&amp;gt;\n&amp;lt;th style=&amp;quot;wid ...&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now let’s convert that HTML table into a data frame.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;visa_requirements &amp;lt;- html_table(referenced_by)
+head(visa_requirements[,1:3])&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##               Country          Visa requirement     Allowed stay
+## 1         Afghanistan       Visa required[2][3]                 
+## 2             Albania   Visa not required[5][6]        1 year[7]
+## 3             Algeria       Visa required[8][9]                 
+## 4             Andorra     Visa not required[10] 3 months[11][12]
+## 5              Angola         eVisa[13][14][15]          30 days
+## 6 Antigua and Barbuda Visa not required[18][19]     6 months[20]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Finally, we can clean footnote references from columns 2 and 3 using &lt;code&gt;gsub()&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;visa_requirements &amp;lt;- html_table(referenced_by)
+visa_requirements$`Visa requirement` &amp;lt;- gsub(&amp;quot;\\[.*&amp;quot;,&amp;quot;&amp;quot;,visa_requirements$`Visa requirement`)
+visa_requirements$`Allowed stay` &amp;lt;-  gsub(&amp;quot;\\[.*&amp;quot;,&amp;quot;&amp;quot;,visa_requirements$`Allowed stay`)
+head(visa_requirements[,1:3])&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;##               Country  Visa requirement Allowed stay
+## 1         Afghanistan     Visa required             
+## 2             Albania Visa not required       1 year
+## 3             Algeria     Visa required             
+## 4             Andorra Visa not required     3 months
+## 5              Angola             eVisa      30 days
+## 6 Antigua and Barbuda Visa not required     6 months&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We’ve only scratched the surface here, but hope this example shows off the convenience of the &lt;code&gt;rvest&lt;/code&gt; package.&lt;/p&gt;
+&lt;p&gt;Notes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Chrome’s Developer Tools can be launched by right-clicking on the page and selecting Inspect. Then, mouse over the html code listed under elements and find a place that highlights the table of interest on the right. Then right-click again, select Copy -&amp;gt; Copy XPath.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;If writing custom scraping scripts in R is not the route you’d want to take, our team has recently discovered a very nice and flexible commercial tool &lt;a href=&#34;https://www.mozenda.com/&#34;&gt;Mozenda&lt;/a&gt;. As of 8/8/2019, they offer a 30-day trial of a full product.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

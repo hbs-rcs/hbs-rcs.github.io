@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>grid | HBS Research Computing Services Blog</title>
+    <link>https://hbs-rcs.github.io/tag/grid/</link>
+      <atom:link href="https://hbs-rcs.github.io/tag/grid/index.xml" rel="self" type="application/rss+xml" />
+    <description>grid</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Thu, 17 Nov 2016 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://hbs-rcs.github.io/media/icon_hua2ec155b4296a9c9791d015323e16eb5_11927_512x512_fill_lanczos_center_3.png</url>
+      <title>grid</title>
+      <link>https://hbs-rcs.github.io/tag/grid/</link>
+    </image>
+    
+    <item>
+      <title>Running Cron Jobs on the Grid</title>
+      <link>https://hbs-rcs.github.io/post/2016-11-17-bsub-cron/</link>
+      <pubDate>Thu, 17 Nov 2016 00:00:00 +0000</pubDate>
+      <guid>https://hbs-rcs.github.io/post/2016-11-17-bsub-cron/</guid>
+      <description>
+&lt;script src=&#34;https://hbs-rcs.github.io/post/2016-11-17-bsub-cron/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;from datetime import datetime, timedelta
+import subprocess
+
+def main():
+    timestamp = datetime.now().isoformat()
+    print &amp;#39;Hello, World! It is currently %s.&amp;#39; % timestamp
+
+def reschedule(**kwargs):
+    when = datetime.now() + timedelta(**kwargs)
+    timestamp = when.strftime(&amp;#39;%Y:%m:%d:%H:%M&amp;#39;)
+    path = __file__
+    command = &amp;#39;bsub -b %(timestamp)s python %(path)s&amp;#39; % locals()
+    subprocess.call(command, shell=True)
+
+if __name__ == &amp;#39;__main__&amp;#39;:
+    reschedule(minutes=1)
+    main()&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Running Matlab on the Grid</title>
+      <link>https://hbs-rcs.github.io/post/2016-11-17-matlab/</link>
+      <pubDate>Thu, 17 Nov 2016 00:00:00 +0000</pubDate>
+      <guid>https://hbs-rcs.github.io/post/2016-11-17-matlab/</guid>
+      <description>
+&lt;script src=&#34;https://hbs-rcs.github.io/post/2016-11-17-matlab/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;div id=&#34;running-matlab-interactively-no-gui&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Running Matlab (interactively no GUI)&lt;/h1&gt;
+&lt;p&gt;I’m looking into this issue. One thing I’ve noticed is that starting Matlab takes a long time on the grid. When I start Matlab with the following command:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;bsub -q interactive -Is matlab -nodesktop -nojvm -nosplash&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;it takes about 45 seconds to start. If I tell Matlab where its license file is, it starts in about 5 seconds!&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;bsub -q interactive -Is matlab -nodesktop -nojvm -nosplash -c /usr/local/apps/matlab/matlab_2015a/licenses/network.lic&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I’m hoping this license file trick will speed up the parpool initialization. I’ll let you know what I find.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;running-a-parallel-loop&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Running a parallel loop&lt;/h1&gt;
+&lt;p&gt;I’ve attached an example script to confirm that parfor works on the grid. Here are some timing results from this script:&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;Running sequential loop ...
+Elapsed time is 23.157138 seconds.
+
+Starting parallel pool (parpool) using the &amp;#39;local&amp;#39; profile ... connected to 3 workers.
+Elapsed time is 11.678452 seconds.
+
+Running parallel loop ...
+Elapsed time is 7.676729 seconds.&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I ran this with three workers. The parallel loop is right around three times as fast as the sequential loop. Setting up the parallel pool takes a little while, but it’s sooooo much better than if I don’t tell Matlab where its license file is.&lt;/p&gt;
+&lt;p&gt;Here’s the bsub command I used to start an interactive Matlab session with 4 cores:&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;bsub -n 4 -q interactive -Is matlab -nodesktop -nosplash -c /usr/local/apps/matlab/matlab_2015a/licenses/network.lic&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If you want to run with more processors replace “-n 4” with something like “-n 12”. Twelve is the max number of processors available. Let me know if you have any questions.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;requesting-more-memory&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Requesting more memory&lt;/h1&gt;
+&lt;p&gt;To specify the amount of memory use the -M flag:&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;bsub -n 4 -M 10240 -q interactive -Is matlab -nodesktop -nosplash -c /usr/local/apps/matlab/matlab_2015a/licenses/network.lic&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Memory here is measured in megabytes, above I’m requesting 10 gigabytes. When submitting through bsub I’m not sure how much memory is requested by default, so it’s probably smart to use the -M flag whenever using bsub.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Installing Python and R packages on the Grid</title>
+      <link>https://hbs-rcs.github.io/post/2016-11-15-conda/</link>
+      <pubDate>Tue, 15 Nov 2016 00:00:00 +0000</pubDate>
+      <guid>https://hbs-rcs.github.io/post/2016-11-15-conda/</guid>
+      <description>
+&lt;script src=&#34;https://hbs-rcs.github.io/post/2016-11-15-conda/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;This post was last updated on 2021-10-26.&lt;/p&gt;
+&lt;p&gt;If you think Python 2.6.6 or R 3.0.2 sound old, I have good
+news for you. The &lt;a href=&#34;http://conda.pydata.org/docs/&#34;&gt;Conda&lt;/a&gt; package manager makes it easy
+to install the latest and greatest Python and R packages in your home
+directory. Conda facilitates the installation of Python 2.7.11, Python 3.5.2, and R 3.3.1.&lt;/p&gt;
+&lt;div id=&#34;installation&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Installation&lt;/h1&gt;
+&lt;p&gt;The first step to installing Python or R on the Grid is to install Miniconda. The steps below outline how to install Miniconda.&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Log in to the grid:&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;ssh researchgrid.hbs.edu&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Set up an alias so it’s easy to submit interactive jobs to
+back-end nodes:&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;alias my_run=&amp;quot;bsub -app generic-5g -q interactive -Is&amp;quot;&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Download the Miniconda installer:&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;my_run wget http://grid.rcs.hbs.org/files/miniconda2-linux-x86_64-4.1.12.sh.gz&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Unzip and run the installer&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;gunzip miniconda2-linux-x86_64-4.1.12.sh.gz
+chmod +x miniconda2-linux-x86_64-4.1.12.sh
+my_run ./miniconda2-linux-x86_64-4.1.12.sh&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Here’s how I answered the questions when running the installer:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Do you approve the license terms? yes&lt;/li&gt;
+&lt;li&gt;I pressed enter to install Miniconda2 in ~/miniconda2&lt;/li&gt;
+&lt;li&gt;Do you wish the installer to prepend the Miniconda2 install
+location to PATH in your ~/.bashrc ? no&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Make sure the Miniconda bin is on your search path:&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;export PATH=&amp;quot;~/miniconda2/bin:$PATH&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If you skip this step, trying to use Conda will throw error
+messages like &lt;code&gt;-bash: conda: command not found&lt;/code&gt;. It is also useful
+to put the same export command in your &lt;code&gt;~/.bash_profile&lt;/code&gt;
+file. This way when you log into the grid and call python in the
+future it will find the python in &lt;code&gt;~/miniconda2/bin&lt;/code&gt; first rather
+than using the old version in &lt;code&gt;/usr/local/bin&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Remove the Miniconda installer:&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;rm -f miniconda2-linux-x86_64-4.1.12.sh&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div id=&#34;python&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Python&lt;/h2&gt;
+&lt;p&gt;Note this step requires that you have already installed Miniconda. If you have not installed Miniconda yet, return to Section .&lt;/p&gt;
+&lt;p&gt;The following command installs the typical Python packages used in social science research:&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;my_run conda install anaconda&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If the Python packages included in Anaconda are insufficient for your needs, Conda’s documentation on &lt;a href=&#34;http://conda.pydata.org/docs/using/pkgs.html&#34;&gt;managing packages&lt;/a&gt; has excellent information on how to install additional packages. The general approach to installing additional packages proceeds as follows:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;See if the package is available through Conda with &lt;code&gt;conda search&lt;/code&gt;. If it is, install the package using &lt;code&gt;conda install&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;See if the package is available on &lt;a href=&#34;http://anaconda.org&#34;&gt;http://anaconda.org&lt;/a&gt;. If it is, install the package using &lt;code&gt;conda install&lt;/code&gt; being sure to specify the correct channel.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;To install a non-conda package, use &lt;code&gt;pip&lt;/code&gt; to install the package.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div id=&#34;r&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;R&lt;/h2&gt;
+&lt;p&gt;Note this step requires that you have already installed Miniconda. If you have not installed Miniconda yet, return to Section .&lt;/p&gt;
+&lt;p&gt;The following command installs the typical R packages used in social science research:&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;my_run conda install -c r r-essentials&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Notice that the above command installs &lt;code&gt;r-essentials&lt;/code&gt; from the &lt;code&gt;r&lt;/code&gt; channel. This package contains the latest version of R.&lt;/p&gt;
+&lt;p&gt;If you need additional R packages the general approach proceeds as follows:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Search &lt;a href=&#34;http://anaconda.org&#34;&gt;http://anaconda.org&lt;/a&gt;. If the package is available use &lt;code&gt;conda install&lt;/code&gt; specifying the appropriate channel.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;If the package is available through CRAN but not Conda, you can create a new Conda package from the CRAN repository. For documentation on this process see &lt;a href=&#34;http://conda.pydata.org/docs/build_tutorials/pkgs.html&#34;&gt;building conda packages&lt;/a&gt; and &lt;a href=&#34;http://conda.pydata.org/docs/commands/build/conda-skeleton-cran.html&#34;&gt;conda skeleton cran&lt;/a&gt;. This looks like a bit of work to do properly.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;This &lt;a href=&#34;http://stackoverflow.com/a/35023854/3756632&#34;&gt;Stack Overflow answer&lt;/a&gt; provides a quick and dirty workaround if you don’t want to build new Conda packages. The key insight is to open R and use &lt;code&gt;install.packages&lt;/code&gt; being sure the specify the correct path for where to install the package, something like:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;install.packages(&amp;quot;rstan&amp;quot;, lib = &amp;quot;~/miniconda2/lib/R/library&amp;quot;)&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div id=&#34;environments&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Environments&lt;/h2&gt;
+&lt;p&gt;One of Conda’s most useful features is the ability to create virtual environments. This is particularly helpful if you have multiple projects that depend on different versions of packages. With a virtual environment you can update the packages for one project without disturbing the packages of your other projects. Conda’s documentation on &lt;a href=&#34;http://conda.pydata.org/docs/using/envs.html&#34;&gt;managing environments&lt;/a&gt; is a good place to learn about this feature.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;execution&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Execution&lt;/h1&gt;
+&lt;p&gt;Now that you have installed python and R in &lt;code&gt;~/miniconda2/bin/&lt;/code&gt; you
+need to run these programs using bsub commands so your computationally
+intense jobs are run on back-end nodes rather than on front-end
+nodes. Below I give a quick introduction to submitting batch and
+interactive jobs through LSF.&lt;/p&gt;
+&lt;div id=&#34;batch&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Batch&lt;/h2&gt;
+&lt;p&gt;To start let’s create an alias describing a &lt;code&gt;bsub&lt;/code&gt; command for submitting batch jobs. If you want to learn more about bsub go to &lt;em&gt;this page in the documentation&lt;/em&gt;.&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;alias my_batch=&amp;quot;bsub -app generic-5g -q normal&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;If you want to run a Python script named &lt;code&gt;your_file.py&lt;/code&gt; you would run:&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;my_batch ~/miniconda2/bin/python your_file.py&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Notice that it’s important to give the full path to your installation of Python. Similarly, here is how to run an R script named &lt;code&gt;your_file.R&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;my_batch ~/miniconda2/bin/Rscript your_file.R&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;interactive&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Interactive&lt;/h2&gt;
+&lt;p&gt;Note, I define the &lt;code&gt;my_run&lt;/code&gt; alias used below in Section .&lt;/p&gt;
+&lt;p&gt;There are a lot of ways to run interactive Python and R jobs on the Grid. I’m going to highlight the most enjoyable ways:&lt;/p&gt;
+&lt;div id=&#34;jupyter-console&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Jupyter Console&lt;/h3&gt;
+&lt;p&gt;If you want to work at the command line, the Jupyter Console makes interactive work quite pleasant and it works with both Python and R. To run Python use:&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;my_run jupyter console&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To run R use:&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;my_run jupyter console --kernel=ir&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;jupyter-notebook&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Jupyter Notebook&lt;/h3&gt;
+&lt;p&gt;The Jupyter Notebook is not currently supported on the Grid for security reasons.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;rstudio-desktop&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;RStudio Desktop&lt;/h3&gt;
+&lt;p&gt;It is possible to run RStudio Desktop on the grid. Here is how I run RStudio (note the spelling of the &lt;code&gt;Rstudio&lt;/code&gt; command has a capital &lt;code&gt;R&lt;/code&gt; and a lower-case &lt;code&gt;s&lt;/code&gt;):&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;export RSTUDIO_WHICH_R=~/miniconda2/bin/R
+Rstudio&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Unfortunately, install RStudio on the Grid is quite challenging and the currently installed version is quite old. You’re likely to have a more pleasant interactive experience using the Jupyter Notebook, which is easy to install.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;troubleshooting&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Troubleshooting&lt;/h1&gt;
+&lt;div id=&#34;lattice-was-built-before-r-3.0.0&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;code&gt;lattice&lt;/code&gt; was built before R 3.0.0&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;R&lt;/code&gt; is working great, but I’m getting the following error:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;&amp;gt; library(lattice)
+Error: package ‘lattice’ was built before R 3.0.0: please re-install it&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This is happening because &lt;code&gt;R&lt;/code&gt; is looking for packages in two places:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;&amp;gt; .libPaths()
+[1] &amp;quot;/usr/local/apps/R/packages&amp;quot;
+[2] &amp;quot;/export/home/dor/amarder/miniconda2/lib/R/library&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The first directory has old packages in it. When &lt;code&gt;R&lt;/code&gt; is loading &lt;code&gt;lattice&lt;/code&gt; it tries to import the version in &lt;code&gt;/usr/local/apps/R/packages&lt;/code&gt; first, unfortunately this version is too old and the import fails. To fix this issue remove this directory from &lt;code&gt;.libPaths&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;&amp;gt; .libPaths(.libPaths()[.libPaths() != &amp;quot;/usr/local/apps/R/packages&amp;quot;])
+&amp;gt; library(lattice)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;You have successfully imported lattice in the current R session. To make this change affect all future &lt;code&gt;R&lt;/code&gt; sessions add the following line to your &lt;code&gt;~/.Rprofile&lt;/code&gt; file:&lt;/p&gt;
+&lt;pre class=&#34;r&#34;&gt;&lt;code&gt;.libPaths(.libPaths()[.libPaths() != &amp;quot;/usr/local/apps/R/packages&amp;quot;])&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

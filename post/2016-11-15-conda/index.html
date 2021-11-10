@@ -1,0 +1,1246 @@
+<!DOCTYPE html><html lang="en-us" >
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  
+  
+    <meta name="generator" content="Wowchemy 5.3.0 for Hugo" />
+  
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  
+
+  
+  
+  
+    
+  
+  <meta name="description" content="This post was last updated on 2021-10-26.
+If you think Python 2.6.6 or R 3.0.2 sound old, I have good news for you. The Conda package manager makes it easy to install the latest and greatest Python and R packages in your home directory." />
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://hbs-rcs.github.io/post/2016-11-15-conda/" />
+
+  
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  
+
+  
+  
+  
+    <meta name="theme-color" content="#1565c0" />
+  
+
+  
+  
+    
+    <script src="/js/mathjax-config.js"></script>
+  
+
+  
+
+  <link rel="stylesheet" href="/css/vendor-bundle.min.f1ecf783c14edc00c9320c205831ad8e.css" media="print" onload="this.media='all'">
+
+  
+  
+  
+    
+    
+
+    
+    
+    
+    
+      
+      
+    
+    
+    
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/styles/github.min.css" crossorigin="anonymous" title="hl-light" media="print" onload="this.media='all'">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" media="print" onload="this.media='all'" disabled>
+        
+      
+    
+
+    
+    
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.min.css" integrity="sha512-1xoFisiGdy9nvho8EgXuXvnpR5GAMSjFwp40gSRE3NwdUdIMIKuPa7bqoUhLD0O/5tPNhteAsE5XyyMi5reQVA==" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+
+    
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+  
+
+  
+  
+  
+    
+      
+      <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono&family=Roboto:wght@400;700&display=swap">
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono&family=Roboto:wght@400;700&display=swap" media="print" onload="this.media='all'">
+    
+  
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/wowchemy.9f457a613f02e9027025db7311c58ccf.css" />
+
+  
+
+
+
+  
+
+  
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+    <link rel="manifest" href="/manifest.webmanifest" />
+  
+
+  <link rel="icon" type="image/png" href="/media/icon_hua2ec155b4296a9c9791d015323e16eb5_11927_32x32_fill_lanczos_center_3.png" />
+  <link rel="apple-touch-icon" type="image/png" href="/media/icon_hua2ec155b4296a9c9791d015323e16eb5_11927_180x180_fill_lanczos_center_3.png" />
+
+  <link rel="canonical" href="https://hbs-rcs.github.io/post/2016-11-15-conda/" />
+
+  
+  
+  
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary" />
+  
+  <meta property="og:site_name" content="HBS Research Computing Services Blog" />
+  <meta property="og:url" content="https://hbs-rcs.github.io/post/2016-11-15-conda/" />
+  <meta property="og:title" content="Installing Python and R packages on the Grid | HBS Research Computing Services Blog" />
+  <meta property="og:description" content="This post was last updated on 2021-10-26.
+If you think Python 2.6.6 or R 3.0.2 sound old, I have good news for you. The Conda package manager makes it easy to install the latest and greatest Python and R packages in your home directory." /><meta property="og:image" content="https://hbs-rcs.github.io/media/icon_hua2ec155b4296a9c9791d015323e16eb5_11927_512x512_fill_lanczos_center_3.png" />
+    <meta property="twitter:image" content="https://hbs-rcs.github.io/media/icon_hua2ec155b4296a9c9791d015323e16eb5_11927_512x512_fill_lanczos_center_3.png" /><meta property="og:locale" content="en-us" />
+  
+    
+      <meta
+        property="article:published_time"
+        content="2016-11-15T00:00:00&#43;00:00"
+      />
+    
+    <meta property="article:modified_time" content="2016-11-15T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://hbs-rcs.github.io/post/2016-11-15-conda/"
+  },
+  "headline": "Installing Python and R packages on the Grid",
+  
+  "datePublished": "2016-11-15T00:00:00Z",
+  "dateModified": "2016-11-15T00:00:00Z",
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "HBS Research Computing Services Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://hbs-rcs.github.io/media/icon_hua2ec155b4296a9c9791d015323e16eb5_11927_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "This post was last updated on 2021-10-26.\nIf you think Python 2.6.6 or R 3.0.2 sound old, I have good news for you. The Conda package manager makes it easy to install the latest and greatest Python and R packages in your home directory."
+}
+</script>
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+  <title>Installing Python and R packages on the Grid | HBS Research Computing Services Blog</title>
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="page-wrapper   " data-wc-page-id="84b0421e70092d320d005a5ad9681d11" >
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <script src="/js/wowchemy-init.min.8988fb2a4bba758785868cfcb5244555.js"></script>
+
+  
+
+
+<aside class="search-modal" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#" aria-label="Close"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control"
+        aria-label="Search...">
+        
+      </div>
+
+      
+      
+
+      
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+
+  <div class="page-header">
+    
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container-xl">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">HBS Research Computing Services Blog</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">HBS Research Computing Services Blog</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://www.hbs.edu/research-computing-services/about-us/" target="_blank" rel="noopener"><span>About</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+            
+            
+            
+              
+            
+            
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#posts"><span>Posts</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://www.hbs.edu/research-computing-services/faculty-projects/" target="_blank" rel="noopener"><span>Projects</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://www.hbs.edu/research-computing-services/training/" target="_blank" rel="noopener"><span>Events</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://www.hbs.edu/research-computing-services/contact-us/" target="_blank" rel="noopener"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+
+      
+      
+
+      
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#" aria-label="Search"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+      
+      <li class="nav-item dropdown theme-dropdown">
+        <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-label="Display preferences">
+          <i class="fas fa-moon" aria-hidden="true"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a href="#" class="dropdown-item js-set-theme-light">
+            <span>Light</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-dark">
+            <span>Dark</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-auto">
+            <span>Automatic</span>
+          </a>
+        </div>
+      </li>
+      
+
+      
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  </div>
+
+  <div class="page-body">
+    <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>Installing Python and R packages on the Grid</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Nov 15, 2016
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    5 min read
+  </span>
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+
+</div>
+
+    
+
+
+
+
+
+  
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      
+<script src="https://hbs-rcs.github.io/post/2016-11-15-conda/index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>This post was last updated on 2021-10-26.</p>
+<p>If you think Python 2.6.6 or R 3.0.2 sound old, I have good
+news for you. The <a href="http://conda.pydata.org/docs/">Conda</a> package manager makes it easy
+to install the latest and greatest Python and R packages in your home
+directory. Conda facilitates the installation of Python 2.7.11, Python 3.5.2, and R 3.3.1.</p>
+<div id="installation" class="section level1">
+<h1>Installation</h1>
+<p>The first step to installing Python or R on the Grid is to install Miniconda. The steps below outline how to install Miniconda.</p>
+<ol style="list-style-type: decimal">
+<li><p>Log in to the grid:</p>
+<pre class="bash"><code>ssh researchgrid.hbs.edu</code></pre></li>
+<li><p>Set up an alias so it’s easy to submit interactive jobs to
+back-end nodes:</p>
+<pre class="bash"><code>alias my_run=&quot;bsub -app generic-5g -q interactive -Is&quot;</code></pre></li>
+<li><p>Download the Miniconda installer:</p>
+<pre class="bash"><code>my_run wget http://grid.rcs.hbs.org/files/miniconda2-linux-x86_64-4.1.12.sh.gz</code></pre></li>
+<li><p>Unzip and run the installer</p>
+<pre class="bash"><code>gunzip miniconda2-linux-x86_64-4.1.12.sh.gz
+chmod +x miniconda2-linux-x86_64-4.1.12.sh
+my_run ./miniconda2-linux-x86_64-4.1.12.sh</code></pre>
+<p>Here’s how I answered the questions when running the installer:</p>
+<ol style="list-style-type: decimal">
+<li>Do you approve the license terms? yes</li>
+<li>I pressed enter to install Miniconda2 in ~/miniconda2</li>
+<li>Do you wish the installer to prepend the Miniconda2 install
+location to PATH in your ~/.bashrc ? no</li>
+</ol></li>
+<li><p>Make sure the Miniconda bin is on your search path:</p>
+<pre class="bash"><code>export PATH=&quot;~/miniconda2/bin:$PATH&quot;</code></pre>
+<p>If you skip this step, trying to use Conda will throw error
+messages like <code>-bash: conda: command not found</code>. It is also useful
+to put the same export command in your <code>~/.bash_profile</code>
+file. This way when you log into the grid and call python in the
+future it will find the python in <code>~/miniconda2/bin</code> first rather
+than using the old version in <code>/usr/local/bin</code>.</p></li>
+<li><p>Remove the Miniconda installer:</p>
+<pre class="bash"><code>rm -f miniconda2-linux-x86_64-4.1.12.sh</code></pre></li>
+</ol>
+<div id="python" class="section level2">
+<h2>Python</h2>
+<p>Note this step requires that you have already installed Miniconda. If you have not installed Miniconda yet, return to Section .</p>
+<p>The following command installs the typical Python packages used in social science research:</p>
+<pre class="bash"><code>my_run conda install anaconda</code></pre>
+<p>If the Python packages included in Anaconda are insufficient for your needs, Conda’s documentation on <a href="http://conda.pydata.org/docs/using/pkgs.html">managing packages</a> has excellent information on how to install additional packages. The general approach to installing additional packages proceeds as follows:</p>
+<ol style="list-style-type: decimal">
+<li><p>See if the package is available through Conda with <code>conda search</code>. If it is, install the package using <code>conda install</code>.</p></li>
+<li><p>See if the package is available on <a href="http://anaconda.org">http://anaconda.org</a>. If it is, install the package using <code>conda install</code> being sure to specify the correct channel.</p></li>
+<li><p>To install a non-conda package, use <code>pip</code> to install the package.</p></li>
+</ol>
+</div>
+<div id="r" class="section level2">
+<h2>R</h2>
+<p>Note this step requires that you have already installed Miniconda. If you have not installed Miniconda yet, return to Section .</p>
+<p>The following command installs the typical R packages used in social science research:</p>
+<pre class="bash"><code>my_run conda install -c r r-essentials</code></pre>
+<p>Notice that the above command installs <code>r-essentials</code> from the <code>r</code> channel. This package contains the latest version of R.</p>
+<p>If you need additional R packages the general approach proceeds as follows:</p>
+<ol style="list-style-type: decimal">
+<li><p>Search <a href="http://anaconda.org">http://anaconda.org</a>. If the package is available use <code>conda install</code> specifying the appropriate channel.</p></li>
+<li><p>If the package is available through CRAN but not Conda, you can create a new Conda package from the CRAN repository. For documentation on this process see <a href="http://conda.pydata.org/docs/build_tutorials/pkgs.html">building conda packages</a> and <a href="http://conda.pydata.org/docs/commands/build/conda-skeleton-cran.html">conda skeleton cran</a>. This looks like a bit of work to do properly.</p></li>
+<li><p>This <a href="http://stackoverflow.com/a/35023854/3756632">Stack Overflow answer</a> provides a quick and dirty workaround if you don’t want to build new Conda packages. The key insight is to open R and use <code>install.packages</code> being sure the specify the correct path for where to install the package, something like:</p>
+<pre class="r"><code>install.packages(&quot;rstan&quot;, lib = &quot;~/miniconda2/lib/R/library&quot;)</code></pre></li>
+</ol>
+</div>
+<div id="environments" class="section level2">
+<h2>Environments</h2>
+<p>One of Conda’s most useful features is the ability to create virtual environments. This is particularly helpful if you have multiple projects that depend on different versions of packages. With a virtual environment you can update the packages for one project without disturbing the packages of your other projects. Conda’s documentation on <a href="http://conda.pydata.org/docs/using/envs.html">managing environments</a> is a good place to learn about this feature.</p>
+</div>
+</div>
+<div id="execution" class="section level1">
+<h1>Execution</h1>
+<p>Now that you have installed python and R in <code>~/miniconda2/bin/</code> you
+need to run these programs using bsub commands so your computationally
+intense jobs are run on back-end nodes rather than on front-end
+nodes. Below I give a quick introduction to submitting batch and
+interactive jobs through LSF.</p>
+<div id="batch" class="section level2">
+<h2>Batch</h2>
+<p>To start let’s create an alias describing a <code>bsub</code> command for submitting batch jobs. If you want to learn more about bsub go to <em>this page in the documentation</em>.</p>
+<pre class="bash"><code>alias my_batch=&quot;bsub -app generic-5g -q normal&quot;</code></pre>
+<p>If you want to run a Python script named <code>your_file.py</code> you would run:</p>
+<pre class="bash"><code>my_batch ~/miniconda2/bin/python your_file.py</code></pre>
+<p>Notice that it’s important to give the full path to your installation of Python. Similarly, here is how to run an R script named <code>your_file.R</code>:</p>
+<pre class="bash"><code>my_batch ~/miniconda2/bin/Rscript your_file.R</code></pre>
+</div>
+<div id="interactive" class="section level2">
+<h2>Interactive</h2>
+<p>Note, I define the <code>my_run</code> alias used below in Section .</p>
+<p>There are a lot of ways to run interactive Python and R jobs on the Grid. I’m going to highlight the most enjoyable ways:</p>
+<div id="jupyter-console" class="section level3">
+<h3>Jupyter Console</h3>
+<p>If you want to work at the command line, the Jupyter Console makes interactive work quite pleasant and it works with both Python and R. To run Python use:</p>
+<pre class="bash"><code>my_run jupyter console</code></pre>
+<p>To run R use:</p>
+<pre class="bash"><code>my_run jupyter console --kernel=ir</code></pre>
+</div>
+<div id="jupyter-notebook" class="section level3">
+<h3>Jupyter Notebook</h3>
+<p>The Jupyter Notebook is not currently supported on the Grid for security reasons.</p>
+</div>
+<div id="rstudio-desktop" class="section level3">
+<h3>RStudio Desktop</h3>
+<p>It is possible to run RStudio Desktop on the grid. Here is how I run RStudio (note the spelling of the <code>Rstudio</code> command has a capital <code>R</code> and a lower-case <code>s</code>):</p>
+<pre class="bash"><code>export RSTUDIO_WHICH_R=~/miniconda2/bin/R
+Rstudio</code></pre>
+<p>Unfortunately, install RStudio on the Grid is quite challenging and the currently installed version is quite old. You’re likely to have a more pleasant interactive experience using the Jupyter Notebook, which is easy to install.</p>
+</div>
+</div>
+</div>
+<div id="troubleshooting" class="section level1">
+<h1>Troubleshooting</h1>
+<div id="lattice-was-built-before-r-3.0.0" class="section level2">
+<h2><code>lattice</code> was built before R 3.0.0</h2>
+<p><code>R</code> is working great, but I’m getting the following error:</p>
+<pre class="r"><code>&gt; library(lattice)
+Error: package ‘lattice’ was built before R 3.0.0: please re-install it</code></pre>
+<p>This is happening because <code>R</code> is looking for packages in two places:</p>
+<pre class="r"><code>&gt; .libPaths()
+[1] &quot;/usr/local/apps/R/packages&quot;
+[2] &quot;/export/home/dor/amarder/miniconda2/lib/R/library&quot;</code></pre>
+<p>The first directory has old packages in it. When <code>R</code> is loading <code>lattice</code> it tries to import the version in <code>/usr/local/apps/R/packages</code> first, unfortunately this version is too old and the import fails. To fix this issue remove this directory from <code>.libPaths</code>.</p>
+<pre class="r"><code>&gt; .libPaths(.libPaths()[.libPaths() != &quot;/usr/local/apps/R/packages&quot;])
+&gt; library(lattice)</code></pre>
+<p>You have successfully imported lattice in the current R session. To make this change affect all future <code>R</code> sessions add the following line to your <code>~/.Rprofile</code> file:</p>
+<pre class="r"><code>.libPaths(.libPaths()[.libPaths() != &quot;/usr/local/apps/R/packages&quot;])</code></pre>
+</div>
+</div>
+
+    </div>
+
+    
+
+
+
+
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tag/grid/">grid</a>
+  
+</div>
+
+
+
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://hbs-rcs.github.io/post/2016-11-15-conda/&amp;text=Installing%20Python%20and%20R%20packages%20on%20the%20Grid" target="_blank" rel="noopener" class="share-btn-twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://hbs-rcs.github.io/post/2016-11-15-conda/&amp;t=Installing%20Python%20and%20R%20packages%20on%20the%20Grid" target="_blank" rel="noopener" class="share-btn-facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Installing%20Python%20and%20R%20packages%20on%20the%20Grid&amp;body=https://hbs-rcs.github.io/post/2016-11-15-conda/" target="_blank" rel="noopener" class="share-btn-email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://hbs-rcs.github.io/post/2016-11-15-conda/&amp;title=Installing%20Python%20and%20R%20packages%20on%20the%20Grid" target="_blank" rel="noopener" class="share-btn-linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Installing%20Python%20and%20R%20packages%20on%20the%20Grid%20https://hbs-rcs.github.io/post/2016-11-15-conda/" target="_blank" rel="noopener" class="share-btn-whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=https://hbs-rcs.github.io/post/2016-11-15-conda/&amp;title=Installing%20Python%20and%20R%20packages%20on%20the%20Grid" target="_blank" rel="noopener" class="share-btn-weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+  
+  
+  
+    
+  
+  
+  
+  <div class="media author-card content-widget-hr">
+    
+      
+      <a href="https://hbs-rcs.github.io"><img class="avatar mr-3 avatar-circle" src="/author/avatar_hu52a603635ecebd45650b162dadabb4e5_12861_270x270_fill_q75_lanczos_center.jpg" alt=""></a>
+    
+
+    <div class="media-body">
+      <h5 class="card-title"><a href="https://hbs-rcs.github.io"></a></h5>
+      <h6 class="card-subtitle">Senior Statistician / Data Scientist</h6>
+      <p class="card-text">I enjoy statistics and programming.</p>
+      <ul class="network-icon" aria-hidden="true">
+  
+</ul>
+
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/2016-11-17-bsub-cron/">Running Cron Jobs on the Grid</a></li>
+      
+      <li><a href="/post/2016-11-17-matlab/">Running Matlab on the Grid</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+
+
+  </div>
+</article>
+  </div>
+
+  <div class="page-footer">
+    
+    
+    <div class="container">
+      <footer class="site-footer">
+
+  
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+
+
+
+
+
+  <p class="powered-by">
+    
+    
+    
+      
+      
+      
+      
+      
+      
+      Published with <a href="https://wowchemy.com/?utm_campaign=poweredby" target="_blank" rel="noopener">Wowchemy</a> — the free, <a href="https://github.com/wowchemy/wowchemy-hugo-modules" target="_blank" rel="noopener">open source</a> website builder that empowers creators.
+    
+  </p>
+</footer>
+
+    </div>
+    
+  </div>
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      
+
+    
+    <script src="/js/vendor-bundle.min.b73dfaac3b6499dc997741748a7c3fe2.js"></script>
+
+    
+    
+    
+      
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      
+
+      
+      
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/highlight.min.js" integrity="sha512-TDKKr+IvoqZnPzc3l35hdjpHD0m+b2EC2SrLEgKDRWpxf2rFCxemkgvJ5kfU48ip+Y+m2XVKyOCD85ybtlZDmw==" crossorigin="anonymous"></script>
+        
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/r.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/python.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/latex.min.js" crossorigin="anonymous"></script>
+        
+      
+
+    
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.min.js" integrity="sha512-SeiQaaDh73yrb56sTW/RgVdi/mMqNeM2oBwubFHagc5BkixSpP1fvqF47mKzPGWYSSy4RwbBunrJBQ4Co8fRWA==" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+      
+      <script id="search-hit-fuse-template" type="text/x-template">
+        <div class="search-hit" id="summary-{{key}}">
+          <div class="search-hit-content">
+            <div class="search-hit-name">
+              <a href="{{relpermalink}}">{{title}}</a>
+              <div class="article-metadata search-hit-type">{{type}}</div>
+              <p class="search-hit-description">{{snippet}}</p>
+            </div>
+          </div>
+        </div>
+      </script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+      
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+      
+      
+      
+      
+      
+      
+      
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+      
+      
+    
+    
+    <script src="/en/js/wowchemy.min.d68ecd57c0ec1f1f61d65fd568f1c3a0.js"></script>
+
+    
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+
+
+</body>
+</html>

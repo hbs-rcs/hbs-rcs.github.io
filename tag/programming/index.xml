@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>programming | HBS Research Computing Services Blog</title>
+    <link>https://hbs-rcs.github.io/tag/programming/</link>
+      <atom:link href="https://hbs-rcs.github.io/tag/programming/index.xml" rel="self" type="application/rss+xml" />
+    <description>programming</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Mon, 19 Jun 2017 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://hbs-rcs.github.io/media/icon_hua2ec155b4296a9c9791d015323e16eb5_11927_512x512_fill_lanczos_center_3.png</url>
+      <title>programming</title>
+      <link>https://hbs-rcs.github.io/tag/programming/</link>
+    </image>
+    
+    <item>
+      <title>Makefile Tips</title>
+      <link>https://hbs-rcs.github.io/post/make/</link>
+      <pubDate>Mon, 19 Jun 2017 00:00:00 +0000</pubDate>
+      <guid>https://hbs-rcs.github.io/post/make/</guid>
+      <description>&lt;p&gt;If you&amp;rsquo;re new to Make, check out Mike Bostock&amp;rsquo;s article &lt;a href=&#34;https://bost.ocks.org/mike/make/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Why Use Make&lt;/a&gt;, it&amp;rsquo;s excellent! This post is intended as a follow-up to Mike&amp;rsquo;s introduction.&lt;/p&gt;
+&lt;p&gt;I love Makefiles because they allow me to describe my workflow as a directed acyclic graph. Makefiles are a great example of &lt;a href=&#34;https://en.wikipedia.org/wiki/Declarative_programming&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;declarative programming&lt;/a&gt;. When I specify a rule like the following:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;targetfile: sourcefile
+	command
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I am saying that the &lt;code&gt;targetfile&lt;/code&gt; depends on the &lt;code&gt;sourcefile&lt;/code&gt;. Whenever I issue the command &lt;code&gt;make targetfile&lt;/code&gt;, Make checks to see if anything in the &lt;code&gt;targetfile&lt;/code&gt;&amp;rsquo;s dependency graph needs to be recompiled and it runs the necessary commands to bring the &lt;code&gt;targetfile&lt;/code&gt; up to date. I enjoy using Make because it provides:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;A framework for writing reproducible research.&lt;/li&gt;
+&lt;li&gt;A transparent caching mechanism. Often downloading data can take a lot of time, while cleaning data once it&amp;rsquo;s downloaded is relatively fast. By breaking these into two rules. I only need to download the data once and then I can focus on data cleaning and data analysis without re-running code from previous steps.&lt;/li&gt;
+&lt;li&gt;A mechanism for building projects in parallel. Using &lt;code&gt;make -j&lt;/code&gt; (or &lt;code&gt;lsmake&lt;/code&gt; on the Grid) tells Make to run commands in parallel. All I have to specify is how each file in my project is built, Make figures out how to run everything in parallel.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h1 id=&#34;makefiles-as-glue&#34;&gt;Makefiles as Glue&lt;/h1&gt;
+&lt;p&gt;I often find myself using different tools for different jobs. I like using Python for web scraping, R for data visualization, and Stata for certain statistical models. Makefiles make it easy to combine different tools:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-makefile&#34;&gt;DATA = data/processed/data.csv
+
+$(DATA): src/download.py
+	python $&amp;lt;
+
+reports/figures/graph.pdf: src/graph.R $(DATA)
+	Rscript $&amp;lt;
+
+reports/figures/table.tex: src/table.do $(DATA)
+	stata-mp -b do $&amp;lt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To understand the syntax above, read about &lt;a href=&#34;https://www.gnu.org/software/make/manual/html_node/Using-Variables.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;variables&lt;/a&gt; and &lt;a href=&#34;https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;automatic variables&lt;/a&gt;.&lt;/p&gt;
+&lt;h1 id=&#34;compiling-a-bunch-of-files-at-once&#34;&gt;Compiling a Bunch of Files at Once&lt;/h1&gt;
+&lt;p&gt;Often the projects I work on require a lot of analyses. Imagine the following directory structure:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;.
+├── Makefile
+├── data
+│   └── processed
+│       └── data.dta
+└── src
+    └── tables
+        ├── table1.do
+        ├── table2.do
+        └── table3.do
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Putting the following two rules in my Makefile allows me to recompile all tables with a single &lt;code&gt;make tables&lt;/code&gt; command:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-makefile&#34;&gt;%.log: %.do data/processed/data.dta
+	cd $(dir $&amp;lt;); stata-mp -b do $(notdir $&amp;lt;)
+
+DO_FILES = $(shell find src/tables -name &amp;quot;*.do&amp;quot;)
+LOG_FILES = $(patsubst %.do,%.log,$(DO_FILES))
+
+tables: $(LOG_FILES)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To understand the syntax above, read about &lt;a href=&#34;https://www.gnu.org/software/make/manual/html_node/Pattern-Rules.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;pattern rules&lt;/a&gt; and &lt;a href=&#34;https://www.gnu.org/software/make/manual/html_node/Functions.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;functions&lt;/a&gt;.&lt;/p&gt;
+&lt;h1 id=&#34;working-with-databases&#34;&gt;Working with Databases&lt;/h1&gt;
+&lt;p&gt;Make cannot inspect when a database table was last modified. Imagine we have a script that updates a table of patent data. We can work this into a Makefile by creating a corresponding file to keep track of when the database table was last updated. A rule like the following will allow Make to keep track of when the patents table was last updated:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-makefile&#34;&gt;data/processed/patents.table: src/patents.py
+	python $&amp;lt;
+	echo &amp;quot;Data stored in PostgreSQL database.&amp;quot; &amp;gt; $@
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h1 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h1&gt;
+&lt;p&gt;There are a crazy number of alternatives to Make. Here are just a few:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://ant.apache.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Ant&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://cmake.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CMake&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://gradle.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Gradle&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://luigi.readthedocs.io/en/stable/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Luigi&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://maven.apache.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Maven&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://ninja-build.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Ninja&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://ruby.github.io/rake/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Rake&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://scons.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;SCons&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://waf.io/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Waf&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;For the most part, I&amp;rsquo;ve found Make does everything I need it to do. Although the syntax is ugly, I appreciate how it ships with Unix-like operating systems (I find it annoying when I want to install a project and first I have to install the installation tool). That being said, I am very interested to experiment with Luigi (I&amp;rsquo;ve heard great things).&lt;/p&gt;
+&lt;p&gt;If you want to learn more about how I structure my projects, check out &lt;a href=&#34;https://drivendata.github.io/cookiecutter-data-science/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Cookiecutter Data Science&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Makefile Tips</title>
+      <link>https://hbs-rcs.github.io/post/make/</link>
+      <pubDate>Mon, 19 Jun 2017 00:00:00 +0000</pubDate>
+      <guid>https://hbs-rcs.github.io/post/make/</guid>
+      <description>&lt;p&gt;If you&amp;rsquo;re new to Make, check out Mike Bostock&amp;rsquo;s article &lt;a href=&#34;https://bost.ocks.org/mike/make/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Why Use Make&lt;/a&gt;, it&amp;rsquo;s excellent! This post is intended as a follow-up to Mike&amp;rsquo;s introduction.&lt;/p&gt;
+&lt;p&gt;I love Makefiles because they allow me to describe my workflow as a directed acyclic graph. Makefiles are a great example of &lt;a href=&#34;https://en.wikipedia.org/wiki/Declarative_programming&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;declarative programming&lt;/a&gt;. When I specify a rule like the following:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;targetfile: sourcefile
+	command
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;I am saying that the &lt;code&gt;targetfile&lt;/code&gt; depends on the &lt;code&gt;sourcefile&lt;/code&gt;. Whenever I issue the command &lt;code&gt;make targetfile&lt;/code&gt;, Make checks to see if anything in the &lt;code&gt;targetfile&lt;/code&gt;&amp;rsquo;s dependency graph needs to be recompiled and it runs the necessary commands to bring the &lt;code&gt;targetfile&lt;/code&gt; up to date. I enjoy using Make because it provides:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;A framework for writing reproducible research.&lt;/li&gt;
+&lt;li&gt;A transparent caching mechanism. Often downloading data can take a lot of time, while cleaning data once it&amp;rsquo;s downloaded is relatively fast. By breaking these into two rules. I only need to download the data once and then I can focus on data cleaning and data analysis without re-running code from previous steps.&lt;/li&gt;
+&lt;li&gt;A mechanism for building projects in parallel. Using &lt;code&gt;make -j&lt;/code&gt; (or &lt;code&gt;lsmake&lt;/code&gt; on the Grid) tells Make to run commands in parallel. All I have to specify is how each file in my project is built, Make figures out how to run everything in parallel.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h1 id=&#34;makefiles-as-glue&#34;&gt;Makefiles as Glue&lt;/h1&gt;
+&lt;p&gt;I often find myself using different tools for different jobs. I like using Python for web scraping, R for data visualization, and Stata for certain statistical models. Makefiles make it easy to combine different tools:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-makefile&#34;&gt;DATA = data/processed/data.csv
+
+$(DATA): src/download.py
+	python $&amp;lt;
+
+reports/figures/graph.pdf: src/graph.R $(DATA)
+	Rscript $&amp;lt;
+
+reports/figures/table.tex: src/table.do $(DATA)
+	stata-mp -b do $&amp;lt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To understand the syntax above, read about &lt;a href=&#34;https://www.gnu.org/software/make/manual/html_node/Using-Variables.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;variables&lt;/a&gt; and &lt;a href=&#34;https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;automatic variables&lt;/a&gt;.&lt;/p&gt;
+&lt;h1 id=&#34;compiling-a-bunch-of-files-at-once&#34;&gt;Compiling a Bunch of Files at Once&lt;/h1&gt;
+&lt;p&gt;Often the projects I work on require a lot of analyses. Imagine the following directory structure:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;.
+├── Makefile
+├── data
+│   └── processed
+│       └── data.dta
+└── src
+    └── tables
+        ├── table1.do
+        ├── table2.do
+        └── table3.do
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Putting the following two rules in my Makefile allows me to recompile all tables with a single &lt;code&gt;make tables&lt;/code&gt; command:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-makefile&#34;&gt;%.log: %.do data/processed/data.dta
+	cd $(dir $&amp;lt;); stata-mp -b do $(notdir $&amp;lt;)
+
+DO_FILES = $(shell find src/tables -name &amp;quot;*.do&amp;quot;)
+LOG_FILES = $(patsubst %.do,%.log,$(DO_FILES))
+
+tables: $(LOG_FILES)
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;To understand the syntax above, read about &lt;a href=&#34;https://www.gnu.org/software/make/manual/html_node/Pattern-Rules.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;pattern rules&lt;/a&gt; and &lt;a href=&#34;https://www.gnu.org/software/make/manual/html_node/Functions.html&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;functions&lt;/a&gt;.&lt;/p&gt;
+&lt;h1 id=&#34;working-with-databases&#34;&gt;Working with Databases&lt;/h1&gt;
+&lt;p&gt;Make cannot inspect when a database table was last modified. Imagine we have a script that updates a table of patent data. We can work this into a Makefile by creating a corresponding file to keep track of when the database table was last updated. A rule like the following will allow Make to keep track of when the patents table was last updated:&lt;/p&gt;
+&lt;pre&gt;&lt;code class=&#34;language-makefile&#34;&gt;data/processed/patents.table: src/patents.py
+	python $&amp;lt;
+	echo &amp;quot;Data stored in PostgreSQL database.&amp;quot; &amp;gt; $@
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h1 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h1&gt;
+&lt;p&gt;There are a crazy number of alternatives to Make. Here are just a few:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://ant.apache.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Ant&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://cmake.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;CMake&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://gradle.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Gradle&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://luigi.readthedocs.io/en/stable/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Luigi&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://maven.apache.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Maven&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://ninja-build.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Ninja&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://ruby.github.io/rake/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Rake&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://scons.org/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;SCons&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://waf.io/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Waf&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;For the most part, I&amp;rsquo;ve found Make does everything I need it to do. Although the syntax is ugly, I appreciate how it ships with Unix-like operating systems (I find it annoying when I want to install a project and first I have to install the installation tool). That being said, I am very interested to experiment with Luigi (I&amp;rsquo;ve heard great things).&lt;/p&gt;
+&lt;p&gt;If you want to learn more about how I structure my projects, check out &lt;a href=&#34;https://drivendata.github.io/cookiecutter-data-science/&#34; target=&#34;_blank&#34; rel=&#34;noopener&#34;&gt;Cookiecutter Data Science&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

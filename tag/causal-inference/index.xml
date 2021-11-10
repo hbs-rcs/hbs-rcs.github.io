@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>causal inference | HBS Research Computing Services Blog</title>
+    <link>https://hbs-rcs.github.io/tag/causal-inference/</link>
+      <atom:link href="https://hbs-rcs.github.io/tag/causal-inference/index.xml" rel="self" type="application/rss+xml" />
+    <description>causal inference</description>
+    <generator>Wowchemy (https://wowchemy.com)</generator><language>en-us</language><lastBuildDate>Thu, 12 Sep 2019 00:00:00 +0000</lastBuildDate>
+    <image>
+      <url>https://hbs-rcs.github.io/media/icon_hua2ec155b4296a9c9791d015323e16eb5_11927_512x512_fill_lanczos_center_3.png</url>
+      <title>causal inference</title>
+      <link>https://hbs-rcs.github.io/tag/causal-inference/</link>
+    </image>
+    
+    <item>
+      <title>Synthetic Controls: brief overview with practical recommmendations</title>
+      <link>https://hbs-rcs.github.io/post/synthetic-controls/</link>
+      <pubDate>Thu, 12 Sep 2019 00:00:00 +0000</pubDate>
+      <guid>https://hbs-rcs.github.io/post/synthetic-controls/</guid>
+      <description>
+&lt;script src=&#34;https://hbs-rcs.github.io/post/synthetic-controls/index_files/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;Recently, I found myself researching the latest developments on the topic of Synthetic Controls (SC) for one of the projects. I had the pleasure of learning about the method from its co-author &lt;a href=&#34;https://web.stanford.edu/~jhain/&#34;&gt;Prof. Jens Hainmueller&lt;/a&gt; back in 2011, when it had just started gaining momentum. Wondering what new insights have been gathered over the last 8 years by applied researchers utilizing this method for causal inference problems, I outlined interesting highlights in this post.
+&lt;!-- In another post I give an annotated Stata example of automating the method for more than one treated unit. --&gt;&lt;/p&gt;
+&lt;div id=&#34;overview&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Overview&lt;/h2&gt;
+&lt;p&gt;The method was first introduced in &lt;span class=&#34;citation&#34;&gt;Abadie and Gardeazabal (&lt;a href=&#34;#ref-Abadie_Economic_Costs_2003&#34; role=&#34;doc-biblioref&#34;&gt;2003&lt;/a&gt;)&lt;/span&gt; to estimate a causal effect of a political conflict on region’s per capita GDP. In the spirit of classical matching methods for causal inference (&lt;span class=&#34;citation&#34;&gt;Rosenbaum (&lt;a href=&#34;#ref-rosenbaum2002overt&#34; role=&#34;doc-biblioref&#34;&gt;2002&lt;/a&gt;)&lt;/span&gt;), the authors proposed a procedure for finding a group of control regions such that their &lt;em&gt;weighted average&lt;/em&gt; would match the specified pre-intervention characteristics (including the evolution of the outcome) of the affected region.&lt;/p&gt;
+&lt;p&gt;Here is a more technical description: suppose that we observe &lt;span class=&#34;math inline&#34;&gt;\(J+1\)&lt;/span&gt; units in time periods &lt;span class=&#34;math inline&#34;&gt;\(1,2,..., T\)&lt;/span&gt; and unit #1 is exposed to the intervention during periods &lt;span class=&#34;math inline&#34;&gt;\(T_0+1, ...,T\)&lt;/span&gt;. Let &lt;span class=&#34;math inline&#34;&gt;\(Y^C_{jt}\)&lt;/span&gt; be the outcome that would be observed (i.e., the &lt;a href=&#34;https://en.wikipedia.org/wiki/Rubin_causal_model&#34;&gt;potential outcome&lt;/a&gt;) for unit &lt;span class=&#34;math inline&#34;&gt;\(j\)&lt;/span&gt; at time &lt;span class=&#34;math inline&#34;&gt;\(t\)&lt;/span&gt; in the absence of the intervention. For units 2 through &lt;span class=&#34;math inline&#34;&gt;\(J+1\)&lt;/span&gt;, the observed outcome &lt;span class=&#34;math inline&#34;&gt;\(Y_{jt}\)&lt;/span&gt; is equivalent to &lt;span class=&#34;math inline&#34;&gt;\(Y^C_{jt}\)&lt;/span&gt;. On the other hand, let &lt;span class=&#34;math inline&#34;&gt;\(Y^I_{jt}\)&lt;/span&gt; be the potential outcome under the intervention. Therefore, &lt;span class=&#34;math inline&#34;&gt;\(Y_{1t}=Y^I_{1t}\)&lt;/span&gt; for &lt;span class=&#34;math inline&#34;&gt;\(t=T_0+1, ...,T\)&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;Our goal is to estimate the &lt;em&gt;causal treatment effect on the treated&lt;/em&gt; unit:
+&lt;span class=&#34;math display&#34;&gt;\[
+\alpha_{1t} = Y^I_{jt} - Y^C_{jt}, \text{for } t=T_0+1,..., T.
+\]&lt;/span&gt;
+Suppose we also observe a vector of &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; covariates for each unit &lt;span class=&#34;math inline&#34;&gt;\(j\)&lt;/span&gt;, &lt;span class=&#34;math inline&#34;&gt;\(\textbf{Z}_j\)&lt;/span&gt;, that are &lt;em&gt;predictive of the outcome&lt;/em&gt; and “unaffected by the treatment”. The SC method assumes that we are able to find a set of nonnegative weights &lt;span class=&#34;math inline&#34;&gt;\(\textbf{W}=(w_2,...,w_{J+1})&amp;#39;\)&lt;/span&gt; that sum up to 1 and satisfy the following &lt;span class=&#34;math inline&#34;&gt;\((R+T_0)\)&lt;/span&gt; conditions &lt;em&gt;exactly&lt;/em&gt;:
+&lt;span class=&#34;math display&#34;&gt;\[
+\sum_{j=2}^{J+1}w_j\textbf{Z}_j=\textbf{Z}_1\text{ and }\sum_{j=2}^{J+1}w_jY_{jt}=Y_{1t}, \text{ for }t=1,...,T_0.
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;In practice, of course, it is unlikely that we would find exact matches for all available characteristics. Therefore, we find weights that minimize a chosen measure of discrepancy. Let &lt;span class=&#34;math inline&#34;&gt;\(\textbf{X}_1\)&lt;/span&gt; be a &lt;span class=&#34;math inline&#34;&gt;\((R+T_0)\times 1\)&lt;/span&gt; vector of pre-intervention characteristics for the treated unit. Similarly, &lt;span class=&#34;math inline&#34;&gt;\(\textbf{X}_0\)&lt;/span&gt; is a &lt;span class=&#34;math inline&#34;&gt;\((R+T_0) \times J\)&lt;/span&gt; matrix of the same variables for the donor pool. The original paper (&lt;span class=&#34;citation&#34;&gt;Abadie, Diamond, and Hainmueller (&lt;a href=&#34;#ref-abadie2010synthetic&#34; role=&#34;doc-biblioref&#34;&gt;2010&lt;/a&gt;)&lt;/span&gt;) minimizes the following distance measure:
+&lt;span class=&#34;math display&#34;&gt;\[
+||\textbf{X}_1-\textbf{X}_0\textbf{W}||_{\textbf{V}} = \sqrt{(\textbf{X}_1-\textbf{X}_0\textbf{W})&amp;#39;\textbf{V}(\textbf{X}_1-\textbf{X}_0\textbf{W})} \qquad\qquad(1)
+\]&lt;/span&gt;
+In words, SC calculation produces two outputs: matrix &lt;span class=&#34;math inline&#34;&gt;\(\textbf{V}\)&lt;/span&gt;, which weighs variables included in the minimization differently depending on how well they predict pre-intervention outcomes, and an array of weights &lt;span class=&#34;math inline&#34;&gt;\(\textbf{W}\)&lt;/span&gt; for control units.&lt;/p&gt;
+&lt;p&gt;There are various ways to choose &lt;span class=&#34;math inline&#34;&gt;\(\textbf{V}\)&lt;/span&gt;, including subjective assessment of predictive power of &lt;span class=&#34;math inline&#34;&gt;\(\textbf{X}\)&lt;/span&gt;, regression, minimize prediction error, or cross-validation. When &lt;span class=&#34;math inline&#34;&gt;\(\textbf{V}\)&lt;/span&gt; is set to &lt;span class=&#34;math inline&#34;&gt;\(\textbf{I}\)&lt;/span&gt;, the identity matrix, then all characteristics are assumed to have equal weights, and the distance defined in (1) can be interpreted as the usual Euclidean distance between points &lt;span class=&#34;math inline&#34;&gt;\(\textbf{X}_1\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(\textbf{X}_0\textbf{W}\)&lt;/span&gt; on a &lt;span class=&#34;math inline&#34;&gt;\((R+T_0)\)&lt;/span&gt;-dimensional space.&lt;/p&gt;
+&lt;p&gt;Note that, once we have a synthetic control for the treated unit, the method permits estimation of a treatment effect for each post-treatment time period &lt;span class=&#34;math inline&#34;&gt;\(t=T_0+1,..., T\)&lt;/span&gt;, as long as we observe the corresponding outcome for all controls. However, it is more common to report an aggregated post-treatment effect, e.g., &lt;span class=&#34;math inline&#34;&gt;\(\sum_{t=T_0+1}^T \alpha_{1t}/(T-T_0)\)&lt;/span&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;features-and-limitations&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Features and Limitations&lt;/h2&gt;
+&lt;p&gt;There are several attractive features of the SC method:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;It provides a systematic data-driven way of assigning weights to control units to provide a close synthetic match to a treated unit, especially if none of the observed control units fit the bill.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;When potential outcomes are related linearly to observed and unobserved covariates (or &lt;em&gt;factors&lt;/em&gt;), &lt;span class=&#34;citation&#34;&gt;Abadie, Diamond, and Hainmueller (&lt;a href=&#34;#ref-abadie2010synthetic&#34; role=&#34;doc-biblioref&#34;&gt;2010&lt;/a&gt;)&lt;/span&gt; showed that the estimated causal effect is unbiased even when there are unobserved confounding factors that vary with time (though, this feature as well as many other theoretical properties of the SC method rely on availability of a &lt;em&gt;large number of preintervention outcomes&lt;/em&gt;.)&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;There is an &lt;em&gt;interesting parallel between a linear regression and the SC method&lt;/em&gt;: it turns out that, when estimating a counterfactual outcome using a naive regression approach, i.e., regressing &lt;span class=&#34;math inline&#34;&gt;\(Y_{jt}\)&lt;/span&gt; on &lt;span class=&#34;math inline&#34;&gt;\(\textbf{X}_0\)&lt;/span&gt; post-treatment for controls (&lt;span class=&#34;math inline&#34;&gt;\(t=T_0,...,T\)&lt;/span&gt;, &lt;span class=&#34;math inline&#34;&gt;\(j=2,...,J\)&lt;/span&gt;) and then using this model together with &lt;span class=&#34;math inline&#34;&gt;\(\textbf{X}_1\)&lt;/span&gt; to predict &lt;span class=&#34;math inline&#34;&gt;\(Y^C_{1t}\)&lt;/span&gt;, we can also rewrite the result as a linear combination of untreated units (see &lt;span class=&#34;citation&#34;&gt;Abadie, Diamond, and Hainmueller (&lt;a href=&#34;#ref-abadie2015comparative&#34; role=&#34;doc-biblioref&#34;&gt;2015&lt;/a&gt;)&lt;/span&gt; for a proof) with weights that sum up to one. However, a conceptual difference lies in the fact that regression weights are &lt;em&gt;unrestricted&lt;/em&gt; - they may be negative or greater than one. “As a result, estimates of counterfactuals based on linear regression may extrapolate beyond the support of comparison units.” In fact, as suggested in &lt;span class=&#34;citation&#34;&gt;Abadie, Diamond, and Hainmueller (&lt;a href=&#34;#ref-abadie2015comparative&#34; role=&#34;doc-biblioref&#34;&gt;2015&lt;/a&gt;)&lt;/span&gt;, one way to assess the extent of the extrapolation is to calculate the regression weights explicitly!&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;It can be shown that the SC method is a special case of a “sideways” Lasso regression with a fixed value of its threshold parameter to &lt;span class=&#34;math inline&#34;&gt;\(1\)&lt;/span&gt; and an additional restriction on coefficients to be nonnegative and sum up to one (&lt;span class=&#34;citation&#34;&gt;Kinn (&lt;a href=&#34;#ref-kinn2018synthetic&#34; role=&#34;doc-biblioref&#34;&gt;2018&lt;/a&gt;)&lt;/span&gt;). The “sideways” regression refers to one where units are acting as covariates, and the time periods (and covariates &lt;span class=&#34;math inline&#34;&gt;\(\textbf{Z}\)&lt;/span&gt;) serve as new “units” (e.g., observation &lt;span class=&#34;math inline&#34;&gt;\(Y_{1t}\)&lt;/span&gt; is regressed on &lt;span class=&#34;math inline&#34;&gt;\(Y_{2t}, \dots, Y_{(J+1)t}\)&lt;/span&gt; for &lt;span class=&#34;math inline&#34;&gt;\(t=1, \dots, T_0\)&lt;/span&gt;).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The SC method was originally developed for one treated unit. However, if multiple units are affected by the event of interest, the method can be applied to each unit separately and the treatment effect summarized by computing an Average Treatment Effect on the Treated (ATT) as demonstrated in &lt;span class=&#34;citation&#34;&gt;Kreif et al. (&lt;a href=&#34;#ref-kreif2016examination&#34; role=&#34;doc-biblioref&#34;&gt;2016&lt;/a&gt;)&lt;/span&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!-- An example of this procedure in Stata is shown here. --&gt;
+&lt;/div&gt;
+&lt;div id=&#34;practical-recommendations&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Practical Recommendations&lt;/h2&gt;
+&lt;p&gt;The topic of SCs is still an active area of research appearing regularly in methodological and applied papers. Here are some useful tips that I came across while going over the literature:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;There are many (sometimes, conflicting!) recommendations on what should be included as part of &lt;span class=&#34;math inline&#34;&gt;\(\textbf{X}_0\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(\textbf{X}_1\)&lt;/span&gt;, and I think the jury is still out. Of course, there is no doubt that the chosen covariates should be predictive of the outcome. That said, it is a bit less apparent how to strike a balance between the length of the pretreatment outcome window and a set of background characteristics that should be used to construct &lt;span class=&#34;math inline&#34;&gt;\(\textbf{X}\)&lt;/span&gt; matrices.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;On one hand, many theoretical properties of the procedure were derived asymptotically, assuming infinite pretreatment window. Moreover, &lt;span class=&#34;citation&#34;&gt;Botosaru and Ferman (&lt;a href=&#34;#ref-botosaru2019covariates&#34; role=&#34;doc-biblioref&#34;&gt;2019&lt;/a&gt;)&lt;/span&gt; show that a “perfect balance on pre-treatment outcomes does not generally imply an approximate balance for all covariates, even when they are all relevant”, concluding that, “although there may be advantages to balancing on covariates to construct the SC estimator, a perfect balance on covariates should not be required for the SC method as long as there is a perfect balance on a long set of pre-treatment outcomes.”&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;On the other hand &lt;span class=&#34;citation&#34;&gt;Kaul et al. (&lt;a href=&#34;#ref-kaul2015synthetic&#34; role=&#34;doc-biblioref&#34;&gt;2015&lt;/a&gt;)&lt;/span&gt; argues that one should not use covariates simultaneously with &lt;em&gt;all&lt;/em&gt; available preintervention outcomes, as, under certain conditions, this may renders covariates to be irrelevant. With that, &lt;span class=&#34;citation&#34;&gt;Abadie, Diamond, and Hainmueller (&lt;a href=&#34;#ref-abadie2015comparative&#34; role=&#34;doc-biblioref&#34;&gt;2015&lt;/a&gt;)&lt;/span&gt; states that “it is of crucial importance that synthetic controls closely reproduce the values that variables with a large predictive power on the outcome of interest take for the unit affected by the intervention.” Thus, it is important that the chosen covariates are allowed to influence the estimated synthetic control.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;One should always inspect the quality of the match and discard synthetic controls that do not closely trace the preintervention outcome. However, there is still debate whether a perfect balance on pre-treatment covariates is strictly necessary (&lt;span class=&#34;citation&#34;&gt;Botosaru and Ferman (&lt;a href=&#34;#ref-botosaru2017role&#34; role=&#34;doc-biblioref&#34;&gt;2017&lt;/a&gt;)&lt;/span&gt;).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;span class=&#34;citation&#34;&gt;Abadie, Diamond, and Hainmueller (&lt;a href=&#34;#ref-abadie2010synthetic&#34; role=&#34;doc-biblioref&#34;&gt;2010&lt;/a&gt;)&lt;/span&gt; emphasizes that SC method should be avoided in cases where the treated unit lies outside the distribution of control units. In other words, values of pretreatment variables for the affected unit cannot be outside any linear combination of the donor pool values. If no convex combination of control units can reconstruct the treated unit then counterfactual estimates could be severely biased. In practice, one can start with inspecting the ranges of outcomes and covariates during the pre-treatment period among controls and making sure that they at least overlap with those for the treated unit.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;In addition to the extrapolation issues, we should watch out for possible interpolation bias by making sure that the variables used to compute the weights have values among the donor pool units that are similar to those observed for the affected unit. To reduce interpolation biases, it is recommended to restrict the donor pool to units that are “similar” to the treated one(s).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Implicit in the notation above is the usual assumption of &lt;em&gt;no interference&lt;/em&gt; between units - or that outcomes of the untreated units are not affected by the intervention implemented in the treated unit. For example, the policy in the affected region cannot affect the outcome in the pool of donor regions.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Finally, when dealing with multiple outcomes, a procedure that uses distance measure given in (1) will likely construct a different synthetic control for each outcome, even if the same set of pretreatment characteristics is being matched on. This is due to the fact that the weighting matrix &lt;span class=&#34;math inline&#34;&gt;\(\textbf{V}\)&lt;/span&gt; is computed separately for each outcome. If we preset &lt;span class=&#34;math inline&#34;&gt;\(\textbf{V}\)&lt;/span&gt; to an identity (or any other positive-definite) matrix and use the same pretreatment outcome values to construct &lt;span class=&#34;math inline&#34;&gt;\(\textbf{X}_0\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(\textbf{X}_1\)&lt;/span&gt;, the same synthetic control will be constructed for each unit regardless of the outcome considered.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;As a special case, if &lt;span class=&#34;math inline&#34;&gt;\(\textbf{X}_0\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(\textbf{X}_1\)&lt;/span&gt; do not contain any pretreatment characteristics, setting &lt;span class=&#34;math inline&#34;&gt;\(\textbf{V}\)&lt;/span&gt; to &lt;span class=&#34;math inline&#34;&gt;\(\textbf{I}\)&lt;/span&gt; would imply that we assume that all pretreatment outcome lags affect post-treatment values equally.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This list is by no means exhaustive. I’m sure, as the SC method matures, our understanding of its strengths and limitations as well as advice on practical implementation will continue evolving.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;references&#34; class=&#34;section level2 unnumbered&#34;&gt;
+&lt;h2&gt;References&lt;/h2&gt;
+&lt;div id=&#34;refs&#34; class=&#34;references csl-bib-body hanging-indent&#34;&gt;
+&lt;div id=&#34;ref-abadie2010synthetic&#34; class=&#34;csl-entry&#34;&gt;
+Abadie, Alberto, Alexis Diamond, and Jens Hainmueller. 2010. &lt;span&gt;“Synthetic Control Methods for Comparative Case Studies: Estimating the Effect of Californias Tobacco Control Program.”&lt;/span&gt; &lt;em&gt;Journal of the American Statistical Association&lt;/em&gt; 105 (490): 493–505.
+&lt;/div&gt;
+&lt;div id=&#34;ref-abadie2015comparative&#34; class=&#34;csl-entry&#34;&gt;
+———. 2015. &lt;span&gt;“Comparative Politics and the Synthetic Control Method.”&lt;/span&gt; &lt;em&gt;American Journal of Political Science&lt;/em&gt; 59 (2): 495–510.
+&lt;/div&gt;
+&lt;div id=&#34;ref-Abadie_Economic_Costs_2003&#34; class=&#34;csl-entry&#34;&gt;
+Abadie, Alberto, and Javier Gardeazabal. 2003. &lt;span&gt;“The Economic Costs of Conflict: A Case Study of the Basque Country.”&lt;/span&gt; &lt;em&gt;American Economic Review&lt;/em&gt; 93 (1): 113–32. &lt;a href=&#34;https://doi.org/10.1257/000282803321455188&#34;&gt;https://doi.org/10.1257/000282803321455188&lt;/a&gt;.
+&lt;/div&gt;
+&lt;div id=&#34;ref-botosaru2017role&#34; class=&#34;csl-entry&#34;&gt;
+Botosaru, Irene, and Bruno Ferman. 2017. &lt;span&gt;“On the Role of Covariates in the Synthetic Control Method.”&lt;/span&gt; &lt;a href=&#34;https://mpra.ub.uni-muenchen.de/81940/&#34;&gt;https://mpra.ub.uni-muenchen.de/81940/&lt;/a&gt;.
+&lt;/div&gt;
+&lt;div id=&#34;ref-botosaru2019covariates&#34; class=&#34;csl-entry&#34;&gt;
+———. 2019. &lt;span&gt;“&lt;span class=&#34;nocase&#34;&gt;On the role of covariates in the synthetic control method&lt;/span&gt;.”&lt;/span&gt; &lt;em&gt;The Econometrics Journal&lt;/em&gt; 22 (2): 117–30. &lt;a href=&#34;https://doi.org/10.1093/ectj/utz001&#34;&gt;https://doi.org/10.1093/ectj/utz001&lt;/a&gt;.
+&lt;/div&gt;
+&lt;div id=&#34;ref-kaul2015synthetic&#34; class=&#34;csl-entry&#34;&gt;
+Kaul, Ashok, Stefan Klößner, Gregor Pfeifer, and Manuel Schieler. 2015. &lt;span&gt;“Synthetic Control Methods: Never Use All Pre-Intervention Outcomes Together with Covariates.”&lt;/span&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ref-kinn2018synthetic&#34; class=&#34;csl-entry&#34;&gt;
+Kinn, Daniel. 2018. &lt;span&gt;“Synthetic Control Methods and Big Data.”&lt;/span&gt; &lt;em&gt;arXiv Preprint arXiv:1803.00096&lt;/em&gt;.
+&lt;/div&gt;
+&lt;div id=&#34;ref-kreif2016examination&#34; class=&#34;csl-entry&#34;&gt;
+Kreif, Noémi, Richard Grieve, Dominik Hangartner, Alex James Turner, Silviya Nikolova, and Matt Sutton. 2016. &lt;span&gt;“Examination of the Synthetic Control Method for Evaluating Health Policies with Multiple Treated Units.”&lt;/span&gt; &lt;em&gt;Health Economics&lt;/em&gt; 25 (12): 1514–28.
+&lt;/div&gt;
+&lt;div id=&#34;ref-rosenbaum2002overt&#34; class=&#34;csl-entry&#34;&gt;
+Rosenbaum, Paul R. 2002. &lt;span&gt;“Overt Bias in Observational Studies.”&lt;/span&gt; In &lt;em&gt;Observational Studies&lt;/em&gt;, 71–104. Springer.
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

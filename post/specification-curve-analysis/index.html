@@ -1,0 +1,1339 @@
+<!DOCTYPE html><html lang="en-us" >
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  
+  
+    <meta name="generator" content="Wowchemy 5.3.0 for Hugo" />
+  
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Overview Research reproducibility topic has been gaining momentum over the past decade. There have been many studies reporting inability to replicate published results and lack of necessary details in methods description." />
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://hbs-rcs.github.io/post/specification-curve-analysis/" />
+
+  
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  
+
+  
+  
+  
+    <meta name="theme-color" content="#1565c0" />
+  
+
+  
+  
+    
+    <script src="/js/mathjax-config.js"></script>
+  
+
+  
+
+  <link rel="stylesheet" href="/css/vendor-bundle.min.f1ecf783c14edc00c9320c205831ad8e.css" media="print" onload="this.media='all'">
+
+  
+  
+  
+    
+    
+
+    
+    
+    
+    
+      
+      
+    
+    
+    
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/styles/github.min.css" crossorigin="anonymous" title="hl-light" media="print" onload="this.media='all'">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" media="print" onload="this.media='all'" disabled>
+        
+      
+    
+
+    
+    
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.min.css" integrity="sha512-1xoFisiGdy9nvho8EgXuXvnpR5GAMSjFwp40gSRE3NwdUdIMIKuPa7bqoUhLD0O/5tPNhteAsE5XyyMi5reQVA==" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+
+    
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+  
+
+  
+  
+  
+    
+      
+      <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono&family=Roboto:wght@400;700&display=swap">
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono&family=Roboto:wght@400;700&display=swap" media="print" onload="this.media='all'">
+    
+  
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/wowchemy.9f457a613f02e9027025db7311c58ccf.css" />
+
+  
+
+
+
+  
+
+  
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+    <link rel="manifest" href="/manifest.webmanifest" />
+  
+
+  <link rel="icon" type="image/png" href="/media/icon_hua2ec155b4296a9c9791d015323e16eb5_11927_32x32_fill_lanczos_center_3.png" />
+  <link rel="apple-touch-icon" type="image/png" href="/media/icon_hua2ec155b4296a9c9791d015323e16eb5_11927_180x180_fill_lanczos_center_3.png" />
+
+  <link rel="canonical" href="https://hbs-rcs.github.io/post/specification-curve-analysis/" />
+
+  
+  
+  
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary" />
+  
+  <meta property="og:site_name" content="HBS Research Computing Services Blog" />
+  <meta property="og:url" content="https://hbs-rcs.github.io/post/specification-curve-analysis/" />
+  <meta property="og:title" content="Specification Curve Analysis: Overview and Stata Example | HBS Research Computing Services Blog" />
+  <meta property="og:description" content="Overview Research reproducibility topic has been gaining momentum over the past decade. There have been many studies reporting inability to replicate published results and lack of necessary details in methods description." /><meta property="og:image" content="https://hbs-rcs.github.io/media/icon_hua2ec155b4296a9c9791d015323e16eb5_11927_512x512_fill_lanczos_center_3.png" />
+    <meta property="twitter:image" content="https://hbs-rcs.github.io/media/icon_hua2ec155b4296a9c9791d015323e16eb5_11927_512x512_fill_lanczos_center_3.png" /><meta property="og:locale" content="en-us" />
+  
+    
+      <meta
+        property="article:published_time"
+        content="2021-10-10T00:00:00&#43;00:00"
+      />
+    
+    <meta property="article:modified_time" content="2021-10-10T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://hbs-rcs.github.io/post/specification-curve-analysis/"
+  },
+  "headline": "Specification Curve Analysis: Overview and Stata Example",
+  
+  "datePublished": "2021-10-10T00:00:00Z",
+  "dateModified": "2021-10-10T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Victoria L. Prince"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "HBS Research Computing Services Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://hbs-rcs.github.io/media/icon_hua2ec155b4296a9c9791d015323e16eb5_11927_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "Overview Research reproducibility topic has been gaining momentum over the past decade. There have been many studies reporting inability to replicate published results and lack of necessary details in methods description."
+}
+</script>
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+  <title>Specification Curve Analysis: Overview and Stata Example | HBS Research Computing Services Blog</title>
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="page-wrapper   " data-wc-page-id="9f6faaa26739a2b99ecb3b953ad135d6" >
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <script src="/js/wowchemy-init.min.8988fb2a4bba758785868cfcb5244555.js"></script>
+
+  
+
+
+<aside class="search-modal" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#" aria-label="Close"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control"
+        aria-label="Search...">
+        
+      </div>
+
+      
+      
+
+      
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+
+  <div class="page-header">
+    
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container-xl">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">HBS Research Computing Services Blog</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">HBS Research Computing Services Blog</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://www.hbs.edu/research-computing-services/about-us/" target="_blank" rel="noopener"><span>About</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+            
+            
+            
+              
+            
+            
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#posts"><span>Posts</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://www.hbs.edu/research-computing-services/faculty-projects/" target="_blank" rel="noopener"><span>Projects</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://www.hbs.edu/research-computing-services/training/" target="_blank" rel="noopener"><span>Events</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://www.hbs.edu/research-computing-services/contact-us/" target="_blank" rel="noopener"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+
+      
+      
+
+      
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#" aria-label="Search"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+      
+      <li class="nav-item dropdown theme-dropdown">
+        <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-label="Display preferences">
+          <i class="fas fa-moon" aria-hidden="true"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a href="#" class="dropdown-item js-set-theme-light">
+            <span>Light</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-dark">
+            <span>Dark</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-auto">
+            <span>Automatic</span>
+          </a>
+        </div>
+      </li>
+      
+
+      
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  </div>
+
+  <div class="page-body">
+    <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>Specification Curve Analysis: Overview and Stata Example</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+  
+  
+  <div>
+    
+
+  <span >
+      <a href="/author/victoria-l.-prince/">Victoria L. Prince</a></span>
+  </div>
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Oct 10, 2021
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    9 min read
+  </span>
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/category/methods/">Methods</a></span>
+  
+
+</div>
+
+    
+
+
+
+
+
+  
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      
+
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p>Research reproducibility topic has been gaining momentum over the past decade. There have been many studies reporting inability to replicate published results and lack of necessary details in methods description. Some journals are addressing this issue by requiring access to study data and executable code. However, while this may provide some reassurance in reliability of the results, the actual choice of analytic methods could be shaped by many assumptions that might not be evident.</p>
+<p>There usually isn’t one correct way to analyse data. Instead, empirical studies often have plenty of flexibility in the way data are collected and cleaned as well as in the final model specification. A data cleaning step may involve exclusion of some units with missing data or conversion of a continuous variable to a categorical one or (vice versa). There also might be models equally plausible for the outcome, but having different sets of covariates or functional forms. Each of these small steps may snowball into a reported effect that is overly favorable to researchers’ narrative.</p>
+<p>A relatively novel and very promising method that can help to mitigate this issue was proposed in <span class="citation"><a href="#ref-simonsohn2015better" role="doc-biblioref">Simonsohn, Simmons, and Nelson</a> (<a href="#ref-simonsohn2015better" role="doc-biblioref">2015</a>)</span> and is called <strong>Specification Curve Analysis</strong> (SCA). The idea behind the method is simple - the researcher is asked to consider multiple plausible ways to analyze the data and show that, <em>jointly</em>, the null hypothesis of no effect can be rejected. It doesn’t mean that all models must result in a statistically significant effect (though, it would make the conclusions very convincing!). However, even if the effect is detected when all specifications are tested simultaneously, this would result in a more objective inference.</p>
+</div>
+<div id="method-details" class="section level2">
+<h2>Method Details</h2>
+<p>The method involves the following steps:</p>
+<ol style="list-style-type: lower-roman">
+<li>identifying the set of theoretically justified, statistically valid, and non-redundant analytic specifications;</li>
+<li>running the analysis for each specification and displaying the results graphically - this allows the readers to identify consequential specification decisions;</li>
+<li>conducting statistical tests to determine whether, as a whole, results are inconsistent with the null hypothesis.</li>
+</ol>
+<p>The first two steps above are self-explanatory. However, the third step is novel. The authors (<span class="citation"><a href="#ref-simonsohn2020specification" role="doc-biblioref">Simonsohn, Simmons, and Nelson</a> (<a href="#ref-simonsohn2020specification" role="doc-biblioref">2020</a>)</span>) proposed three test statistics for the SCA:</p>
+<ol style="list-style-type: decimal">
+<li><p>median effect estimated across all specifications;</p></li>
+<li><p>share of specifications that obtain a statistically significant effect in the predicted direction;</p></li>
+<li><p>average of Z-values across all specifications.</p></li>
+</ol>
+<p>For each of them a sampling distribution can be generating by “resampling under-the-null.” This involves modifying the observed data so that the null hypothesis is known to be true, and then drawing random samples of the modified data. The test statistic of interest is then computed on each of those samples. The resulting distribution is the estimated distribution of the test statistic under the null.</p>
+</div>
+<div id="available-tools" class="section level2">
+<h2>Available Tools</h2>
+<p>There are several resources available to aid the implementation of the method. I organize them in a table below:</p>
+<table>
+<colgroup>
+<col width="2%" />
+<col width="15%" />
+<col width="82%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Language</th>
+<th>Package Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>R</td>
+<td><a href="https://masurp.github.io/specr/">specr</a></td>
+<td>Available on CRAN. Provides functions to set up, run, evaluate and plot the specifications of interest. There is a lot of flexibility in model set-up. However, the package doesn’t have capability to perform the step (iii) above (i.e., the joint testing).</td>
+</tr>
+<tr class="even">
+<td>R</td>
+<td><a href="https://joachim-gassen.github.io/rdfanalysis/">rdfanalysis</a></td>
+<td>Available only on GitHub. A more comprehensive collection of functions that provides a self-documenting code base that allows researchers to systematically document and explore their researcher degrees of freedom when conducting analyses. Has a shiny front end that helps to explore the findings interactively.</td>
+</tr>
+<tr class="odd">
+<td>Stata</td>
+<td><a href="https://github.com/martin-andresen/speccurve">speccurve</a></td>
+<td>One function that can only plot the curve using coefficients stored in the <strong>e()</strong>-returns. Requires setting up and looping through the models beforehand.</td>
+</tr>
+<tr class="even">
+<td>Stata</td>
+<td><a href="https://github.com/mgao6767/specurve">specurve</a></td>
+<td>Depends on Stata 16’s Python (v.3.6) integration and several additional Python modules. The function performs regressions as specified in a provided YAML-formatted file and plots the specification curve. Limited to <code>reghdfe</code> models only, but allows for various combinations of fixed effects and clustering.</td>
+</tr>
+<tr class="odd">
+<td>Stata</td>
+<td><a href="https://github.com/bbdaniels/specc">specc</a></td>
+<td>Available on <a href="https://econpapers.repec.org/software/bocbocode/s458720.htm">SSC</a> and is open for development on GitHub. The package appears to be very flexible in setting up models and enumerating specifications as well as plotting the curve. However, it lacks a simple example to get started.</td>
+</tr>
+<tr class="even">
+<td>Python</td>
+<td><a href="https://github.com/aeturrell/specification_curve">specification_curve</a></td>
+<td>Allows to conduct analysis and plot specification curves. Flexible in model specification and very well <a href="https://specification-curve.readthedocs.io/en/latest/">documented</a>. While it also can’t perform the joint test (step (iii) of the specification analysis), the author has an example of its manual implementation <a href="http://aeturrell.com/2019/01/25/Specification-Curve-Analysis/">here</a>.</td>
+</tr>
+</tbody>
+</table>
+<p>It looks like most major statistical programming language have some version of the specification curve implemented. However, as far as I can tell, none of them are capable of performing step (iii), which, arguably, is as important as the curve itself. Therefore, for now, researches have to implement it themselves or contact RCS (research@hbs.edu) for assistance!</p>
+</div>
+<div id="stata-example" class="section level2">
+<h2>Stata Example</h2>
+<p>Next, I show an example in Stata that loops through several model specifications and then uses the <a href="https://github.com/martin-andresen/speccurve">speccurve</a> function in Stata to plot the curve. Before running this code, make sure that the function is installed in Stata by running the following line:</p>
+<p><code>net install speccurve, from("https://raw.githubusercontent.com/martin-andresen/speccurve/master")</code></p>
+<p>The code uses a classic <code>auto</code> data set and specifies several regression models that predict car price using available characteristics. The effect of interest is the coefficient estimated for the indicator <code>foreign</code>.</p>
+<pre class="stata"><code>clear all
+sysuse auto, clear
+
+loc no=0
+
+* enumerationg many different specifications using a loop
+foreach m in &quot;&quot; &quot;mpg&quot; {
+    foreach tr in &quot;&quot; &quot;trunk&quot; {
+        foreach wt in &quot;&quot; &quot;weight&quot; {
+            foreach ln in &quot;&quot; &quot;length&quot; {
+                foreach hr in &quot;&quot; &quot;headroom&quot; {
+                    qui reg price foreign `m&#39; `tr&#39; `wt&#39; `ln&#39; `hr&#39;
+                  eststo md`no&#39;
+                    loc ++no
+                }
+            }
+        }
+    }
+}
+
+* plotting a SC with foreign as a parameter of interest
+speccurve *, param(foreign) controls title(SCA for the effect of foreigh)
+graph export &quot;speccurve1.svg&quot;, replace</code></pre>
+<pre><code>(1978 Automobile Data)
+
+
+
+
+(file speccurve1.svg written in SVG format)</code></pre>
+<p>The code above produced the following specification curve:</p>
+<p><img src="speccurve1.svg" /></p>
+<p>Looks like including the <code>weight</code> variable in the model had a notable effect on the coefficient for <code>foreign</code>. Function <code>speccurve</code> is somewhat limited in that it doesn’t work with models that have factors as controls. Next, I show a workaround for the latter case:</p>
+<pre class="stata"><code>clear all
+sysuse auto, clear
+
+egen headroom_c = group(headroom)
+loc no=0
+
+foreach m in &quot;&quot; &quot;mpg&quot; {
+    foreach tr in &quot;&quot; &quot;trunk&quot; {
+        foreach wt in &quot;&quot; &quot;weight&quot; {
+            foreach ln in &quot;&quot; &quot;length&quot; {
+                foreach hr in &quot;&quot; &quot;headroom&quot; &quot;i.headroom_c&quot;{
+                    qui reg price foreign `m&#39; `tr&#39; `wt&#39; `ln&#39; `hr&#39;
+                    
+                    qui estadd scalar mpgv = 0, replace
+                    qui estadd scalar trunkv = 0, replace
+                    qui estadd scalar weightv = 0, replace
+                    qui estadd scalar lengthv = 0, replace
+                    foreach vr in m tr wt ln {
+                        if &quot;``vr&#39;&#39;&quot;!=&quot;&quot; qui estadd scalar ``vr&#39;&#39;v = 1, replace
+                    }
+                    
+                    qui estadd scalar headroomv = 0
+                    qui estadd scalar iheadroom_cv = 0
+                    local vname = subinstr(&quot;`hr&#39;&quot;, &quot;.&quot;, &quot;&quot;, .)
+                    qui estadd scalar `vname&#39;v = 1, replace 
+                    
+                    eststo md`no&#39;
+                    loc ++no
+                }
+            }
+        }
+    }
+}
+
+* The code below produces an error:
+*speccurve *, param(foreign) controls title(SCA for the effect of foreigh)
+
+* Workaround:
+speccurve *, param(foreign) level(95) graphopts(legend(pos(1))) title(SCA for auto dataset) panel(mpgv trunkv weightv lengthv headroomv iheadroom_cv)
+graph export &quot;speccurve2.svg&quot;, replace</code></pre>
+<pre><code>(1978 Automobile Data)
+
+
+
+
+
+(file speccurve2.svg written in SVG format)</code></pre>
+<p>The code implements models that have <code>headroom</code> included as a factor or as a continuous variable. Note that the first call for <code>speccurve</code> would produce an error due to a bug in the function. However, the second call produces the following specification curve:</p>
+<p><img src="speccurve2.svg" /></p>
+<p>One can also output a table with numerical results:</p>
+<pre class="stata"><code>matlist r(table)</code></pre>
+<pre><code>             |    specno    modelno   estimate      min95      max95       mpgv     trunkv    weightv    lengthv  headroomv  iheadro~v 
+-------------+-------------------------------------------------------------------------------------------------------------------------
+         md0 |         1          1   312.2587  -1191.708   1816.225          0          0          0          0          0          0 
+         md2 |         2          3    364.925  -1419.362   2149.212          0          0          0          0          0          1 
+         md1 |         3          2   577.8125  -992.5493   2148.174          0          0          0          0          1          0 
+        md14 |         4         15   740.7716  -960.3329   2441.876          0          1          0          0          0          1 
+        md13 |         5         14   1128.818  -393.3118   2650.948          0          1          0          0          1          0 
+        md12 |         6         13   1190.155  -326.8468   2707.157          0          1          0          0          0          0 
+        md26 |         7         27   1327.396  -294.4929   2949.285          1          0          0          0          0          1 
+        md38 |         8         39   1376.011  -230.2271   2982.249          1          1          0          0          0          1 
+        md25 |         9         26   1714.109   292.4855   3135.733          1          0          0          0          1          0 
+        md24 |        10         25   1767.292   371.2169   3163.368          1          0          0          0          0          0 
+        md37 |        11         38   1825.733   408.1118   3243.355          1          1          0          0          1          0 
+        md36 |        12         37   1887.461   468.5866   3306.335          1          1          0          0          0          0 
+        md41 |        13         42   2196.194   517.1768   3875.212          1          1          0          1          0          1 
+        md29 |        14         30   2247.635   591.1235   3904.146          1          0          0          1          0          1 
+        md17 |        15         18   2294.095   616.0623   3972.129          0          1          0          1          0          1 
+         md5 |        16          6   2352.064   696.5941   4007.534          0          0          0          1          0          1 
+        md40 |        17         41   2615.666   1084.272   4147.059          1          1          0          1          1          0 
+        md27 |        18         28   2644.771   1125.227   4164.315          1          0          0          1          0          0 
+        md28 |        19         29   2644.847   1133.077   4156.616          1          0          0          1          1          0 
+        md39 |        20         40   2670.519   1133.691   4207.347          1          1          0          1          0          0 
+        md16 |        21         17   2774.021   1233.682   4314.361          0          1          0          1          1          0 
+         md3 |        22          4   2801.143   1273.549   4328.737          0          0          0          1          0          0 
+         md4 |        23          5   2801.899   1281.258    4322.54          0          0          0          1          1          0 
+        md15 |        24         16   2827.236    1282.39   4372.082          0          1          0          1          0          0 
+        md23 |        25         24   3072.365   1665.236   4479.495          0          1          1          1          0          1 
+        md47 |        26         48   3079.179   1643.422   4514.937          1          1          1          1          0          1 
+        md20 |        27         21   3116.728   1652.392   4581.064          0          1          1          0          0          1 
+         md8 |        28          9   3132.815    1688.75    4576.88          0          0          1          0          0          1 
+        md11 |        29         12   3146.808   1750.304   4543.312          0          0          1          1          0          1 
+        md35 |        30         36   3148.211   1721.962   4574.459          1          0          1          1          0          1 
+        md44 |        31         45   3162.517   1671.851   4653.184          1          1          1          0          0          1 
+        md32 |        32         33   3179.193   1706.637   4651.749          1          0          1          0          0          1 
+        md46 |        33         47   3502.516   2193.975   4811.056          1          1          1          1          1          0 
+        md22 |        34         23    3526.83   2250.662   4802.999          0          1          1          1          1          0 
+        md34 |        35         35   3545.345   2248.433   4842.256          1          0          1          1          1          0 
+        md33 |        36         34   3550.194   2242.594   4857.793          1          0          1          1          0          0 
+        md45 |        37         46   3557.085     2235.3   4878.871          1          1          1          1          0          0 
+        md10 |        38         11   3570.379   2305.781   4834.976          0          0          1          1          1          0 
+         md9 |        39         10   3573.092   2297.992   4848.191          0          0          1          1          0          0 
+        md21 |        40         22   3580.051   2290.845   4869.256          0          1          1          1          0          0 
+         md7 |        41          8    3623.75   2316.374   4931.127          0          0          1          0          1          0 
+        md19 |        42         20   3631.585    2310.07   4953.101          0          1          1          0          1          0 
+         md6 |        43          7   3637.001   2303.885   4970.118          0          0          1          0          0          0 
+        md31 |        44         32   3648.619   2310.079   4987.159          1          0          1          0          1          0 
+        md43 |        45         44   3654.777   2302.875   5006.679          1          1          1          0          1          0 
+        md30 |        46         31    3673.06   2308.909   5037.212          1          0          1          0          0          0 
+        md18 |        47         19   3686.447   2352.692   5020.201          0          1          1          0          0          0 
+        md42 |        48         43   3711.123   2346.938   5075.308          1          1          1          0          0          0 </code></pre>
+</div>
+<div id="references" class="section level2 unnumbered">
+<h2>References</h2>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-simonsohn2015better" class="csl-entry">
+Simonsohn, Uri, Joseph P Simmons, and Leif D Nelson. 2015. <span>“Better p-Curves: Making p-Curve Analysis More Robust to Errors, Fraud, and Ambitious p-Hacking, a Reply to Ulrich and Miller (2015).”</span>
+</div>
+<div id="ref-simonsohn2020specification" class="csl-entry">
+———. 2020. <span>“Specification Curve Analysis.”</span> <em>Nature Human Behaviour</em> 4 (11): 1208–14.
+</div>
+</div>
+</div>
+
+    </div>
+
+    
+
+
+
+
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tag/research-reprodicibility/">research reprodicibility</a>
+  
+  <a class="badge badge-light" href="/tag/specification-curve-analysis/">specification curve analysis</a>
+  
+  <a class="badge badge-light" href="/tag/stata/">Stata</a>
+  
+</div>
+
+
+
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://hbs-rcs.github.io/post/specification-curve-analysis/&amp;text=Specification%20Curve%20Analysis:%20Overview%20and%20Stata%20Example" target="_blank" rel="noopener" class="share-btn-twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://hbs-rcs.github.io/post/specification-curve-analysis/&amp;t=Specification%20Curve%20Analysis:%20Overview%20and%20Stata%20Example" target="_blank" rel="noopener" class="share-btn-facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Specification%20Curve%20Analysis:%20Overview%20and%20Stata%20Example&amp;body=https://hbs-rcs.github.io/post/specification-curve-analysis/" target="_blank" rel="noopener" class="share-btn-email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://hbs-rcs.github.io/post/specification-curve-analysis/&amp;title=Specification%20Curve%20Analysis:%20Overview%20and%20Stata%20Example" target="_blank" rel="noopener" class="share-btn-linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Specification%20Curve%20Analysis:%20Overview%20and%20Stata%20Example%20https://hbs-rcs.github.io/post/specification-curve-analysis/" target="_blank" rel="noopener" class="share-btn-whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=https://hbs-rcs.github.io/post/specification-curve-analysis/&amp;title=Specification%20Curve%20Analysis:%20Overview%20and%20Stata%20Example" target="_blank" rel="noopener" class="share-btn-weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <div class="article-widget content-widget-hr">
+    <h3>Related</h3>
+    <ul>
+      
+      <li><a href="/post/2017-02-16-interpret_interaction/">Interpreting interaction term in a regression model</a></li>
+      
+      <li><a href="/post/2017-02-16-margins_nonlinear/">Marginal effects in models with fixed effects</a></li>
+      
+    </ul>
+  </div>
+  
+
+
+
+
+
+  </div>
+</article>
+  </div>
+
+  <div class="page-footer">
+    
+    
+    <div class="container">
+      <footer class="site-footer">
+
+  
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+
+
+
+
+
+  <p class="powered-by">
+    
+    
+    
+      
+      
+      
+      
+      
+      
+      Published with <a href="https://wowchemy.com/?utm_campaign=poweredby" target="_blank" rel="noopener">Wowchemy</a> — the free, <a href="https://github.com/wowchemy/wowchemy-hugo-modules" target="_blank" rel="noopener">open source</a> website builder that empowers creators.
+    
+  </p>
+</footer>
+
+    </div>
+    
+  </div>
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      
+
+    
+    <script src="/js/vendor-bundle.min.b73dfaac3b6499dc997741748a7c3fe2.js"></script>
+
+    
+    
+    
+      
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      
+
+      
+      
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/highlight.min.js" integrity="sha512-TDKKr+IvoqZnPzc3l35hdjpHD0m+b2EC2SrLEgKDRWpxf2rFCxemkgvJ5kfU48ip+Y+m2XVKyOCD85ybtlZDmw==" crossorigin="anonymous"></script>
+        
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/r.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/python.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/latex.min.js" crossorigin="anonymous"></script>
+        
+      
+
+    
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.min.js" integrity="sha512-SeiQaaDh73yrb56sTW/RgVdi/mMqNeM2oBwubFHagc5BkixSpP1fvqF47mKzPGWYSSy4RwbBunrJBQ4Co8fRWA==" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+      
+      <script id="search-hit-fuse-template" type="text/x-template">
+        <div class="search-hit" id="summary-{{key}}">
+          <div class="search-hit-content">
+            <div class="search-hit-name">
+              <a href="{{relpermalink}}">{{title}}</a>
+              <div class="article-metadata search-hit-type">{{type}}</div>
+              <p class="search-hit-description">{{snippet}}</p>
+            </div>
+          </div>
+        </div>
+      </script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+      
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+      
+      
+      
+      
+      
+      
+      
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+      
+      
+    
+    
+    <script src="/en/js/wowchemy.min.d68ecd57c0ec1f1f61d65fd568f1c3a0.js"></script>
+
+    
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+
+
+</body>
+</html>

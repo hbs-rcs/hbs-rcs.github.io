@@ -1,0 +1,1191 @@
+<!DOCTYPE html><html lang="en-us" >
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  
+  
+  
+    <meta name="generator" content="Wowchemy 5.3.0 for Hugo" />
+  
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Recently, I found myself researching the latest developments on the topic of Synthetic Controls (SC) for one of the projects. I had the pleasure of learning about the method from its co-author Prof." />
+
+  
+  <link rel="alternate" hreflang="en-us" href="https://hbs-rcs.github.io/post/synthetic-controls/" />
+
+  
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  
+
+  
+  
+  
+    <meta name="theme-color" content="#1565c0" />
+  
+
+  
+  
+    
+    <script src="/js/mathjax-config.js"></script>
+  
+
+  
+
+  <link rel="stylesheet" href="/css/vendor-bundle.min.f1ecf783c14edc00c9320c205831ad8e.css" media="print" onload="this.media='all'">
+
+  
+  
+  
+    
+    
+
+    
+    
+    
+    
+      
+      
+    
+    
+    
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/styles/github.min.css" crossorigin="anonymous" title="hl-light" media="print" onload="this.media='all'">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" media="print" onload="this.media='all'" disabled>
+        
+      
+    
+
+    
+    
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.min.css" integrity="sha512-1xoFisiGdy9nvho8EgXuXvnpR5GAMSjFwp40gSRE3NwdUdIMIKuPa7bqoUhLD0O/5tPNhteAsE5XyyMi5reQVA==" crossorigin="anonymous" media="print" onload="this.media='all'">
+    
+
+    
+
+    
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+      
+      
+
+      
+      
+
+      
+    
+  
+
+  
+  
+  
+    
+      
+      <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono&family=Roboto:wght@400;700&display=swap">
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto+Mono&family=Roboto:wght@400;700&display=swap" media="print" onload="this.media='all'">
+    
+  
+
+  
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/wowchemy.9f457a613f02e9027025db7311c58ccf.css" />
+
+  
+
+
+
+  
+
+  
+
+  
+
+
+
+
+  
+  
+  
+
+  
+
+  
+    <link rel="manifest" href="/manifest.webmanifest" />
+  
+
+  <link rel="icon" type="image/png" href="/media/icon_hua2ec155b4296a9c9791d015323e16eb5_11927_32x32_fill_lanczos_center_3.png" />
+  <link rel="apple-touch-icon" type="image/png" href="/media/icon_hua2ec155b4296a9c9791d015323e16eb5_11927_180x180_fill_lanczos_center_3.png" />
+
+  <link rel="canonical" href="https://hbs-rcs.github.io/post/synthetic-controls/" />
+
+  
+  
+  
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary" />
+  
+  <meta property="og:site_name" content="HBS Research Computing Services Blog" />
+  <meta property="og:url" content="https://hbs-rcs.github.io/post/synthetic-controls/" />
+  <meta property="og:title" content="Synthetic Controls: brief overview with practical recommmendations | HBS Research Computing Services Blog" />
+  <meta property="og:description" content="Recently, I found myself researching the latest developments on the topic of Synthetic Controls (SC) for one of the projects. I had the pleasure of learning about the method from its co-author Prof." /><meta property="og:image" content="https://hbs-rcs.github.io/media/icon_hua2ec155b4296a9c9791d015323e16eb5_11927_512x512_fill_lanczos_center_3.png" />
+    <meta property="twitter:image" content="https://hbs-rcs.github.io/media/icon_hua2ec155b4296a9c9791d015323e16eb5_11927_512x512_fill_lanczos_center_3.png" /><meta property="og:locale" content="en-us" />
+  
+    
+      <meta
+        property="article:published_time"
+        content="2019-09-12T00:00:00&#43;00:00"
+      />
+    
+    <meta property="article:modified_time" content="2019-09-12T00:00:00&#43;00:00">
+  
+
+  
+
+
+    
+
+
+
+
+
+
+  
+
+
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://hbs-rcs.github.io/post/synthetic-controls/"
+  },
+  "headline": "Synthetic Controls: brief overview with practical recommmendations",
+  
+  "datePublished": "2019-09-12T00:00:00Z",
+  "dateModified": "2019-09-12T00:00:00Z",
+  
+  "author": {
+    "@type": "Person",
+    "name": "Victoria L. Prince"
+  },
+  
+  "publisher": {
+    "@type": "Organization",
+    "name": "HBS Research Computing Services Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://hbs-rcs.github.io/media/icon_hua2ec155b4296a9c9791d015323e16eb5_11927_192x192_fill_lanczos_center_3.png"
+    }
+  },
+  "description": "Recently, I found myself researching the latest developments on the topic of Synthetic Controls (SC) for one of the projects. I had the pleasure of learning about the method from its co-author Prof."
+}
+</script>
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+  <title>Synthetic Controls: brief overview with practical recommmendations | HBS Research Computing Services Blog</title>
+</head>
+
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" class="page-wrapper   " data-wc-page-id="25283f496cce1c4943031baa2b246fe5" >
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <script src="/js/wowchemy-init.min.8988fb2a4bba758785868cfcb5244555.js"></script>
+
+  
+
+
+<aside class="search-modal" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#" aria-label="Close"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        <input name="q" id="search-query" placeholder="Search..." autocapitalize="off"
+        autocomplete="off" autocorrect="off" spellcheck="false" type="search" class="form-control"
+        aria-label="Search...">
+        
+      </div>
+
+      
+      
+
+      
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+
+  <div class="page-header">
+    
+
+
+
+
+
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container-xl">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">HBS Research Computing Services Blog</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">HBS Research Computing Services Blog</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://www.hbs.edu/research-computing-services/about-us/" target="_blank" rel="noopener"><span>About</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+            
+            
+            
+              
+            
+            
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#posts"><span>Posts</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://www.hbs.edu/research-computing-services/faculty-projects/" target="_blank" rel="noopener"><span>Projects</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://www.hbs.edu/research-computing-services/training/" target="_blank" rel="noopener"><span>Events</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+            
+          
+        
+
+        
+
+        
+        
+        
+        
+
+        
+          
+            
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="https://www.hbs.edu/research-computing-services/contact-us/" target="_blank" rel="noopener"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+
+      
+      
+
+      
+      
+      <li class="nav-item">
+        <a class="nav-link js-search" href="#" aria-label="Search"><i class="fas fa-search" aria-hidden="true"></i></a>
+      </li>
+      
+
+      
+      
+      <li class="nav-item dropdown theme-dropdown">
+        <a href="#" class="nav-link" data-toggle="dropdown" aria-haspopup="true" aria-label="Display preferences">
+          <i class="fas fa-moon" aria-hidden="true"></i>
+        </a>
+        <div class="dropdown-menu">
+          <a href="#" class="dropdown-item js-set-theme-light">
+            <span>Light</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-dark">
+            <span>Dark</span>
+          </a>
+          <a href="#" class="dropdown-item js-set-theme-auto">
+            <span>Automatic</span>
+          </a>
+        </div>
+      </li>
+      
+
+      
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  </div>
+
+  <div class="page-body">
+    <article class="article">
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+  
+  
+<div class="article-container pt-3">
+  <h1>Synthetic Controls: brief overview with practical recommmendations</h1>
+
+  
+
+  
+    
+
+
+<div class="article-metadata">
+
+  
+  
+  
+  
+  <div>
+    
+
+  <span >
+      <a href="/author/victoria-l.-prince/">Victoria L. Prince</a></span>
+  </div>
+  
+  
+
+  
+  <span class="article-date">
+    
+    
+      
+    
+    Sep 12, 2019
+  </span>
+  
+
+  
+
+  
+  <span class="middot-divider"></span>
+  <span class="article-reading-time">
+    9 min read
+  </span>
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+  <span class="middot-divider"></span>
+  <span class="article-categories">
+    <i class="fas fa-folder mr-1"></i><a href="/category/methods/">Methods</a></span>
+  
+
+</div>
+
+    
+
+
+
+
+
+  
+</div>
+
+
+
+  <div class="article-container">
+
+    <div class="article-style">
+      
+<script src="https://hbs-rcs.github.io/post/synthetic-controls/index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>Recently, I found myself researching the latest developments on the topic of Synthetic Controls (SC) for one of the projects. I had the pleasure of learning about the method from its co-author <a href="https://web.stanford.edu/~jhain/">Prof. Jens Hainmueller</a> back in 2011, when it had just started gaining momentum. Wondering what new insights have been gathered over the last 8 years by applied researchers utilizing this method for causal inference problems, I outlined interesting highlights in this post.
+<!-- In another post I give an annotated Stata example of automating the method for more than one treated unit. --></p>
+<div id="overview" class="section level2">
+<h2>Overview</h2>
+<p>The method was first introduced in <span class="citation">Abadie and Gardeazabal (<a href="#ref-Abadie_Economic_Costs_2003" role="doc-biblioref">2003</a>)</span> to estimate a causal effect of a political conflict on region’s per capita GDP. In the spirit of classical matching methods for causal inference (<span class="citation">Rosenbaum (<a href="#ref-rosenbaum2002overt" role="doc-biblioref">2002</a>)</span>), the authors proposed a procedure for finding a group of control regions such that their <em>weighted average</em> would match the specified pre-intervention characteristics (including the evolution of the outcome) of the affected region.</p>
+<p>Here is a more technical description: suppose that we observe <span class="math inline">\(J+1\)</span> units in time periods <span class="math inline">\(1,2,..., T\)</span> and unit #1 is exposed to the intervention during periods <span class="math inline">\(T_0+1, ...,T\)</span>. Let <span class="math inline">\(Y^C_{jt}\)</span> be the outcome that would be observed (i.e., the <a href="https://en.wikipedia.org/wiki/Rubin_causal_model">potential outcome</a>) for unit <span class="math inline">\(j\)</span> at time <span class="math inline">\(t\)</span> in the absence of the intervention. For units 2 through <span class="math inline">\(J+1\)</span>, the observed outcome <span class="math inline">\(Y_{jt}\)</span> is equivalent to <span class="math inline">\(Y^C_{jt}\)</span>. On the other hand, let <span class="math inline">\(Y^I_{jt}\)</span> be the potential outcome under the intervention. Therefore, <span class="math inline">\(Y_{1t}=Y^I_{1t}\)</span> for <span class="math inline">\(t=T_0+1, ...,T\)</span>.</p>
+<p>Our goal is to estimate the <em>causal treatment effect on the treated</em> unit:
+<span class="math display">\[
+\alpha_{1t} = Y^I_{jt} - Y^C_{jt}, \text{for } t=T_0+1,..., T.
+\]</span>
+Suppose we also observe a vector of <span class="math inline">\(R\)</span> covariates for each unit <span class="math inline">\(j\)</span>, <span class="math inline">\(\textbf{Z}_j\)</span>, that are <em>predictive of the outcome</em> and “unaffected by the treatment”. The SC method assumes that we are able to find a set of nonnegative weights <span class="math inline">\(\textbf{W}=(w_2,...,w_{J+1})&#39;\)</span> that sum up to 1 and satisfy the following <span class="math inline">\((R+T_0)\)</span> conditions <em>exactly</em>:
+<span class="math display">\[
+\sum_{j=2}^{J+1}w_j\textbf{Z}_j=\textbf{Z}_1\text{ and }\sum_{j=2}^{J+1}w_jY_{jt}=Y_{1t}, \text{ for }t=1,...,T_0.
+\]</span></p>
+<p>In practice, of course, it is unlikely that we would find exact matches for all available characteristics. Therefore, we find weights that minimize a chosen measure of discrepancy. Let <span class="math inline">\(\textbf{X}_1\)</span> be a <span class="math inline">\((R+T_0)\times 1\)</span> vector of pre-intervention characteristics for the treated unit. Similarly, <span class="math inline">\(\textbf{X}_0\)</span> is a <span class="math inline">\((R+T_0) \times J\)</span> matrix of the same variables for the donor pool. The original paper (<span class="citation">Abadie, Diamond, and Hainmueller (<a href="#ref-abadie2010synthetic" role="doc-biblioref">2010</a>)</span>) minimizes the following distance measure:
+<span class="math display">\[
+||\textbf{X}_1-\textbf{X}_0\textbf{W}||_{\textbf{V}} = \sqrt{(\textbf{X}_1-\textbf{X}_0\textbf{W})&#39;\textbf{V}(\textbf{X}_1-\textbf{X}_0\textbf{W})} \qquad\qquad(1)
+\]</span>
+In words, SC calculation produces two outputs: matrix <span class="math inline">\(\textbf{V}\)</span>, which weighs variables included in the minimization differently depending on how well they predict pre-intervention outcomes, and an array of weights <span class="math inline">\(\textbf{W}\)</span> for control units.</p>
+<p>There are various ways to choose <span class="math inline">\(\textbf{V}\)</span>, including subjective assessment of predictive power of <span class="math inline">\(\textbf{X}\)</span>, regression, minimize prediction error, or cross-validation. When <span class="math inline">\(\textbf{V}\)</span> is set to <span class="math inline">\(\textbf{I}\)</span>, the identity matrix, then all characteristics are assumed to have equal weights, and the distance defined in (1) can be interpreted as the usual Euclidean distance between points <span class="math inline">\(\textbf{X}_1\)</span> and <span class="math inline">\(\textbf{X}_0\textbf{W}\)</span> on a <span class="math inline">\((R+T_0)\)</span>-dimensional space.</p>
+<p>Note that, once we have a synthetic control for the treated unit, the method permits estimation of a treatment effect for each post-treatment time period <span class="math inline">\(t=T_0+1,..., T\)</span>, as long as we observe the corresponding outcome for all controls. However, it is more common to report an aggregated post-treatment effect, e.g., <span class="math inline">\(\sum_{t=T_0+1}^T \alpha_{1t}/(T-T_0)\)</span>.</p>
+</div>
+<div id="features-and-limitations" class="section level2">
+<h2>Features and Limitations</h2>
+<p>There are several attractive features of the SC method:</p>
+<ul>
+<li><p>It provides a systematic data-driven way of assigning weights to control units to provide a close synthetic match to a treated unit, especially if none of the observed control units fit the bill.</p></li>
+<li><p>When potential outcomes are related linearly to observed and unobserved covariates (or <em>factors</em>), <span class="citation">Abadie, Diamond, and Hainmueller (<a href="#ref-abadie2010synthetic" role="doc-biblioref">2010</a>)</span> showed that the estimated causal effect is unbiased even when there are unobserved confounding factors that vary with time (though, this feature as well as many other theoretical properties of the SC method rely on availability of a <em>large number of preintervention outcomes</em>.)</p></li>
+<li><p>There is an <em>interesting parallel between a linear regression and the SC method</em>: it turns out that, when estimating a counterfactual outcome using a naive regression approach, i.e., regressing <span class="math inline">\(Y_{jt}\)</span> on <span class="math inline">\(\textbf{X}_0\)</span> post-treatment for controls (<span class="math inline">\(t=T_0,...,T\)</span>, <span class="math inline">\(j=2,...,J\)</span>) and then using this model together with <span class="math inline">\(\textbf{X}_1\)</span> to predict <span class="math inline">\(Y^C_{1t}\)</span>, we can also rewrite the result as a linear combination of untreated units (see <span class="citation">Abadie, Diamond, and Hainmueller (<a href="#ref-abadie2015comparative" role="doc-biblioref">2015</a>)</span> for a proof) with weights that sum up to one. However, a conceptual difference lies in the fact that regression weights are <em>unrestricted</em> - they may be negative or greater than one. “As a result, estimates of counterfactuals based on linear regression may extrapolate beyond the support of comparison units.” In fact, as suggested in <span class="citation">Abadie, Diamond, and Hainmueller (<a href="#ref-abadie2015comparative" role="doc-biblioref">2015</a>)</span>, one way to assess the extent of the extrapolation is to calculate the regression weights explicitly!</p></li>
+<li><p>It can be shown that the SC method is a special case of a “sideways” Lasso regression with a fixed value of its threshold parameter to <span class="math inline">\(1\)</span> and an additional restriction on coefficients to be nonnegative and sum up to one (<span class="citation">Kinn (<a href="#ref-kinn2018synthetic" role="doc-biblioref">2018</a>)</span>). The “sideways” regression refers to one where units are acting as covariates, and the time periods (and covariates <span class="math inline">\(\textbf{Z}\)</span>) serve as new “units” (e.g., observation <span class="math inline">\(Y_{1t}\)</span> is regressed on <span class="math inline">\(Y_{2t}, \dots, Y_{(J+1)t}\)</span> for <span class="math inline">\(t=1, \dots, T_0\)</span>).</p></li>
+<li><p>The SC method was originally developed for one treated unit. However, if multiple units are affected by the event of interest, the method can be applied to each unit separately and the treatment effect summarized by computing an Average Treatment Effect on the Treated (ATT) as demonstrated in <span class="citation">Kreif et al. (<a href="#ref-kreif2016examination" role="doc-biblioref">2016</a>)</span>.</p></li>
+</ul>
+<!-- An example of this procedure in Stata is shown here. -->
+</div>
+<div id="practical-recommendations" class="section level2">
+<h2>Practical Recommendations</h2>
+<p>The topic of SCs is still an active area of research appearing regularly in methodological and applied papers. Here are some useful tips that I came across while going over the literature:</p>
+<ul>
+<li><p>There are many (sometimes, conflicting!) recommendations on what should be included as part of <span class="math inline">\(\textbf{X}_0\)</span> and <span class="math inline">\(\textbf{X}_1\)</span>, and I think the jury is still out. Of course, there is no doubt that the chosen covariates should be predictive of the outcome. That said, it is a bit less apparent how to strike a balance between the length of the pretreatment outcome window and a set of background characteristics that should be used to construct <span class="math inline">\(\textbf{X}\)</span> matrices.</p>
+<ul>
+<li><p>On one hand, many theoretical properties of the procedure were derived asymptotically, assuming infinite pretreatment window. Moreover, <span class="citation">Botosaru and Ferman (<a href="#ref-botosaru2019covariates" role="doc-biblioref">2019</a>)</span> show that a “perfect balance on pre-treatment outcomes does not generally imply an approximate balance for all covariates, even when they are all relevant”, concluding that, “although there may be advantages to balancing on covariates to construct the SC estimator, a perfect balance on covariates should not be required for the SC method as long as there is a perfect balance on a long set of pre-treatment outcomes.”</p></li>
+<li><p>On the other hand <span class="citation">Kaul et al. (<a href="#ref-kaul2015synthetic" role="doc-biblioref">2015</a>)</span> argues that one should not use covariates simultaneously with <em>all</em> available preintervention outcomes, as, under certain conditions, this may renders covariates to be irrelevant. With that, <span class="citation">Abadie, Diamond, and Hainmueller (<a href="#ref-abadie2015comparative" role="doc-biblioref">2015</a>)</span> states that “it is of crucial importance that synthetic controls closely reproduce the values that variables with a large predictive power on the outcome of interest take for the unit affected by the intervention.” Thus, it is important that the chosen covariates are allowed to influence the estimated synthetic control.</p></li>
+</ul></li>
+<li><p>One should always inspect the quality of the match and discard synthetic controls that do not closely trace the preintervention outcome. However, there is still debate whether a perfect balance on pre-treatment covariates is strictly necessary (<span class="citation">Botosaru and Ferman (<a href="#ref-botosaru2017role" role="doc-biblioref">2017</a>)</span>).</p></li>
+<li><p><span class="citation">Abadie, Diamond, and Hainmueller (<a href="#ref-abadie2010synthetic" role="doc-biblioref">2010</a>)</span> emphasizes that SC method should be avoided in cases where the treated unit lies outside the distribution of control units. In other words, values of pretreatment variables for the affected unit cannot be outside any linear combination of the donor pool values. If no convex combination of control units can reconstruct the treated unit then counterfactual estimates could be severely biased. In practice, one can start with inspecting the ranges of outcomes and covariates during the pre-treatment period among controls and making sure that they at least overlap with those for the treated unit.</p></li>
+<li><p>In addition to the extrapolation issues, we should watch out for possible interpolation bias by making sure that the variables used to compute the weights have values among the donor pool units that are similar to those observed for the affected unit. To reduce interpolation biases, it is recommended to restrict the donor pool to units that are “similar” to the treated one(s).</p></li>
+<li><p>Implicit in the notation above is the usual assumption of <em>no interference</em> between units - or that outcomes of the untreated units are not affected by the intervention implemented in the treated unit. For example, the policy in the affected region cannot affect the outcome in the pool of donor regions.</p></li>
+<li><p>Finally, when dealing with multiple outcomes, a procedure that uses distance measure given in (1) will likely construct a different synthetic control for each outcome, even if the same set of pretreatment characteristics is being matched on. This is due to the fact that the weighting matrix <span class="math inline">\(\textbf{V}\)</span> is computed separately for each outcome. If we preset <span class="math inline">\(\textbf{V}\)</span> to an identity (or any other positive-definite) matrix and use the same pretreatment outcome values to construct <span class="math inline">\(\textbf{X}_0\)</span> and <span class="math inline">\(\textbf{X}_1\)</span>, the same synthetic control will be constructed for each unit regardless of the outcome considered.</p>
+<ul>
+<li>As a special case, if <span class="math inline">\(\textbf{X}_0\)</span> and <span class="math inline">\(\textbf{X}_1\)</span> do not contain any pretreatment characteristics, setting <span class="math inline">\(\textbf{V}\)</span> to <span class="math inline">\(\textbf{I}\)</span> would imply that we assume that all pretreatment outcome lags affect post-treatment values equally.</li>
+</ul></li>
+</ul>
+<p>This list is by no means exhaustive. I’m sure, as the SC method matures, our understanding of its strengths and limitations as well as advice on practical implementation will continue evolving.</p>
+</div>
+<div id="references" class="section level2 unnumbered">
+<h2>References</h2>
+<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-abadie2010synthetic" class="csl-entry">
+Abadie, Alberto, Alexis Diamond, and Jens Hainmueller. 2010. <span>“Synthetic Control Methods for Comparative Case Studies: Estimating the Effect of Californias Tobacco Control Program.”</span> <em>Journal of the American Statistical Association</em> 105 (490): 493–505.
+</div>
+<div id="ref-abadie2015comparative" class="csl-entry">
+———. 2015. <span>“Comparative Politics and the Synthetic Control Method.”</span> <em>American Journal of Political Science</em> 59 (2): 495–510.
+</div>
+<div id="ref-Abadie_Economic_Costs_2003" class="csl-entry">
+Abadie, Alberto, and Javier Gardeazabal. 2003. <span>“The Economic Costs of Conflict: A Case Study of the Basque Country.”</span> <em>American Economic Review</em> 93 (1): 113–32. <a href="https://doi.org/10.1257/000282803321455188">https://doi.org/10.1257/000282803321455188</a>.
+</div>
+<div id="ref-botosaru2017role" class="csl-entry">
+Botosaru, Irene, and Bruno Ferman. 2017. <span>“On the Role of Covariates in the Synthetic Control Method.”</span> <a href="https://mpra.ub.uni-muenchen.de/81940/">https://mpra.ub.uni-muenchen.de/81940/</a>.
+</div>
+<div id="ref-botosaru2019covariates" class="csl-entry">
+———. 2019. <span>“<span class="nocase">On the role of covariates in the synthetic control method</span>.”</span> <em>The Econometrics Journal</em> 22 (2): 117–30. <a href="https://doi.org/10.1093/ectj/utz001">https://doi.org/10.1093/ectj/utz001</a>.
+</div>
+<div id="ref-kaul2015synthetic" class="csl-entry">
+Kaul, Ashok, Stefan Klößner, Gregor Pfeifer, and Manuel Schieler. 2015. <span>“Synthetic Control Methods: Never Use All Pre-Intervention Outcomes Together with Covariates.”</span>
+</div>
+<div id="ref-kinn2018synthetic" class="csl-entry">
+Kinn, Daniel. 2018. <span>“Synthetic Control Methods and Big Data.”</span> <em>arXiv Preprint arXiv:1803.00096</em>.
+</div>
+<div id="ref-kreif2016examination" class="csl-entry">
+Kreif, Noémi, Richard Grieve, Dominik Hangartner, Alex James Turner, Silviya Nikolova, and Matt Sutton. 2016. <span>“Examination of the Synthetic Control Method for Evaluating Health Policies with Multiple Treated Units.”</span> <em>Health Economics</em> 25 (12): 1514–28.
+</div>
+<div id="ref-rosenbaum2002overt" class="csl-entry">
+Rosenbaum, Paul R. 2002. <span>“Overt Bias in Observational Studies.”</span> In <em>Observational Studies</em>, 71–104. Springer.
+</div>
+</div>
+</div>
+
+    </div>
+
+    
+
+
+
+
+
+
+<div class="article-tags">
+  
+  <a class="badge badge-light" href="/tag/synthetic-controls/">synthetic controls</a>
+  
+  <a class="badge badge-light" href="/tag/causal-inference/">causal inference</a>
+  
+</div>
+
+
+
+<div class="share-box" aria-hidden="true">
+  <ul class="share">
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://twitter.com/intent/tweet?url=https://hbs-rcs.github.io/post/synthetic-controls/&amp;text=Synthetic%20Controls:%20brief%20overview%20with%20practical%20recommmendations" target="_blank" rel="noopener" class="share-btn-twitter">
+          <i class="fab fa-twitter"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.facebook.com/sharer.php?u=https://hbs-rcs.github.io/post/synthetic-controls/&amp;t=Synthetic%20Controls:%20brief%20overview%20with%20practical%20recommmendations" target="_blank" rel="noopener" class="share-btn-facebook">
+          <i class="fab fa-facebook"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="mailto:?subject=Synthetic%20Controls:%20brief%20overview%20with%20practical%20recommmendations&amp;body=https://hbs-rcs.github.io/post/synthetic-controls/" target="_blank" rel="noopener" class="share-btn-email">
+          <i class="fas fa-envelope"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://www.linkedin.com/shareArticle?url=https://hbs-rcs.github.io/post/synthetic-controls/&amp;title=Synthetic%20Controls:%20brief%20overview%20with%20practical%20recommmendations" target="_blank" rel="noopener" class="share-btn-linkedin">
+          <i class="fab fa-linkedin-in"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="whatsapp://send?text=Synthetic%20Controls:%20brief%20overview%20with%20practical%20recommmendations%20https://hbs-rcs.github.io/post/synthetic-controls/" target="_blank" rel="noopener" class="share-btn-whatsapp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+      </li>
+    
+      
+      
+      
+        
+      
+      
+      
+      <li>
+        <a href="https://service.weibo.com/share/share.php?url=https://hbs-rcs.github.io/post/synthetic-controls/&amp;title=Synthetic%20Controls:%20brief%20overview%20with%20practical%20recommmendations" target="_blank" rel="noopener" class="share-btn-weibo">
+          <i class="fab fa-weibo"></i>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+  </div>
+</article>
+  </div>
+
+  <div class="page-footer">
+    
+    
+    <div class="container">
+      <footer class="site-footer">
+
+  
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+
+
+
+
+
+  <p class="powered-by">
+    
+    
+    
+      
+      
+      
+      
+      
+      
+      Published with <a href="https://wowchemy.com/?utm_campaign=poweredby" target="_blank" rel="noopener">Wowchemy</a> — the free, <a href="https://github.com/wowchemy/wowchemy-hugo-modules" target="_blank" rel="noopener">open source</a> website builder that empowers creators.
+    
+  </p>
+</footer>
+
+    </div>
+    
+  </div>
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      
+
+    
+    <script src="/js/vendor-bundle.min.b73dfaac3b6499dc997741748a7c3fe2.js"></script>
+
+    
+    
+    
+      
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      
+
+      
+      
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/highlight.min.js" integrity="sha512-TDKKr+IvoqZnPzc3l35hdjpHD0m+b2EC2SrLEgKDRWpxf2rFCxemkgvJ5kfU48ip+Y+m2XVKyOCD85ybtlZDmw==" crossorigin="anonymous"></script>
+        
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/r.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/python.min.js" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.2.0/languages/latex.min.js" crossorigin="anonymous"></script>
+        
+      
+
+    
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/leaflet.min.js" integrity="sha512-SeiQaaDh73yrb56sTW/RgVdi/mMqNeM2oBwubFHagc5BkixSpP1fvqF47mKzPGWYSSy4RwbBunrJBQ4Co8fRWA==" crossorigin="anonymous"></script>
+    
+
+    
+    
+
+    
+    
+    
+      
+      <script id="search-hit-fuse-template" type="text/x-template">
+        <div class="search-hit" id="summary-{{key}}">
+          <div class="search-hit-content">
+            <div class="search-hit-name">
+              <a href="{{relpermalink}}">{{title}}</a>
+              <div class="article-metadata search-hit-type">{{type}}</div>
+              <p class="search-hit-description">{{snippet}}</p>
+            </div>
+          </div>
+        </div>
+      </script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/3.2.1/fuse.min.js" integrity="sha256-VzgmKYmhsGNNN4Ph1kMW+BjoYJM2jV5i4IlFoeZA9XI=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script>
+      
+    
+
+    
+    
+
+    
+    
+    
+    
+
+    
+    
+      
+      
+      
+      
+      
+      
+      
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+      
+      
+    
+    
+    <script src="/en/js/wowchemy.min.d68ecd57c0ec1f1f61d65fd568f1c3a0.js"></script>
+
+    
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
+
+
+
+
+</body>
+</html>
