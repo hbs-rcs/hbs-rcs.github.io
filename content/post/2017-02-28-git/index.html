@@ -1,0 +1,21 @@
+---
+title: Using Git on the Grid
+date: 2017-02-28
+tags:
+  - grid
+draft: true
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<blockquote>
+<p>We would like to use Git to manage version control of our software. I’ve created a private GitHub repo, but we don’t know how to set this up on the linux machine. Do you know?</p>
+</blockquote>
+<p>I believe the firewall is blocking SSH connections from the grid logging into GitHub. So, the following will not work out of the box:</p>
+<pre class="bash"><code>git clone git@github.com:your/private.git</code></pre>
+<p>When I try to clone over HTTPS, I get a 403 error. Reading <a href="https://help.github.com/articles/https-cloning-errors/">this page</a> suggests that the version of Git on the grid (1.7.1) might be too old (1.7.10 is preferred).</p>
+<p>As a crazy workaround, it looks like we can use SSH over the HTTPS port. Follow the instructions on <a href="https://help.github.com/articles/using-ssh-over-the-https-port/">this page</a> to enable SSH over HTTPS for GitHub. One issue they don’t mention on that page is I needed to change the permissions on my <code>~/.ssh/config</code> file for SSH to work:</p>
+<pre class="bash"><code>chmod 600 ~/.ssh/config</code></pre>
+<p>For all of this to work, you need to set up your public and private SSH keys to the grid. When all of this is done, you can use the following to clone a private repo:</p>
+<pre class="bash"><code>git clone git@github.com:your/repo.git</code></pre>

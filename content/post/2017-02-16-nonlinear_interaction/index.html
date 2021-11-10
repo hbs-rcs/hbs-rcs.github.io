@@ -1,0 +1,50 @@
+---
+author: Xiang Ao
+title: Interaction term in a non-linear model
+comments: true
+tags:
+  - statistics
+date: 2017-02-14
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<p>In a non-linear model (for example, logit or poisson model), the interpretation of the coefficient on the interaction term is tricky. <a href="https://pdfs.semanticscholar.org/6285/8e64d9a337504d72cb862c4cc1e7fd27a7a0.pdf">Ai and Norton (2003)</a> points out that the interaction term coefficient is not the same as people can interpret as in a linear model; that is, how much effect of <span class="math inline">\(x1\)</span> changes with the value of <span class="math inline">\(x2\)</span>. They interpret this as a cross</p>
+<p>If we have a linear model with interaction:</p>
+<p><span class="math display">\[ E(y) = \beta_1 x_1 + \beta_2 x_2 + \beta_{12} x_1*x_2 \]</span></p>
+<p>Then, the marginal effect</p>
+<p><span class="math display">\[ \frac{\partial^2 E(y)}{\partial x_1 \partial x_2} = \beta_{12} \]</span></p>
+<p>That is, <span class="math inline">\(\beta_{12}\)</span> is the second derivative of <span class="math inline">\(E(y)\)</span> on <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span>. The marginal effect of <span class="math inline">\(x_1\)</span></p>
+<p>In a non-linear model,</p>
+<p><span class="math display">\[ F(E(y)) = \beta_1 x_1 + \beta_2 x_2 + \beta_{12} x_1*x_2 \]</span></p>
+<p><span class="math display">\[ \frac{\partial^2 F(E(y))}{\partial x_1 \partial x_2} = \beta_{12} \]</span></p>
+<p>Here, the partial derivative of <span class="math inline">\(F(E(y))\)</span> on <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> is still <span class="math inline">\(\beta_{12}\)</span>. However, most people are interested in <span class="math inline">\(\frac{\partial^2 E(y)}{\partial x_1 \partial x_2}\)</span>.</p>
+<p><span class="math display">\[ \frac{\partial^2 E(y)}{\partial x_1 \partial x_2} = \beta_{12} G&#39;() + (\beta_{1} + \beta_{12} x_2)(\beta_2 + \beta_{12} x_1) G&#39;&#39;()\]</span></p>
+<p>where <span class="math inline">\(G()\)</span> is the inverse function of <span class="math inline">\(F()\)</span>.</p>
+<p>It is true that in a non-linear model with interaction, the marginal effect of <span class="math inline">\(x_1\)</span> differs with different values of <span class="math inline">\(x_2\)</span>. However, even if we have a non-linear model without interaction, the marginal effect of <span class="math inline">\(x_1\)</span> is still different with different values of <span class="math inline">\(x_2\)</span>. To see this,</p>
+<p><span class="math display">\[ F(E(y)) = \beta_1 x_1 + \beta_2 x_2 \]</span></p>
+<p><span class="math display">\[ \frac{\partial^2 E(y)}{\partial x_1 \partial x_2} =  (\beta_{1} \beta_2 ) G&#39;&#39;()\]</span></p>
+<p>Therefore, when we set up our model,</p>
+<p><span class="math display">\[ F(E(y)) = \beta_1 x_1 + \beta_2 x_2 + \beta_{12} x_1*x_2 \]</span></p>
+<p>we have in mind that we allow interaction of <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_1\)</span> to interact for the effect on <span class="math inline">\(F(E(y))\)</span>; not on <span class="math inline">\(E(y)\)</span>.</p>
+<p>We agree with <a href="http://people.stern.nyu.edu/wgreene/Lugano2013/Greene-InteractionTerms.pdf">Bill Greene, 2013</a>. In
+a nonlinear model, the partial effects (as Greene calls it) is
+nonlinear, regardless of the model. For example, in a logit model,
+even if you don’t have an interaction term in your model, the effect
+of <span class="math inline">\(x_1\)</span> will still be different for every value of <span class="math inline">\(x_2\)</span>, simply
+because it’s a nonlinear model.</p>
+<p>As Greene put it at the summary section,
+“Build the model based on appropriate statistical procedures and principles. Statistical testing
+about the model specification is done at this step Hypothesis tests are about model coefficients
+and about the structural aspects of the model specifications. Partial effects are neither
+coefficients nor elements of the specification of the model. They are implications of the specified
+and estimated model.”</p>
+<p>We also agree with <a href="http://www.stata-journal.com/sjpdf.html?articlenum=st0194">Maarten Buis 2010</a>, that we should use multiplicative effect in a non-linear model. That is, in a non-linear model,</p>
+<p><span class="math display">\[ F(E(y)) = \beta_1 x_1 + \beta_2 x_2 + \beta_{12} x_1*x_2 \]</span></p>
+<p>We should pay more attention to</p>
+<p><span class="math display">\[ \frac{\partial^2 F(E(y))}{\partial x_1 \partial x_2} = \beta_{12} \]</span></p>
+<p>For example, in a logit model,</p>
+<p><span class="math display">\[ log(P(y=1)/(1-P(y=1))) = \beta_1 x_1 + \beta_2 x_2 + \beta_{12} x_1*x_2 \]</span></p>
+<p>That is, the log of odds is a linear function of <span class="math inline">\(x_1\)</span> and <span class="math inline">\(x_2\)</span> and interaction. The interaction effect has the same interpretation as the linear model, in terms of log of odds.</p>
+<p>Or, it becomes multiplicative effect when we talk about odds ratios. Stata’s “margins” command is a great tool to calculate marginal effects in various situations, as shown in <a href="http://www.stata-journal.com/sjpdf.html?articlenum=st0194">Maarten Buis 2010</a>.</p>

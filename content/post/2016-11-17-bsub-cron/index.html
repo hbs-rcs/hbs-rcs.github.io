@@ -1,0 +1,28 @@
+---
+title: Running Cron Jobs on the Grid
+author: Andrew Marder
+tags:
+  - grid
+date: 2016-11-17
+---
+
+<script src="{{< blogdown/postref >}}index_files/header-attrs/header-attrs.js"></script>
+
+
+<pre class="python"><code>from datetime import datetime, timedelta
+import subprocess
+
+def main():
+    timestamp = datetime.now().isoformat()
+    print &#39;Hello, World! It is currently %s.&#39; % timestamp
+
+def reschedule(**kwargs):
+    when = datetime.now() + timedelta(**kwargs)
+    timestamp = when.strftime(&#39;%Y:%m:%d:%H:%M&#39;)
+    path = __file__
+    command = &#39;bsub -b %(timestamp)s python %(path)s&#39; % locals()
+    subprocess.call(command, shell=True)
+
+if __name__ == &#39;__main__&#39;:
+    reschedule(minutes=1)
+    main()</code></pre>
